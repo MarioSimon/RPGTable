@@ -30,6 +30,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         buttonHost.onClick.AddListener(() => StartHost());
+        buttonClient.onClick.AddListener(() => StartClient());
     }
 
     #endregion
@@ -54,6 +55,14 @@ public class UIManager : MonoBehaviour
         if (!SetIPAndPort()) { return; }
 
         NetworkManager.Singleton.StartHost();
+        DeactivateMainMenu();
+    }
+
+    private void StartClient()
+    {
+        if (!SetIPAndPort()) { return; }
+
+        NetworkManager.Singleton.StartClient();
         DeactivateMainMenu();
     }
 
