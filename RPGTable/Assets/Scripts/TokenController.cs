@@ -1,18 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class TokenController : MonoBehaviour
+
+public class TokenController : NetworkBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
+    bool selected = false;
+
     void Update()
     {
-        
+        InteractWithMovement();
+    }
+
+    private void InteractWithMovement()
+    {
+        if ((!IsOwner) && (!IsHost)) { return; }
+        RaycastHit hit;
+        bool hasHit = Physics.Raycast(GetMouseRay(), out hit);
+
+        if (hasHit)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                MoveTokenServerRpc(hit.point);
+            }
+        }
+    }
+
+    private Ray GetMouseRay()
+    {
+        return Camera.main.ScreenPointToRay(Input.mousePosition);
+    }
+
+    [ServerRpc]
+    private void MoveTokenServerRpc(Vector3 destination)
+    {
+        GetComponent<Mover>().MoveTo(destination);
     }
 }
