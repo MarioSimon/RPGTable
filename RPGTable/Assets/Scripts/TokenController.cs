@@ -9,9 +9,17 @@ public class TokenController : NetworkBehaviour
 
     bool selected = false;
 
-    void Update()
+    private void Update()
     {
-        InteractWithMovement();
+        //if (selected)
+            InteractWithMovement();
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        if (IsOwner) { return; }
+        if (IsHost) { return; }
+        Destroy(this);
     }
 
     private void InteractWithMovement()
@@ -24,7 +32,10 @@ public class TokenController : NetworkBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                MoveTokenServerRpc(hit.point);
+                if (IsOwner)
+                    MoveTokenServerRpc(hit.point);
+                else if (IsHost)
+                    GetComponent<Mover>().MoveTo(hit.point);
             }
         }
     }
