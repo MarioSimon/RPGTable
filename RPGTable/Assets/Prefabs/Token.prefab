@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: -4835415366638394736}
   - component: {fileID: -6924161648093421783}
   m_Layer: 0
-  m_Name: PlayerToken
+  m_Name: Token
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,6 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e2929ffa95d302479117f98c0458eb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tokenName: 
+  selected: 0
 --- !u!114 &-4835415366638394736
 MonoBehaviour:
   m_ObjectHideFlags: 0

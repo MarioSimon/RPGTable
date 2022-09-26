@@ -2,51 +2,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using Unity.Collections;
 
 
 public class TokenController : NetworkBehaviour
 {
+    [SerializeField] string tokenName;
+    [SerializeField] bool selected = false;
 
-    bool selected = false;
+    public NetworkVariable<FixedString64Bytes> ownerName;
 
-    private void Update()
+    Color selectedColor = new Color(0, 0.75f, 0);
+    Color standardColor = new Color(0.5f, 0.5f, 0.5f);
+
+
+    public void ChangeSelection()
     {
-        //if (selected)
-            InteractWithMovement();
+        selected = !selected;
+        ChangeColor(selected);
     }
 
-    public override void OnNetworkSpawn()
+    public void ChangeColor(bool selected)
     {
-        if (IsOwner) { return; }
-        if (IsHost) { return; }
-        Destroy(this);
-    }
-
-    private void InteractWithMovement()
-    {
-        if ((!IsOwner) && (!IsHost)) { return; }
-        RaycastHit hit;
-        bool hasHit = Physics.Raycast(GetMouseRay(), out hit);
-
-        if (hasHit)
+        if (selected)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (IsOwner)
-                    MoveTokenServerRpc(hit.point);
-                else if (IsHost)
-                    GetComponent<Mover>().MoveTo(hit.point);
-            }
+            GetComponent<Renderer>().material.color = selectedColor;
+        }
+        else
+        {
+            GetComponent<Renderer>().material.color = standardColor;
         }
     }
 
-    private Ray GetMouseRay()
-    {
-        return Camera.main.ScreenPointToRay(Input.mousePosition);
-    }
-
-    [ServerRpc]
-    private void MoveTokenServerRpc(Vector3 destination)
+    [ServerRpc(RequireOwnership = false)]
+    public void MoveToServerRpc(Vector3 destination)
     {
         GetComponent<Mover>().MoveTo(destination);
     }
