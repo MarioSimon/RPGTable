@@ -3,20 +3,31 @@ using UnityEngine.UI;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using System;
+using Unity.Collections;
 
-public class UIManager : MonoBehaviour
+public class UIManager : NetworkBehaviour
 {
-    #region variables
+    #region Variables
+
     [SerializeField] NetworkManager networkManager;
     UnityTransport transport;
     readonly ushort port = 7777;
 
     [Header("Main Menu")]
     [SerializeField] GameObject mainMenu;
-    [SerializeField] InputField inputFieldName;
+    [SerializeField] public InputField inputFieldName;
     [SerializeField] InputField inputFieldIP;
     [SerializeField] Button buttonHost;
     [SerializeField] Button buttonClient;
+
+    [Header("In Game HUD")]
+    [SerializeField] GameObject inGameHUD;
+    [SerializeField] Button buttonSpawnToken;
+    //Esto probablemente se mueva mas adelante
+    [SerializeField] GameObject tokenPrefab;
+
+    //Esto no me gusta, estoy probando cosas y luego veré si puedo arreglarlo
+    public Player localPlayer;
 
     #endregion
 
@@ -31,6 +42,24 @@ public class UIManager : MonoBehaviour
     {
         buttonHost.onClick.AddListener(() => StartHost());
         buttonClient.onClick.AddListener(() => StartClient());
+        buttonSpawnToken.onClick.AddListener(() => SpawnToken());
+    }
+
+    #endregion
+
+    private void SpawnToken()
+    {
+        SpawnTokenServerRpc(localPlayer.givenName.Value);
+    }
+
+    #region ServerRpc
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SpawnTokenServerRpc(FixedString64Bytes ownerName)
+    {       
+        GameObject token = Instantiate(tokenPrefab, Vector3.zero, Quaternion.identity);
+        token.GetComponent<TokenController>().ownerName.Value = ownerName;
+        token.GetComponent<NetworkObject>().Spawn();
     }
 
     #endregion
@@ -41,9 +70,20 @@ public class UIManager : MonoBehaviour
     {
         mainMenu.SetActive(true);
     }
+
     private void DeactivateMainMenu()
     {
         mainMenu.SetActive(false);
+    }
+
+    private void ActivateInGameHUD()
+    {
+        inGameHUD.SetActive(true);
+    }
+
+    private void DeactivateInGameHUD()
+    {
+        inGameHUD.SetActive(false);
     }
 
     #endregion
@@ -56,6 +96,7 @@ public class UIManager : MonoBehaviour
 
         NetworkManager.Singleton.StartHost();
         DeactivateMainMenu();
+        ActivateInGameHUD();
     }
 
     private void StartClient()
@@ -64,6 +105,7 @@ public class UIManager : MonoBehaviour
 
         NetworkManager.Singleton.StartClient();
         DeactivateMainMenu();
+        ActivateInGameHUD();
     }
 
     private bool SetIPAndPort()
