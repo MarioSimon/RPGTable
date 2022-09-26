@@ -7,10 +7,16 @@ using UnityEngine;
 
 public class Player : NetworkBehaviour
 {
+    #region Variables
+
     public NetworkVariable<FixedString64Bytes> givenName;
 
     [SerializeField] private TokenController selectedToken;
     private UIManager UIManager;
+
+    #endregion
+
+    #region Unity Event Functions
 
     private void Awake()
     {
@@ -28,14 +34,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-    private void ConfigurePlayer(ulong obj)
-    {
-        if (IsLocalPlayer)
-        {
-            SetPlayerNameServerRpc(UIManager.inputFieldName.text);
-        }
-    }
-
     private void Update()
     {
         if (!IsLocalPlayer) { return; }
@@ -46,6 +44,22 @@ public class Player : NetworkBehaviour
         InteractWithSelection();
         InteractWithMovement();
     }
+
+    #endregion
+
+    #region Player Related Methods
+
+    private void ConfigurePlayer(ulong obj)
+    {
+        if (IsLocalPlayer)
+        {
+            SetPlayerNameServerRpc(UIManager.inputFieldName.text);
+        }
+    }
+
+    #endregion
+
+    #region Token Interaction Methods
 
     public void SelectToken(TokenController token)
     {
@@ -96,29 +110,23 @@ public class Player : NetworkBehaviour
                     //MoveTokenServerRpc(hit.point);
                     selectedToken.MoveToServerRpc(hit.point);
                 else if (IsHost)
-                    selectedToken.gameObject.GetComponent<Mover>().MoveTo(hit.point);
+                    selectedToken.MoveTo(hit.point);
             }
         }
     }
+
+    #endregion
+
+    #region Utility
 
     private Ray GetMouseRay()
     {
         return Camera.main.ScreenPointToRay(Input.mousePosition);
     }
 
+    #endregion
+
     #region ServerRpc
-
-    [ServerRpc]
-    private void SelectTokenServerRpc()
-    {
-
-    }
-
-    [ServerRpc]
-    private void MoveTokenServerRpc(Vector3 destination)
-    {
-        selectedToken.gameObject.GetComponent<Mover>().MoveTo(destination);
-    }
 
     [ServerRpc]
     public void SetPlayerNameServerRpc(string name)

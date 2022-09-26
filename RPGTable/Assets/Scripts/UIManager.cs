@@ -7,7 +7,8 @@ using Unity.Collections;
 
 public class UIManager : NetworkBehaviour
 {
-    #region variables
+    #region Variables
+
     [SerializeField] NetworkManager networkManager;
     UnityTransport transport;
     readonly ushort port = 7777;
@@ -69,6 +70,7 @@ public class UIManager : NetworkBehaviour
     {
         mainMenu.SetActive(true);
     }
+
     private void DeactivateMainMenu()
     {
         mainMenu.SetActive(false);

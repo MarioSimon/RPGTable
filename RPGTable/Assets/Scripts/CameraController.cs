@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    #region Variables
+
     [SerializeField] Transform tableTransform;
 
     Vector3 camOffset;
@@ -12,6 +14,10 @@ public class CameraController : MonoBehaviour
     float minFov = 20f;
     float maxFov = 70f;
     float zoomSpeed = 10f;
+
+    #endregion
+
+    #region Unity Event Functions
 
     private void Start()
     {
@@ -26,6 +32,10 @@ public class CameraController : MonoBehaviour
         }
         UpdateZoom();
     }
+
+    #endregion
+
+    #region Camera Related Methods
 
     private void UpdateZoom()
     {
@@ -43,4 +53,6 @@ public class CameraController : MonoBehaviour
 
         transform.LookAt(tableTransform.position);
     }
+
+    #endregion
 }
