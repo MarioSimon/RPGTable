@@ -9,6 +9,7 @@
 /RPGTable/[Bb]uilds/
 /RPGTable/[Ll]ogs/
 /RPGTable/[Mm]emoryCaptures/
+/RPGTable_clone_0/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
