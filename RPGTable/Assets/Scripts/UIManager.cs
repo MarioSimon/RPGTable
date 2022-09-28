@@ -23,8 +23,11 @@ public class UIManager : NetworkBehaviour
     [Header("In Game HUD")]
     [SerializeField] GameObject inGameHUD;
     [SerializeField] Button buttonSpawnToken;
+    [SerializeField] Button buttonThrowD20;
+
     //Esto probablemente se mueva mas adelante
     [SerializeField] GameObject tokenPrefab;
+    [SerializeField] GameObject d20Prefab;
 
     //Esto no me gusta, estoy probando cosas y luego veré si puedo arreglarlo
     public Player localPlayer;
@@ -43,6 +46,7 @@ public class UIManager : NetworkBehaviour
         buttonHost.onClick.AddListener(() => StartHost());
         buttonClient.onClick.AddListener(() => StartClient());
         buttonSpawnToken.onClick.AddListener(() => SpawnToken());
+        buttonThrowD20.onClick.AddListener(() => ThrowD20());
     }
 
     #endregion
@@ -52,6 +56,11 @@ public class UIManager : NetworkBehaviour
         SpawnTokenServerRpc(localPlayer.givenName.Value);
     }
 
+    private void ThrowD20()
+    {
+        ThrowD20ServerRpc(Camera.main.transform.position);
+    }
+
     #region ServerRpc
 
     [ServerRpc(RequireOwnership = false)]
@@ -59,6 +68,13 @@ public class UIManager : NetworkBehaviour
     {       
         GameObject token = Instantiate(tokenPrefab, Vector3.zero, Quaternion.identity);
         token.GetComponent<TokenController>().ownerName.Value = ownerName;
+        token.GetComponent<NetworkObject>().Spawn();
+    }
+
+    [ServerRpc]
+    private void ThrowD20ServerRpc(Vector3 position)
+    {
+        GameObject token = Instantiate(d20Prefab, position, Quaternion.identity);
         token.GetComponent<NetworkObject>().Spawn();
     }
 
