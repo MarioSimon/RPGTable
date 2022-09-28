@@ -566,9 +566,22 @@ MonoBehaviour:
   buttonClient: {fileID: 1880828173}
   inGameHUD: {fileID: 1688289004}
   buttonSpawnToken: {fileID: 599752303}
-  buttonThrowD20: {fileID: 1764585377}
   tokenPrefab: {fileID: 1564062960752013882, guid: 39d74c822aa0ede4d91f3ad7908e00f9, type: 3}
+  diceBox: {fileID: 586615381}
+  buttonThrowD4: {fileID: 150895744}
+  buttonThrowD6: {fileID: 1081046405}
+  buttonThrowD8: {fileID: 1587230870}
+  buttonThrowD10: {fileID: 836142940}
+  buttonThrowD12: {fileID: 1151758060}
+  buttonThrowD20: {fileID: 1764585377}
+  buttonThrowD100: {fileID: 1139257012}
+  d4Prefab: {fileID: 7735603651951753207, guid: 33b2d431405efa243ab3fb652b14cb2c, type: 3}
+  d6Prefab: {fileID: 379013194807109498, guid: e564d3562444d7d41ac9a3e7acebd084, type: 3}
+  d8Prefab: {fileID: 3058876418915712847, guid: 8ef3c83aace9f254eb194abe6cb6c6a8, type: 3}
+  d10Prefab: {fileID: 161197249643304075, guid: 57acc65246ee2d7469c656eaf909d042, type: 3}
+  d12Prefab: {fileID: 9029430318022057906, guid: aee767fec02dc80489088402c64ec3f3, type: 3}
   d20Prefab: {fileID: 3110057177666186646, guid: 37494ceaa418bf448b0afaebda14dee7, type: 3}
+  pdPrefab: {fileID: 3189847381327322211, guid: 242cdfc0d458abc468eaa42dcb73d2eb, type: 3}
   localPlayer: {fileID: 0}
 --- !u!4 &316338589
 Transform:
@@ -3786,7 +3799,37 @@ MonoBehaviour:
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
+      Prefab: {fileID: 7735603651951753207, guid: 33b2d431405efa243ab3fb652b14cb2c, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 379013194807109498, guid: e564d3562444d7d41ac9a3e7acebd084, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 3058876418915712847, guid: 8ef3c83aace9f254eb194abe6cb6c6a8, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 161197249643304075, guid: 57acc65246ee2d7469c656eaf909d042, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 9029430318022057906, guid: aee767fec02dc80489088402c64ec3f3, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
       Prefab: {fileID: 3110057177666186646, guid: 37494ceaa418bf448b0afaebda14dee7, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 3189847381327322211, guid: 242cdfc0d458abc468eaa42dcb73d2eb, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
