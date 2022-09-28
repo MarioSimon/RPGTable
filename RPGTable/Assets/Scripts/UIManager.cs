@@ -71,7 +71,7 @@ public class UIManager : NetworkBehaviour
         token.GetComponent<NetworkObject>().Spawn();
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void ThrowD20ServerRpc(Vector3 position)
     {
         GameObject token = Instantiate(d20Prefab, position, Quaternion.identity);

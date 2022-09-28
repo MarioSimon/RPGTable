@@ -10,10 +10,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] Transform tableTransform;
 
     Vector3 camOffset;
-    float rotationSpeed = 1.0f;
-    float minFov = 20f;
-    float maxFov = 70f;
-    float zoomSpeed = 10f;
+    [SerializeField] float rotationSpeed = 1.0f;
+    [SerializeField] float minFov = 20f;
+    [SerializeField] float maxFov = 70f;
+    [SerializeField] float zoomSpeed = 10f;
 
     #endregion
 

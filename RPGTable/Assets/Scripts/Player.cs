@@ -31,7 +31,6 @@ public class Player : NetworkBehaviour
         if (IsLocalPlayer)
         {
             UIManager.localPlayer = this;
-            UIManager.GetComponent<NetworkObject>().ChangeOwnership(NetworkManager.Singleton.LocalClientId);
         }
     }
 
