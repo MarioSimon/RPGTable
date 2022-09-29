@@ -659,7 +659,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  throwForce: 50
+  throwForce: 25
 --- !u!1 &3964527865597322613
 GameObject:
   m_ObjectHideFlags: 0
