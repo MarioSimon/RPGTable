@@ -31,6 +31,7 @@ public class Player : NetworkBehaviour
         if (IsLocalPlayer)
         {
             UIManager.localPlayer = this;
+            FindObjectOfType<CameraController>().enabled = true;
         }
     }
 
