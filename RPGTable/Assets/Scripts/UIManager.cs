@@ -60,6 +60,8 @@ public class UIManager : NetworkBehaviour
 
     private void Start()
     {
+        inputFieldIP.text = "127.0.0.1";
+
         buttonHost.onClick.AddListener(() => StartHost());
         buttonClient.onClick.AddListener(() => StartClient());
         buttonSpawnToken.onClick.AddListener(() => SpawnToken());

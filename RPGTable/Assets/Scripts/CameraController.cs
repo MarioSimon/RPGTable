@@ -7,13 +7,17 @@ public class CameraController : MonoBehaviour
 {
     #region Variables
 
-    [SerializeField] Transform tableTransform;
+    [SerializeField] Transform cameraTransform;
 
-    Vector3 camOffset;
+    Vector3 newPosition;
+    Quaternion newRotation;
+    Vector3 newZoom;
+
     [SerializeField] float rotationSpeed = 1.0f;
-    [SerializeField] float minFov = 20f;
-    [SerializeField] float maxFov = 70f;
-    [SerializeField] float zoomSpeed = 10f;
+    [SerializeField] float movementSpeed = 0.1f;
+    [SerializeField] Vector3 zoomSpeed = new Vector3(0,-0.5f,0.5f);
+
+
 
     #endregion
 
@@ -21,37 +25,62 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        camOffset = transform.position - tableTransform.position;
+        newPosition = transform.position;
+        newRotation = transform.rotation;
+        newZoom = cameraTransform.localPosition;
     }
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            OrbitCamera();
-        }
-        UpdateZoom();
+        HandleMovementInput();
+        //UpdateZoom();
     }
 
     #endregion
 
     #region Camera Related Methods
 
-    private void UpdateZoom()
+    private void HandleMovementInput()
     {
-        float fov = Camera.main.fieldOfView;
-        fov -= Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
-        fov = Mathf.Clamp(fov, minFov, maxFov);
-        Camera.main.fieldOfView = fov;
-    }
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        {
+            newPosition += transform.forward * movementSpeed;
+        }
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            newPosition -= transform.right * movementSpeed;
+        }
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        {
+            newPosition -= transform.forward * movementSpeed;
+        }
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            newPosition += transform.right * movementSpeed;
+        }
 
-    private void OrbitCamera()
-    {
-        Quaternion camTurnAngle = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * rotationSpeed, Vector3.up);
+        if (Input.GetKey(KeyCode.Q))
+        {
+            newRotation *= Quaternion.Euler(Vector3.up * rotationSpeed);
+        }
+        if (Input.GetKey(KeyCode.E))
+        {
+            newRotation *= Quaternion.Euler(Vector3.up * -rotationSpeed);
+        }
 
-        transform.position = camOffset = camTurnAngle * camOffset;
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        {
+            newZoom += zoomSpeed;
+        }
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        {
+            newZoom -= zoomSpeed;
+        }
 
-        transform.LookAt(tableTransform.position);
+        transform.position = newPosition;
+        transform.rotation = newRotation;
+        cameraTransform.localPosition = newZoom;
+
     }
 
     #endregion
