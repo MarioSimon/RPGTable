@@ -7,7 +7,7 @@ public class Dice : MonoBehaviour
 
     #region Variables
 
-    [SerializeField] private diceType type;
+    public diceType type;
     [SerializeField] private float throwForce = 1.0f;
     private Rigidbody rb;
 
@@ -46,6 +46,11 @@ public class Dice : MonoBehaviour
     Vector3 GetThrowDirection(Vector3 tablePos)
     {
         return tablePos - transform.position;
+    }
+
+    public bool IsStopped()
+    {
+        return (rb.velocity.x == 0 && rb.velocity.y == 0 && rb.velocity.z == 0);
     }
 }
 
