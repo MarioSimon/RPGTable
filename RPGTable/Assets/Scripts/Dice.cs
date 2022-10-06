@@ -8,12 +8,9 @@ public class Dice : MonoBehaviour
     #region Variables
 
     public diceType type;
+    public string thrownBy;
     [SerializeField] private float throwForce = 1.0f;
     private Rigidbody rb;
-
-    //private Vector3 startPos;
-    //private Vector3 prevPos;
-    //bool selected;
 
     #endregion
 

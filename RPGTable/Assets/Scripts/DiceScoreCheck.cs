@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class DiceScoreCheck : NetworkBehaviour
 {
+    [SerializeField] UIManager UIManager;
+
     Dice dice;
     bool result = false;
     bool reseting = false;
@@ -58,19 +60,19 @@ public class DiceScoreCheck : NetworkBehaviour
             switch (col.gameObject.name)
             {
                 case "Side1":
-                    Debug.Log("1");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 1");
                     result = true;
                     break;
                 case "Side2":
-                    Debug.Log("2");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 2");
                     result = true;
                     break;
                 case "Side3":
-                    Debug.Log("3");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 3");
                     result = true;
                     break;
                 case "Side4":
-                    Debug.Log("4");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 4");
                     result = true;
                     break;
             }
@@ -89,27 +91,27 @@ public class DiceScoreCheck : NetworkBehaviour
             switch (col.gameObject.name)
             {
                 case "Side1":
-                    Debug.Log("6");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D6: 6");
                     result = true;
                     break;
                 case "Side2":
-                    Debug.Log("5");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D6: 5");
                     result = true;
                     break;
                 case "Side3":
-                    Debug.Log("4");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D6: 4");
                     result = true;
                     break;
                 case "Side4":
-                    Debug.Log("3");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D6: 3");
                     result = true;
                     break;
                 case "Side5":
-                    Debug.Log("2");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D6: 2");
                     result = true;
                     break;
                 case "Side6":
-                    Debug.Log("1");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D6: 1");
                     result = true;
                     break;
             }
@@ -128,35 +130,35 @@ public class DiceScoreCheck : NetworkBehaviour
             switch (col.gameObject.name)
             {
                 case "Side1":
-                    Debug.Log("8");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D8: 8");
                     result = true;
                     break;
                 case "Side2":
-                    Debug.Log("7");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D8: 7");
                     result = true;
                     break;
                 case "Side3":
-                    Debug.Log("6");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D8: 6");
                     result = true;
                     break;
                 case "Side4":
-                    Debug.Log("5");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D8: 5");
                     result = true;
                     break;
                 case "Side5":
-                    Debug.Log("4");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D8: 4");
                     result = true;
                     break;
                 case "Side6":
-                    Debug.Log("3");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D8: 3");
                     result = true;
                     break;
                 case "Side7":
-                    Debug.Log("2");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D8: 2");
                     result = true;
                     break;
                 case "Side8":
-                    Debug.Log("1");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D8: 1");
                     result = true;
                     break;
             }
@@ -175,43 +177,43 @@ public class DiceScoreCheck : NetworkBehaviour
             switch (col.gameObject.name)
             {
                 case "Side1":
-                    Debug.Log("10");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D10: 10");
                     result = true;
                     break;
                 case "Side2":
-                    Debug.Log("9");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D10: 9");
                     result = true;
                     break;
                 case "Side3":
-                    Debug.Log("8");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D10: 8");
                     result = true;
                     break;
                 case "Side4":
-                    Debug.Log("7");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D10: 7");
                     result = true;
                     break;
                 case "Side5":
-                    Debug.Log("6");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D10: 6");
                     result = true;
                     break;
                 case "Side6":
-                    Debug.Log("5");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D10: 5");
                     result = true;
                     break;
                 case "Side7":
-                    Debug.Log("4");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D10: 4");
                     result = true;
                     break;
                 case "Side8":
-                    Debug.Log("3");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D10: 3");
                     result = true;
                     break;
                 case "Side9":
-                    Debug.Log("2");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D10: 2");
                     result = true;
                     break;
                 case "Side10":
-                    Debug.Log("1");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D10: 1");
                     result = true;
                     break;
             }
@@ -230,43 +232,43 @@ public class DiceScoreCheck : NetworkBehaviour
             switch (col.gameObject.name)
             {
                 case "Side10":
-                    Debug.Log("00");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a percentile dice: 00");
                     result = true;
                     break;
                 case "Side20":
-                    Debug.Log("90");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a percentile dice: 90");
                     result = true;
                     break;
                 case "Side30":
-                    Debug.Log("80");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a percentile dice: 80");
                     result = true;
                     break;
                 case "Side40":
-                    Debug.Log("70");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a percentile dice: 70");
                     result = true;
                     break;
                 case "Side50":
-                    Debug.Log("60");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a percentile dice: 60");
                     result = true;
                     break;
                 case "Side60":
-                    Debug.Log("50");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a percentile dice: 50");
                     result = true;
                     break;
                 case "Side70":
-                    Debug.Log("40");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a percentile dice: 40");
                     result = true;
                     break;
                 case "Side80":
-                    Debug.Log("30");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a percentile dice: 30");
                     result = true;
                     break;
                 case "Side90":
-                    Debug.Log("20");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a percentile dice: 20");
                     result = true;
                     break;
                 case "Side00":
-                    Debug.Log("10");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a percentile dice: 10");
                     result = true;
                     break;
             }
@@ -285,51 +287,51 @@ public class DiceScoreCheck : NetworkBehaviour
             switch (col.gameObject.name)
             {
                 case "Side1":
-                    Debug.Log("12");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 12");
                     result = true;
                     break;
                 case "Side2":
-                    Debug.Log("11");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 11");
                     result = true;
                     break;
                 case "Side3":
-                    Debug.Log("10");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 10");
                     result = true;
                     break;
                 case "Side4":
-                    Debug.Log("9");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 9");
                     result = true;
                     break;
                 case "Side5":
-                    Debug.Log("8");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 8");
                     result = true;
                     break;
                 case "Side6":
-                    Debug.Log("7");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 7");
                     result = true;
                     break;
                 case "Side7":
-                    Debug.Log("6");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 6");
                     result = true;
                     break;
                 case "Side8":
-                    Debug.Log("5");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 5");
                     result = true;
                     break;
                 case "Side9":
-                    Debug.Log("4");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 4");
                     result = true;
                     break;
                 case "Side10":
-                    Debug.Log("3");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 3");
                     result = true;
                     break;
                 case "Side11":
-                    Debug.Log("2");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 2");
                     result = true;
                     break;
                 case "Side12":
-                    Debug.Log("1");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D12: 1");
                     result = true;
                     break;
             }
@@ -348,83 +350,83 @@ public class DiceScoreCheck : NetworkBehaviour
             switch (col.gameObject.name)
             {
                 case "Side1":
-                    Debug.Log("20");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 20");
                     result = true;
                     break;
                 case "Side2":
-                    Debug.Log("19");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 19");
                     result = true;
                     break;
                 case "Side3":
-                    Debug.Log("18");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 18");
                     result = true;
                     break;
                 case "Side4":
-                    Debug.Log("17");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 17");
                     result = true;
                     break;
                 case "Side5":
-                    Debug.Log("16");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 16");
                     result = true;
                     break;
                 case "Side6":
-                    Debug.Log("15");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 15");
                     result = true;
                     break;
                 case "Side7":
-                    Debug.Log("14");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 14");
                     result = true;
                     break;
                 case "Side8":
-                    Debug.Log("13");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 13");
                     result = true;
                     break;
                 case "Side9":
-                    Debug.Log("12");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 12");
                     result = true;
                     break;
                 case "Side10":
-                    Debug.Log("11");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 11");
                     result = true;
                     break;
                 case "Side11":
-                    Debug.Log("10");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 10");
                     result = true;
                     break;
                 case "Side12":
-                    Debug.Log("9");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 9");
                     result = true;
                     break;
                 case "Side13":
-                    Debug.Log("8");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 8");
                     result = true;
                     break;
                 case "Side14":
-                    Debug.Log("7");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 7");
                     result = true;
                     break;
                 case "Side15":
-                    Debug.Log("6");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 6");
                     result = true;
                     break;
                 case "Side16":
-                    Debug.Log("5");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 5");
                     result = true;
                     break;
                 case "Side17":
-                    Debug.Log("4");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 4");
                     result = true;
                     break;
                 case "Side18":
-                    Debug.Log("3");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 3");
                     result = true;
                     break;
                 case "Side19":
-                    Debug.Log("2");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 2");
                     result = true;
                     break;
                 case "Side20":
-                    Debug.Log("1");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 1");
                     result = true;
                     break;
             }
@@ -440,9 +442,7 @@ public class DiceScoreCheck : NetworkBehaviour
     {
         yield return new WaitForSeconds(1.5f);
 
-        Destroy(dice.gameObject);
-        //dice.transform.rotation = Quaternion.identity;
-        //dice.ResetPosition();          
+        Destroy(dice.gameObject);        
         result = false;
         reseting = false;
     }
