@@ -7,13 +7,10 @@ public class Dice : MonoBehaviour
 
     #region Variables
 
-    [SerializeField] private diceType type;
+    public diceType type;
+    public string thrownBy;
     [SerializeField] private float throwForce = 1.0f;
     private Rigidbody rb;
-
-    //private Vector3 startPos;
-    //private Vector3 prevPos;
-    //bool selected;
 
     #endregion
 
@@ -46,6 +43,11 @@ public class Dice : MonoBehaviour
     Vector3 GetThrowDirection(Vector3 tablePos)
     {
         return tablePos - transform.position;
+    }
+
+    public bool IsStopped()
+    {
+        return (rb.velocity.x == 0 && rb.velocity.y == 0 && rb.velocity.z == 0);
     }
 }
 
