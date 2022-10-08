@@ -147,7 +147,7 @@ public class UIManager : NetworkBehaviour
     [ClientRpc]
     public void NotifyDiceScoreClientRpc(string scoreMessage)
     {
-        diceRegistryText.text += scoreMessage + "\n";
+        diceRegistryText.text += "\n" + scoreMessage;
     }
 
     #endregion
