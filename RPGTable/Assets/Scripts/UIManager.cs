@@ -9,7 +9,9 @@ public class UIManager : NetworkBehaviour
 {
     #region Variables
 
+    [SerializeField] Canvas canvas;
     [SerializeField] NetworkManager networkManager;
+    [SerializeField] GameManager gameManager;
     UnityTransport transport;
     readonly ushort port = 7777;
 
@@ -23,9 +25,11 @@ public class UIManager : NetworkBehaviour
     [Header("In Game HUD")]
     [SerializeField] GameObject inGameHUD;
     [SerializeField] Button buttonSpawnToken;
+    [SerializeField] Button buttonSpawnNewCharSheet;
 
     //Esto probablemente se mueva mas adelante
     [SerializeField] GameObject tokenPrefab;
+    [SerializeField] GameObject charSheetPrefab;
 
     [Header("Dice Box")]
     [SerializeField] GameObject diceBox;
@@ -36,14 +40,6 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button buttonThrowD12;
     [SerializeField] Button buttonThrowD20;
     [SerializeField] Button buttonThrowD100;
-
-    [SerializeField] GameObject d4Prefab;
-    [SerializeField] GameObject d6Prefab;
-    [SerializeField] GameObject d8Prefab;
-    [SerializeField] GameObject d10Prefab;
-    [SerializeField] GameObject d12Prefab;
-    [SerializeField] GameObject d20Prefab;
-    [SerializeField] GameObject pdPrefab;
 
     [Header("Dice Registry")]
     [SerializeField] GameObject diceRegistry;
@@ -69,13 +65,14 @@ public class UIManager : NetworkBehaviour
         buttonHost.onClick.AddListener(() => StartHost());
         buttonClient.onClick.AddListener(() => StartClient());
         buttonSpawnToken.onClick.AddListener(() => SpawnToken());
-        buttonThrowD4.onClick.AddListener(() => ThrowDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD6.onClick.AddListener(() => ThrowDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD8.onClick.AddListener(() => ThrowDiceServerRpc(diceType.d8, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD10.onClick.AddListener(() => ThrowDiceServerRpc(diceType.d10, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD12.onClick.AddListener(() => ThrowDiceServerRpc(diceType.d12, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD20.onClick.AddListener(() => ThrowDiceServerRpc(diceType.d20, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD100.onClick.AddListener(() => ThrowDiceServerRpc(diceType.pd, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
+        buttonSpawnNewCharSheet.onClick.AddListener(() => SpawnNewCharSheet());
+        buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
+        buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
+        buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(diceType.d8, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
+        buttonThrowD10.onClick.AddListener(() => RollDiceServerRpc(diceType.d10, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
+        buttonThrowD12.onClick.AddListener(() => RollDiceServerRpc(diceType.d12, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
+        buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(diceType.d20, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
+        buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(diceType.pd, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
     }
 
     #endregion
@@ -84,6 +81,11 @@ public class UIManager : NetworkBehaviour
     {
         SpawnTokenServerRpc(localPlayer.givenName.Value);
     }    
+
+    private void SpawnNewCharSheet()
+    {
+        SpawnNewCharSheetServerRpc(NetworkManager.Singleton.LocalClientId, localPlayer.givenName.Value);
+    }
 
     #region ServerRpc
 
@@ -96,48 +98,18 @@ public class UIManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void ThrowDiceServerRpc(diceType type, Vector3 position, string thrownBy)
+    private void RollDiceServerRpc(diceType type, Vector3 position, string thrownBy)
     {
-        position.y -= 0.5f;
+        gameManager.RollDice(type, position, thrownBy, 0);
+    }
 
-        switch (type)
-        {
-            case diceType.d4:
-                GameObject d4Dice = Instantiate(d4Prefab, position, Quaternion.identity);
-                d4Dice.GetComponent<Dice>().thrownBy = thrownBy;
-                d4Dice.GetComponent<NetworkObject>().Spawn();
-                break;
-            case diceType.d6:
-                GameObject d6Dice = Instantiate(d6Prefab, position, Quaternion.identity);
-                d6Dice.GetComponent<Dice>().thrownBy = thrownBy;
-                d6Dice.GetComponent<NetworkObject>().Spawn();
-                break;
-            case diceType.d8:
-                GameObject d8Dice = Instantiate(d8Prefab, position, Quaternion.identity);
-                d8Dice.GetComponent<Dice>().thrownBy = thrownBy;
-                d8Dice.GetComponent<NetworkObject>().Spawn();
-                break;
-            case diceType.d10:
-                GameObject d10Dice = Instantiate(d10Prefab, position, Quaternion.identity);
-                d10Dice.GetComponent<Dice>().thrownBy = thrownBy;
-                d10Dice.GetComponent<NetworkObject>().Spawn();
-                break;
-            case diceType.pd:
-                GameObject pdDice = Instantiate(pdPrefab, position, Quaternion.identity);
-                pdDice.GetComponent<Dice>().thrownBy = thrownBy;
-                pdDice.GetComponent<NetworkObject>().Spawn();
-                break;
-            case diceType.d12:
-                GameObject d12Dice = Instantiate(d12Prefab, position, Quaternion.identity);
-                d12Dice.GetComponent<Dice>().thrownBy = thrownBy;
-                d12Dice.GetComponent<NetworkObject>().Spawn();
-                break;
-            case diceType.d20:
-                GameObject d20Dice = Instantiate(d20Prefab, position, Quaternion.identity);
-                d20Dice.GetComponent<Dice>().thrownBy = thrownBy;
-                d20Dice.GetComponent<NetworkObject>().Spawn();
-                break;
-        }
+    [ServerRpc]
+    private void SpawnNewCharSheetServerRpc(ulong clientID, FixedString64Bytes ownerName)
+    {
+        GameObject charSheet = Instantiate(charSheetPrefab);
+        charSheet.GetComponent<CharacterSheetManager>().playerName.text = ownerName.Value.ToString();
+        charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(clientID);
+        charSheet.transform.SetParent(canvas.gameObject.transform, false);
     }
 
     #endregion

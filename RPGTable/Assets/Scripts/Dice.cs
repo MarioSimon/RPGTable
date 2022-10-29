@@ -9,6 +9,8 @@ public class Dice : MonoBehaviour
 
     public diceType type;
     public string thrownBy;
+    public int modifier;
+    public string line;
     [SerializeField] private float throwForce = 1.0f;
     private Rigidbody rb;
 
