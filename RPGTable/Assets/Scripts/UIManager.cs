@@ -109,7 +109,7 @@ public class UIManager : NetworkBehaviour
         GameObject charSheet = Instantiate(charSheetPrefab);
         charSheet.GetComponent<CharacterSheetManager>().playerName.text = ownerName.Value.ToString();
         charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(clientID);
-        charSheet.transform.SetParent(canvas.gameObject.transform, false);
+        charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
     }
 
     #endregion

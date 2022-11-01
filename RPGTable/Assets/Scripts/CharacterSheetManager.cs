@@ -9,7 +9,7 @@ using System;
 public class CharacterSheetManager : NetworkBehaviour
 {
     #region Variables
-    CharacterSheetInfo CSInfo;
+    public CharacterSheetInfo CSInfo;
     GameManager gameManager;
 
     [SerializeField] GameObject tokenPrefab;
@@ -121,11 +121,33 @@ public class CharacterSheetManager : NetworkBehaviour
 
     #endregion
 
+    #region Features
+
     [Header("Features")]
     [SerializeField] GameObject features;
 
+    #endregion
+
+    #region Inventory
+
     [Header("Inventory")]
     [SerializeField] GameObject inventory;
+    [SerializeField] GameObject inventoryArea;
+    [SerializeField] Button addItem;
+    [SerializeField] GameObject itemPrefab;
+
+    [SerializeField] List<GameObject> itemList;
+    [SerializeField] float itemSpace;
+
+    [SerializeField] InputField totalWeight;
+    [SerializeField] InputField maxWeight;
+    [SerializeField] InputField copperPieces;
+    [SerializeField] InputField silverPieces;
+    [SerializeField] InputField electrumPieces;
+    [SerializeField] InputField goldPieces;
+    [SerializeField] InputField platinumPieces;
+
+    #endregion
 
     [Header("Spells")]
     [SerializeField] GameObject spells;
@@ -162,7 +184,7 @@ public class CharacterSheetManager : NetworkBehaviour
         //charactername.onValueChanged.AddListener(delegate { SetCharName(); });
 
         // ability score related logic events
-        strScore.onValueChanged.AddListener(delegate { CheckStrScore(); });
+        strScore.onValueChanged.AddListener(delegate { CheckStrScore(); CalculateMaxWeight(); });
         dexScore.onValueChanged.AddListener(delegate { CheckDexScore(); });
         conScore.onValueChanged.AddListener(delegate { CheckConScore(); });
         intScore.onValueChanged.AddListener(delegate { CheckIntScore(); });
@@ -184,6 +206,19 @@ public class CharacterSheetManager : NetworkBehaviour
         wisSave.onClick.AddListener(() => RollWisdomSaveServerRpc());
         chaSave.onClick.AddListener(() => RollCharismaSaveServerRpc());
 
+        // character stats related events
+        maxHealthPoints.onValueChanged.AddListener(delegate { CheckInt(maxHealthPoints); });
+        currHealthPoints.onValueChanged.AddListener(delegate { CheckInt(currHealthPoints); });
+        tempHealthPoints.onValueChanged.AddListener(delegate { CheckInt(tempHealthPoints); });
+
+        armorClass.onValueChanged.AddListener(delegate { CheckInt(armorClass); });
+        initiativeBonus.onValueChanged.AddListener(delegate { CheckInt(initiativeBonus); });
+
+        rollHitDice.onClick.AddListener(() => RollHitDiceServerRpc(hitDice.value));
+        rollInitiative.onClick.AddListener(() => RollInitiativeServerRpc());
+        rollDeathSave.onClick.AddListener(() => RollDeathSavingThrowServerRpc());
+        resetDeathSaves.onClick.AddListener(() => ResetDeathSavingThrows());
+       
         // skill related logic events
         proficencyBonus.onValueChanged.AddListener(delegate { CheckProficencyBonus(); });
         foreach (Skill skill in skillList)
@@ -196,6 +231,18 @@ public class CharacterSheetManager : NetworkBehaviour
             // skill related roll events
             skill.skillCheck.onClick.AddListener(() => RollSkillCheckServerRpc(skill.skillName, skill.skillTotalBonus.text));
         }
+
+        // inventory related events
+        addItem.onClick.AddListener(() => AddItemToInventory());
+        maxWeight.onValueChanged.AddListener(delegate { CheckInt(maxWeight); });
+        totalWeight.onValueChanged.AddListener(delegate { CheckInt(totalWeight); });
+
+        copperPieces.onValueChanged.AddListener(delegate { CheckInt(copperPieces); });
+        silverPieces.onValueChanged.AddListener(delegate { CheckInt(silverPieces); });
+        electrumPieces.onValueChanged.AddListener(delegate { CheckInt(electrumPieces); });
+        goldPieces.onValueChanged.AddListener(delegate { CheckInt(goldPieces); });
+        platinumPieces.onValueChanged.AddListener(delegate { CheckInt(platinumPieces); });
+
 
         if (CSInfo != null)
         {
@@ -280,6 +327,8 @@ public class CharacterSheetManager : NetworkBehaviour
         playerName.text = CSInfo.playerName;
         appearance.text = CSInfo.appearance;
     }
+
+    // abilit score methods
 
     void CheckStrScore()
     {
@@ -389,6 +438,8 @@ public class CharacterSheetManager : NetworkBehaviour
         UpdateAbilityModifier(int.Parse(chaScore.text), chaModifier);
     }
 
+    // skill methods
+
     void CheckProficencyBonus()
     {
         int bonus;
@@ -424,6 +475,27 @@ public class CharacterSheetManager : NetworkBehaviour
         total.text = totalBonus.ToString();
     }
 
+    // inventory methods
+
+    void AddItemToInventory()
+    {
+        if (itemList.Count >= 30) return;
+
+        Vector3 position = new Vector3(215f, - 20 + itemList.Count * itemSpace, 0);
+        
+        GameObject item = Instantiate(itemPrefab);                     
+        item.GetComponent<RectTransform>().SetParent(inventoryArea.transform);
+        item.GetComponent<RectTransform>().localPosition = position;
+        itemList.Add(item);
+
+    }
+
+    void CalculateMaxWeight()
+    {
+        int newMaxWeight = int.Parse(strScore.text) * 15;
+        maxWeight.text = newMaxWeight.ToString();
+    }
+
     // falta un if para texto con modificador negativo y estos deben ser serverRpc
     void RollStrenghtCheck()
     {
@@ -455,8 +527,43 @@ public class CharacterSheetManager : NetworkBehaviour
         gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(chaModifier.text), " [Charisma check (+" + chaModifier.text + ")]: ");
     }
 
-
     // Auxiliary methods
+
+    void CheckInt(InputField inputField)
+    {
+        int value;
+        if (!int.TryParse(inputField.text, out value))
+        {
+            inputField.text = "";
+        }
+    }
+
+    diceType GetHitDice(int diceSelector)
+    {
+        switch (diceSelector)
+        {
+            case 0:
+                return diceType.d6;
+            case 1:
+                return diceType.d8;
+            case 2:
+                return diceType.d10;
+            case 3:
+                return diceType.d12;
+        }
+        return diceType.pd; // error check
+    }
+
+    void ResetDeathSavingThrows()
+    {
+        deathSaveFail1.isOn = false;
+        deathSaveFail2.isOn = false;
+        deathSaveFail3.isOn = false;
+        deathSaveSuccess1.isOn = false;
+        deathSaveSuccess2.isOn = false;
+        deathSaveSuccess3.isOn = false;
+    }
+
     void UpdateAbilityModifier(int score, Text modifier)
     {
         modifier.text = CalculateAbilityModifier(score).ToString();
@@ -511,6 +618,7 @@ public class CharacterSheetManager : NetworkBehaviour
 
     #region ServerRpc
 
+    // ability saving throws
     [ServerRpc]
     private void SpawnTokenServerRpc(ulong ownerID, string ownerName)
     {
@@ -603,6 +711,33 @@ public class CharacterSheetManager : NetworkBehaviour
         }
     }
 
+    // other basic rolls
+    [ServerRpc]
+    void RollInitiativeServerRpc()
+    {
+        if (initiativeBonus.text == "")
+        {
+            initiativeBonus.text = "0";
+        }
+
+        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(initiativeBonus.text), " [Initiative (+" + initiativeBonus.text + ")]: ");
+    }
+
+    [ServerRpc]
+    void RollDeathSavingThrowServerRpc()
+    {
+        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, 0, " [Death saving throw]: ");
+    }
+
+    [ServerRpc]
+    void RollHitDiceServerRpc(int hitDiceType)
+    {
+        diceType hitDice = GetHitDice(hitDiceType);
+        if (hitDice == diceType.pd) { return; }
+        gameManager.RollDice(hitDice, Camera.main.transform.position, characterName.text, int.Parse(conModifier.text), " [Hit dice (+" + conModifier.text + "]: ");
+    }
+
+    // skill rolls
     [ServerRpc]
     void RollSkillCheckServerRpc(string skillName, string skillTotalBonus)
     {

@@ -1,3 +1,4 @@
+//using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,6 +53,7 @@ public class Dice : MonoBehaviour
         return (rb.velocity.x == 0 && rb.velocity.y == 0 && rb.velocity.z == 0);
     }
 }
+
 
 public enum diceType
 {
