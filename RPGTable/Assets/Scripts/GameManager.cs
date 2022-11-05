@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameManager : NetworkBehaviour
 {
+    [SerializeField] UIManager uiManager;
     List<CharacterSheetInfo> characterSheets = new List<CharacterSheetInfo>();
 
     [SerializeField] GameObject d4Prefab;
@@ -130,10 +131,24 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public CharacterSheetInfo GetSheetInfo(int index)
+    {
+        return characterSheets[index];
+    }
+
     public void SaveCharacterSheet(CharacterSheetInfo charInfo)
     {
-        //UpdateSheetListClientRpc(charInfo);
-        //characterSheets.Add(charInfo);
+        if (charInfo.sheetID < 0)
+        {
+            charInfo.sheetID = characterSheets.Count;
+            characterSheets.Add(charInfo);
+            //UpdateSheetListClientRpc(charInfo);
+            uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName);
+        }
+        else
+            characterSheets[charInfo.sheetID] = charInfo;
+        
+        
     }
 
     [ClientRpc]

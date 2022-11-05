@@ -43,7 +43,7 @@ public class CharacterSheetManager : NetworkBehaviour
     // Info
     [SerializeField] GameObject basicInfo;
     [SerializeField] InputField clasAndLevel;
-    [SerializeField] InputField subclas;
+    [SerializeField] InputField subclass;
     [SerializeField] InputField race;
     [SerializeField] InputField background;
     [SerializeField] InputField alignement;
@@ -93,18 +93,7 @@ public class CharacterSheetManager : NetworkBehaviour
     [SerializeField] Button resetDeathSaves;
     #endregion
 
-    #region Skills
-
-    [Serializable]
-    struct Skill
-    {
-        public string skillName;
-        public Button skillCheck;
-        public Dropdown skillProficency;
-        public Dropdown skillCharacteristic;
-        public InputField skillExtraBonus;
-        public Text skillTotalBonus;
-    }
+    #region Skills   
 
     [Header("Skills")]
     [SerializeField] GameObject skills;
@@ -125,6 +114,8 @@ public class CharacterSheetManager : NetworkBehaviour
 
     [Header("Features")]
     [SerializeField] GameObject features;
+    [SerializeField] InputField featuresAndTraits;
+    [SerializeField] InputField proficencies;
 
     #endregion
 
@@ -251,9 +242,13 @@ public class CharacterSheetManager : NetworkBehaviour
         else
         {
             CSInfo = new CharacterSheetInfo();
+            CSInfo.ownerID = characterSheet.GetComponent<NetworkObject>().OwnerClientId;
         }
 
-        proficencyBonus.text = "2";
+        if (proficencyBonus.text == "")
+        {
+            proficencyBonus.text = "2";
+        }       
     }
 
     #region Navigation Methods
@@ -306,16 +301,20 @@ public class CharacterSheetManager : NetworkBehaviour
         actions.SetActive(true);
         currentPage = actions;
     }
+
     void OpenPersonalityPage()
     {
         currentPage.SetActive(false);
         personailty.SetActive(true);
         currentPage = personailty;
     }
+
     void CloseSheet()
     {
+        SetCharacterInfo();
         gameManager.SaveCharacterSheet(CSInfo);
-        Destroy(characterSheet);
+        //Destroy(characterSheet);
+        DestroySheetServerRpc();
     }
     #endregion
 
@@ -326,6 +325,158 @@ public class CharacterSheetManager : NetworkBehaviour
         characterName.text = CSInfo.characterName;
         playerName.text = CSInfo.playerName;
         appearance.text = CSInfo.appearance;
+
+        clasAndLevel.text = CSInfo.clasAndLevel;
+        subclass.text = CSInfo.subclass;
+        race.text = CSInfo.race;
+        background.text = CSInfo.background;
+        alignement.text = CSInfo.alignement;
+        experience.text = CSInfo.experience;
+
+        strScore.text = CSInfo.strScore;
+        dexScore.text = CSInfo.dexScore;
+        conScore.text = CSInfo.conScore;
+        intScore.text = CSInfo.intScore;
+        wisScore.text = CSInfo.wisScore;
+        chaScore.text = CSInfo.chaScore;
+
+        maxHealthPoints.text = CSInfo.maxHealthPoints;
+        currHealthPoints.text = CSInfo.currHealthPoints;
+        tempHealthPoints.text = CSInfo.tempHealthPoints;
+        initiativeBonus.text = CSInfo.initiativeBonus;
+        armorClass.text = CSInfo.armorClass;
+        speed.text = CSInfo.speed;
+        hitDice.value = CSInfo.hitDiceType;
+        switch (CSInfo.deathSaveSuccesses)
+        {
+            case 1:
+                deathSaveSuccess1.isOn = true;
+                break;
+            case 2:
+                deathSaveSuccess1.isOn = true;
+                deathSaveSuccess2.isOn = true;
+                break;
+            case 3:
+                deathSaveSuccess1.isOn = true;
+                deathSaveSuccess2.isOn = true;
+                deathSaveSuccess3.isOn = true;
+                break;
+        }
+        switch (CSInfo.deathSaveFails)
+        {
+            case 1:
+                deathSaveFail1.isOn = true;
+                break;
+            case 2:
+                deathSaveFail1.isOn = true;
+                deathSaveFail2.isOn = true;
+                break;
+            case 3:
+                deathSaveFail1.isOn = true;
+                deathSaveFail2.isOn = true;
+                deathSaveFail3.isOn = true;
+                break;
+        }
+
+        proficencyBonus.text = CSInfo.proficencyBonus;
+        strProficency.isOn = CSInfo.strProf;
+        dexProficency.isOn = CSInfo.dexProf;
+        conProficency.isOn = CSInfo.conProf;
+        intProficency.isOn = CSInfo.intProf;
+        wisProficency.isOn = CSInfo.wisProf;
+        chaProficency.isOn = CSInfo.chaProf;
+
+        for (int i = 0; i < skillList.Count; i++)
+        {
+            skillList[i].skillProficency.value = CSInfo.skillProf[i];
+            skillList[i].skillCharacteristic.value = CSInfo.skillCharacteristic[i];
+            skillList[i].skillExtraBonus.text = CSInfo.skillBonus[i];
+            skillList[i].skillTotalBonus.text = CSInfo.skillTotal[i];
+        }
+
+        featuresAndTraits.text = CSInfo.featuresAndTraits;
+        proficencies.text = CSInfo.proficencies;
+
+        //itemList = CSInfo.itemList;
+
+        copperPieces.text = CSInfo.copperPieces;
+        silverPieces.text = CSInfo.silverPieces;
+        electrumPieces.text = CSInfo.electrumPieces;
+        goldPieces.text = CSInfo.goldPieces;
+        platinumPieces.text = CSInfo.platinumPieces;
+    }
+
+    void SetCharacterInfo()
+    {
+        CSInfo.characterName = characterName.text;
+        CSInfo.playerName = playerName.text;
+        CSInfo.appearance = appearance.text;
+
+        CSInfo.clasAndLevel = clasAndLevel.text;
+        CSInfo.subclass = subclass.text;
+        CSInfo.race = race.text;
+        CSInfo.background = background.text;
+        CSInfo.alignement = alignement.text;
+        CSInfo.experience = experience.text;
+
+        CSInfo.strScore = strScore.text;
+        CSInfo.dexScore = dexScore.text;
+        CSInfo.conScore = conScore.text;
+        CSInfo.intScore = intScore.text;
+        CSInfo.wisScore = wisScore.text;
+        CSInfo.chaScore = chaScore.text;
+
+        CSInfo.maxHealthPoints = maxHealthPoints.text;
+        CSInfo.currHealthPoints = currHealthPoints.text;
+        CSInfo.tempHealthPoints = tempHealthPoints.text;
+        CSInfo.initiativeBonus = initiativeBonus.text;
+        CSInfo.armorClass = armorClass.text;
+        CSInfo.speed = speed.text;
+        CSInfo.hitDiceType = hitDice.value;
+        if (deathSaveFail1.isOn)
+            CSInfo.deathSaveFails += 1;
+        if (deathSaveFail2.isOn)
+            CSInfo.deathSaveFails += 1;
+        if (deathSaveFail3.isOn)
+            CSInfo.deathSaveFails += 1;
+        if (deathSaveSuccess1.isOn)
+            CSInfo.deathSaveSuccesses += 1;
+        if (deathSaveSuccess2.isOn)
+            CSInfo.deathSaveSuccesses += 1;
+        if (deathSaveSuccess3.isOn)
+            CSInfo.deathSaveSuccesses += 1;
+
+        CSInfo.proficencyBonus = proficencyBonus.text;
+        CSInfo.strProf = strProficency.isOn;
+        CSInfo.dexProf = dexProficency.isOn;
+        CSInfo.conProf = conProficency.isOn;
+        CSInfo.intProf = intProficency.isOn;
+        CSInfo.wisProf = wisProficency.isOn;
+        CSInfo.chaProf = chaProficency.isOn;
+
+        CSInfo.skillProf = new int[skillList.Count];
+        CSInfo.skillCharacteristic = new int[skillList.Count];
+        CSInfo.skillBonus = new string[skillList.Count];
+        CSInfo.skillTotal = new string[skillList.Count];
+
+        for (int i = 0; i < skillList.Count; i++)
+        {
+            CSInfo.skillProf[i] = skillList[i].skillProficency.value;
+            CSInfo.skillCharacteristic[i] = skillList[i].skillCharacteristic.value;
+            CSInfo.skillBonus[i] = skillList[i].skillExtraBonus.text;
+            CSInfo.skillTotal[i] = skillList[i].skillTotalBonus.text;
+        }
+
+        CSInfo.featuresAndTraits = featuresAndTraits.text;
+        CSInfo.proficencies = proficencies.text;
+
+        //CSInfo.itemList = itemList;
+
+        CSInfo.copperPieces = copperPieces.text;
+        CSInfo.silverPieces = silverPieces.text;
+        CSInfo.electrumPieces = electrumPieces.text;
+        CSInfo.goldPieces = goldPieces.text;
+        CSInfo.platinumPieces = platinumPieces.text;
     }
 
     // abilit score methods
@@ -618,7 +769,7 @@ public class CharacterSheetManager : NetworkBehaviour
 
     #region ServerRpc
 
-    // ability saving throws
+    
     [ServerRpc]
     private void SpawnTokenServerRpc(ulong ownerID, string ownerName)
     {
@@ -627,6 +778,13 @@ public class CharacterSheetManager : NetworkBehaviour
         token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
     }
 
+    [ServerRpc]
+    private void DestroySheetServerRpc()
+    {
+        Destroy(characterSheet);
+    }
+
+    // ability saving throws
     [ServerRpc]
     void RollStrengthSaveServerRpc()
     {
@@ -745,4 +903,15 @@ public class CharacterSheetManager : NetworkBehaviour
     }
 
     #endregion
+}
+
+[Serializable]
+public struct Skill
+{
+    public string skillName;
+    public Button skillCheck;
+    public Dropdown skillProficency;
+    public Dropdown skillCharacteristic;
+    public InputField skillExtraBonus;
+    public Text skillTotalBonus;
 }

@@ -69978,7 +69978,7 @@ MonoBehaviour:
   appearance: {fileID: 3549543119920821950}
   basicInfo: {fileID: 2792604016678141297}
   clasAndLevel: {fileID: 6409100973100574282}
-  subclas: {fileID: 4968651027306373241}
+  subclass: {fileID: 4968651027306373241}
   race: {fileID: 5083319639966970703}
   background: {fileID: 4778428488120701910}
   alignement: {fileID: 5338261749259667405}
@@ -70142,6 +70142,8 @@ MonoBehaviour:
     skillExtraBonus: {fileID: 6763258302429955039}
     skillTotalBonus: {fileID: 65170724871558545}
   features: {fileID: 8843957443265185919}
+  featuresAndTraits: {fileID: 4651998567584316233}
+  proficencies: {fileID: 8545698624979686550}
   inventory: {fileID: 3600649207153576024}
   inventoryArea: {fileID: 6913347233366792279}
   addItem: {fileID: 887278116860829748}

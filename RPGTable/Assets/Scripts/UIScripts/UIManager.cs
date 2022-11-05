@@ -4,6 +4,7 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using System;
 using Unity.Collections;
+using System.Collections.Generic;
 
 public class UIManager : NetworkBehaviour
 {
@@ -14,6 +15,9 @@ public class UIManager : NetworkBehaviour
     [SerializeField] GameManager gameManager;
     UnityTransport transport;
     readonly ushort port = 7777;
+
+    //Esto no me gusta, estoy probando cosas y luego veré si puedo arreglarlo
+    public Player localPlayer;
 
     [Header("Main Menu")]
     [SerializeField] GameObject mainMenu;
@@ -26,6 +30,7 @@ public class UIManager : NetworkBehaviour
     [SerializeField] GameObject inGameHUD;
     [SerializeField] Button buttonSpawnToken;
     [SerializeField] Button buttonSpawnNewCharSheet;
+    [SerializeField] Button openCharSelector;
 
     //Esto probablemente se mueva mas adelante
     [SerializeField] GameObject tokenPrefab;
@@ -45,9 +50,16 @@ public class UIManager : NetworkBehaviour
     [SerializeField] GameObject diceRegistry;
     [SerializeField] Text diceRegistryText;
 
+    [Header("Character Selector")]
+    [SerializeField] GameObject characterSelector;
+    [SerializeField] Button closeCharacterSelector;
+    [SerializeField] GameObject characterListArea;
+    List<GameObject> characterList = new List<GameObject>();
+    [SerializeField] float characterSpace;
+    [SerializeField] GameObject characterButtonPrefab;
 
-    //Esto no me gusta, estoy probando cosas y luego veré si puedo arreglarlo
-    public Player localPlayer;
+
+    
 
     #endregion
 
@@ -65,7 +77,12 @@ public class UIManager : NetworkBehaviour
         buttonHost.onClick.AddListener(() => StartHost());
         buttonClient.onClick.AddListener(() => StartClient());
         buttonSpawnToken.onClick.AddListener(() => SpawnToken());
+
         buttonSpawnNewCharSheet.onClick.AddListener(() => SpawnNewCharSheet());
+        //openCharSheet.onClick.AddListener(() => OpenCharSheetServerRpc(0));
+        openCharSelector.onClick.AddListener(() => ActivateCharacterSelector());
+        closeCharacterSelector.onClick.AddListener(() => DeactivateCharacterSelector());
+
         buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
         buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
         buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(diceType.d8, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
@@ -103,12 +120,23 @@ public class UIManager : NetworkBehaviour
         gameManager.RollDice(type, position, thrownBy, 0);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void SpawnNewCharSheetServerRpc(ulong clientID, FixedString64Bytes ownerName)
     {
         GameObject charSheet = Instantiate(charSheetPrefab);
         charSheet.GetComponent<CharacterSheetManager>().playerName.text = ownerName.Value.ToString();
         charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(clientID);
+        charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
+    }
+
+    [ServerRpc]
+    private void OpenCharSheetServerRpc(int sheetIndex)
+    {
+        CharacterSheetInfo CSInfo = gameManager.GetSheetInfo(sheetIndex);
+        if (CSInfo == null) { return; }
+        GameObject charSheet = Instantiate(charSheetPrefab);
+        charSheet.GetComponent<CharacterSheetManager>().CSInfo = CSInfo;
+        charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(CSInfo.ownerID);
         charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
     }
 
@@ -120,6 +148,33 @@ public class UIManager : NetworkBehaviour
     public void NotifyDiceScoreClientRpc(string scoreMessage)
     {
         diceRegistryText.text += "\n" + scoreMessage;
+    }
+
+    [ClientRpc]
+    public void AddCharacterButtonClientRpc(int chararacterID, string characterName)
+    {
+
+        Vector3 position;
+
+        if (characterList.Count % 2 == 0)
+        {
+            position = new Vector3(characterListArea.GetComponent<RectTransform>().rect.width / 4, -characterSpace/2 - characterList.Count / 2 * characterSpace, 0);
+        }
+        else
+        {
+            position = new Vector3(characterListArea.GetComponent<RectTransform>().rect.width / 4 * 3, -characterSpace/2 - characterList.Count / 2 * characterSpace, 0);
+        }
+        
+        GameObject newCharacterButton = Instantiate(characterButtonPrefab);
+
+        newCharacterButton.GetComponent<CharacterSelector>().characterName.text = characterName;
+        newCharacterButton.GetComponent<CharacterSelector>().charID = chararacterID;
+
+        newCharacterButton.GetComponent<RectTransform>().SetParent(characterListArea.transform);
+        newCharacterButton.GetComponent<RectTransform>().localPosition = position;
+
+        characterList.Add(newCharacterButton);
+
     }
 
     #endregion
@@ -144,6 +199,16 @@ public class UIManager : NetworkBehaviour
     private void DeactivateInGameHUD()
     {
         inGameHUD.SetActive(false);
+    }
+
+    private void ActivateCharacterSelector()
+    {
+        characterSelector.SetActive(true);
+    }
+
+    private void DeactivateCharacterSelector()
+    {
+        characterSelector.SetActive(false);
     }
 
     #endregion
