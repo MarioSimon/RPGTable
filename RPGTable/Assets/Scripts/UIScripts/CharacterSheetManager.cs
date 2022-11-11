@@ -39,6 +39,8 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] InputField characterName;
     [SerializeField] public InputField playerName;
     [SerializeField] InputField appearance;
+
+    [SerializeField] Image publicInfoBlocker;
     #endregion
 
     #region Basic Info
@@ -94,6 +96,8 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] Toggle deathSaveFail3;
     [SerializeField] Button rollDeathSave;
     [SerializeField] Button resetDeathSaves;
+
+    [SerializeField] Image basicInfoBlocker;
     #endregion
 
     #region Skills   
@@ -111,6 +115,8 @@ public class CharacterSheetManager : MonoBehaviour
     // Skill Proficencies
     [SerializeField] List<Skill> skillList;
 
+    [SerializeField] Image skillsBlocker;
+
     #endregion
 
     #region Features
@@ -120,6 +126,7 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] InputField featuresAndTraits;
     [SerializeField] InputField proficencies;
 
+    [SerializeField] Image featuresBlocker;
     #endregion
 
     #region Inventory
@@ -141,18 +148,24 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] InputField goldPieces;
     [SerializeField] InputField platinumPieces;
 
+    [SerializeField] Image inventoryBlocker;
     #endregion
 
     [Header("Spells")]
     [SerializeField] GameObject spells;
 
+    [SerializeField] Image spellsBlocker1;
+    [SerializeField] Image spellsBlocker2;
+
     [Header("Actions")]
     [SerializeField] GameObject actions;
+
+    [SerializeField] Image actionsBlocker;
 
     [Header("Personality")]
     [SerializeField] GameObject personailty;
 
-    
+    [SerializeField] Image personalityBlocker;
 
     #endregion
 
@@ -174,9 +187,31 @@ public class CharacterSheetManager : MonoBehaviour
         buttonInventory.onClick.AddListener(() => OpenInventoryPage());
         buttonSpells.onClick.AddListener(() => OpenSpellsPage());
         buttonActions.onClick.AddListener(() => OpenActionsPage());
-        buttonPersonality.onClick.AddListener(() => OpenPersonalityPage());        
+        buttonPersonality.onClick.AddListener(() => OpenPersonalityPage());
 
-        //quiza sea mejor guardar textos al cambiar de pestaña o cerrar la ficha
+        // public info events
+
+        bool isServer = NetworkManager.Singleton.IsServer;
+
+        if (isServer) { 
+            playerName.interactable = true; 
+        }
+
+        if (isServer || NetworkManager.Singleton.LocalClientId == CSInfo.ownerID)
+        {
+            publicInfoBlocker.enabled = false;
+            basicInfoBlocker.enabled = false;
+            skillsBlocker.enabled = false;
+            featuresBlocker.enabled = false;
+            inventoryBlocker.enabled = false;
+            spellsBlocker1.enabled = false;
+            spellsBlocker2.enabled = false;
+            actionsBlocker.enabled = false;
+            personalityBlocker.enabled = false;
+
+            buttonSpawnToken.enabled = true;
+        }
+        
         characterName.onValueChanged.AddListener(delegate { uiManager.UpdateCharacterButtonNameClientRpc(CSInfo.sheetID, characterName.text); });
 
         // ability score related logic events
@@ -320,7 +355,6 @@ public class CharacterSheetManager : MonoBehaviour
     {
         SetCharacterInfo();
         gameManager.SaveCharacterSheetChanges(CSInfo);
-        //SaveCharacterSheetServerRpc(CSInfo);
         Destroy(characterSheet);
        
     }
@@ -746,7 +780,6 @@ public class CharacterSheetManager : MonoBehaviour
     {
         SetCharacterInfo();
         gameManager.SaveCharacterSheetChanges(CSInfo);
-        //SaveCharacterSheetServerRpc(CSInfo);
         GetCharacterInfo();
     }
 
@@ -760,12 +793,6 @@ public class CharacterSheetManager : MonoBehaviour
         GameObject token = Instantiate(tokenPrefab, Vector3.zero, Quaternion.identity);
         token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
         token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
-    }
-
-    [ServerRpc]
-    void SaveCharacterSheetServerRpc(CharacterSheetInfo CSInfo)
-    {
-        gameManager.SaveCharacterSheetChanges(CSInfo);
     }
 
     // ability checks
