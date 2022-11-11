@@ -188,12 +188,12 @@ public class CharacterSheetManager : MonoBehaviour
         chaScore.onValueChanged.AddListener(delegate { CheckChaScore(); });
 
         // ability related roll events
-        strCheck.onClick.AddListener(() => RollStrenghtCheck());
-        dexCheck.onClick.AddListener(() => RollDexterityCheck());
-        conCheck.onClick.AddListener(() => RollConstitutionCheck());
-        intCheck.onClick.AddListener(() => RollIntelligenceCheck());
-        wisCheck.onClick.AddListener(() => RollWisdomCheck());
-        chaCheck.onClick.AddListener(() => RollCharismaCheck());
+        strCheck.onClick.AddListener(() => RollStrenghtCheckServerRpc());
+        dexCheck.onClick.AddListener(() => RollDexterityCheckServerRpc());
+        conCheck.onClick.AddListener(() => RollConstitutionCheckServerRpc());
+        intCheck.onClick.AddListener(() => RollIntelligenceCheckServerRpc());
+        wisCheck.onClick.AddListener(() => RollWisdomCheckServerRpc());
+        chaCheck.onClick.AddListener(() => RollCharismaCheckServerRpc());
 
         strSave.onClick.AddListener(() => RollStrengthSaveServerRpc());
         dexSave.onClick.AddListener(() => RollDexteritySaveServerRpc());
@@ -254,6 +254,7 @@ public class CharacterSheetManager : MonoBehaviour
 
     void OpenPublicInfoPage()
     {
+        RefreshSheetData();
         currentPage.SetActive(false);
         publicInfo.SetActive(true);
         currentPage = publicInfo;
@@ -261,6 +262,7 @@ public class CharacterSheetManager : MonoBehaviour
 
     void OpenBasicInfoPage()
     {
+        RefreshSheetData();
         currentPage.SetActive(false);
         basicInfo.SetActive(true);
         currentPage = basicInfo;
@@ -268,6 +270,7 @@ public class CharacterSheetManager : MonoBehaviour
 
     void OpenSkillsPage()
     {
+        RefreshSheetData();
         currentPage.SetActive(false);
         skills.SetActive(true);
         currentPage = skills;
@@ -275,6 +278,7 @@ public class CharacterSheetManager : MonoBehaviour
 
     void OpenFeaturesPage()
     {
+        RefreshSheetData();
         currentPage.SetActive(false);
         features.SetActive(true);
         currentPage = features;
@@ -282,6 +286,7 @@ public class CharacterSheetManager : MonoBehaviour
 
     void OpenInventoryPage()
     {
+        RefreshSheetData();
         currentPage.SetActive(false);
         inventory.SetActive(true);
         currentPage = inventory;
@@ -289,6 +294,7 @@ public class CharacterSheetManager : MonoBehaviour
 
     void OpenSpellsPage()
     {
+        RefreshSheetData();
         currentPage.SetActive(false);
         spells.SetActive(true);
         currentPage = spells;
@@ -296,6 +302,7 @@ public class CharacterSheetManager : MonoBehaviour
 
     void OpenActionsPage()
     {
+        RefreshSheetData();
         currentPage.SetActive(false);
         actions.SetActive(true);
         currentPage = actions;
@@ -303,6 +310,7 @@ public class CharacterSheetManager : MonoBehaviour
 
     void OpenPersonalityPage()
     {
+        RefreshSheetData();
         currentPage.SetActive(false);
         personailty.SetActive(true);
         currentPage = personailty;
@@ -311,10 +319,10 @@ public class CharacterSheetManager : MonoBehaviour
     void CloseSheet()
     {
         SetCharacterInfo();
-        SaveCharacterSheetServerRpc(CSInfo);
-        //gameManager.SaveCharacterSheet(CSInfo);
+        gameManager.SaveCharacterSheetChanges(CSInfo);
+        //SaveCharacterSheetServerRpc(CSInfo);
         Destroy(characterSheet);
-        
+       
     }
     #endregion
 
@@ -647,37 +655,6 @@ public class CharacterSheetManager : MonoBehaviour
         maxWeight.text = newMaxWeight.ToString();
     }
 
-    // falta un if para texto con modificador negativo y estos deben ser serverRpc
-    void RollStrenghtCheck()
-    {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(strModifier.text), " [Strengh check (+" + strModifier.text +")]: ");
-    }
-
-    void RollDexterityCheck()
-    {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(dexModifier.text), " [Dexterity check (+" + dexModifier.text + ")]: ");
-    }
-
-    void RollConstitutionCheck()
-    {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(conModifier.text), " [Constitution check (+" + conModifier.text +")]: ");
-    }
-
-    void RollIntelligenceCheck()
-    {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(intModifier.text), " [Intelligence check (+" + intModifier.text + ")]: ");
-    }
-
-    void RollWisdomCheck()
-    {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(wisModifier.text), " [Wisdom check (+" + wisModifier.text + ")]: ");
-    }
-
-    void RollCharismaCheck()
-    {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(chaModifier.text), " [Charisma check (+" + chaModifier.text + ")]: ");
-    }
-
     // Auxiliary methods
 
     void CheckInt(InputField inputField)
@@ -765,13 +742,20 @@ public class CharacterSheetManager : MonoBehaviour
         return 0;
     }
 
+    void RefreshSheetData()
+    {
+        SetCharacterInfo();
+        gameManager.SaveCharacterSheetChanges(CSInfo);
+        //SaveCharacterSheetServerRpc(CSInfo);
+        GetCharacterInfo();
+    }
+
     #endregion
 
     #region ServerRpc
 
-    
     [ServerRpc]
-    private void SpawnTokenServerRpc(ulong ownerID, string ownerName)
+    void SpawnTokenServerRpc(ulong ownerID, string ownerName)
     {
         GameObject token = Instantiate(tokenPrefab, Vector3.zero, Quaternion.identity);
         token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
@@ -779,9 +763,46 @@ public class CharacterSheetManager : MonoBehaviour
     }
 
     [ServerRpc]
-    private void SaveCharacterSheetServerRpc(CharacterSheetInfo CSInfo)
+    void SaveCharacterSheetServerRpc(CharacterSheetInfo CSInfo)
     {
-        gameManager.SaveCharacterSheet(CSInfo);
+        gameManager.SaveCharacterSheetChanges(CSInfo);
+    }
+
+    // ability checks
+    [ServerRpc]
+    void RollStrenghtCheckServerRpc()
+    {
+        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(strModifier.text), " [Strengh check (+" + strModifier.text + ")]: ");
+    }
+
+    [ServerRpc]
+    void RollDexterityCheckServerRpc()
+    {
+        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(dexModifier.text), " [Dexterity check (+" + dexModifier.text + ")]: ");
+    }
+
+    [ServerRpc]
+    void RollConstitutionCheckServerRpc()
+    {
+        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(conModifier.text), " [Constitution check (+" + conModifier.text + ")]: ");
+    }
+
+    [ServerRpc]
+    void RollIntelligenceCheckServerRpc()
+    {
+        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(intModifier.text), " [Intelligence check (+" + intModifier.text + ")]: ");
+    }
+
+    [ServerRpc]
+    void RollWisdomCheckServerRpc()
+    {
+        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(wisModifier.text), " [Wisdom check (+" + wisModifier.text + ")]: ");
+    }
+
+    [ServerRpc]
+    void RollCharismaCheckServerRpc()
+    {
+        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(chaModifier.text), " [Charisma check (+" + chaModifier.text + ")]: ");
     }
 
     // ability saving throws

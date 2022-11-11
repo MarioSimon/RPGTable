@@ -149,15 +149,16 @@ public class GameManager : NetworkBehaviour
         uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName);
     }
 
-    public void SaveCharacterSheet(CharacterSheetInfo charInfo)
+    public void SaveCharacterSheetChanges(CharacterSheetInfo charInfo)
     {
-        if (characterSheets[charInfo.sheetID].characterName != charInfo.characterName)
+        if (!IsServer) 
+        { 
+            SaveCharacterSheetChangesServerRpc(charInfo); 
+        } else
         {
-            //uiManager.UpdateCharacterButtonNameClientRpc(charInfo.sheetID, charInfo.characterName);
-        }
-
-        characterSheets[charInfo.sheetID] = charInfo;
-        
+            //characterSheets[charInfo.sheetID] = charInfo;
+            SaveCharacterSheetChangesClientRpc(charInfo);
+        }            
     }
 
     public int GetNewSheetID()
@@ -178,6 +179,13 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+
+    [ServerRpc (RequireOwnership = false)]
+    void SaveCharacterSheetChangesServerRpc(CharacterSheetInfo charInfo)
+    {
+        characterSheets[charInfo.sheetID] = charInfo;
+        SaveCharacterSheetChangesClientRpc(charInfo);
+    }
     #endregion
 
     #region ClientRpc
@@ -195,6 +203,12 @@ public class GameManager : NetworkBehaviour
     void UpdateSheetListClientRpc(CharacterSheetInfo charInfo)
     {
         characterSheets.Add(charInfo);
+    }
+
+    [ClientRpc]
+    void SaveCharacterSheetChangesClientRpc(CharacterSheetInfo charInfo)
+    {
+        characterSheets[charInfo.sheetID] = charInfo;
     }
 
     #endregion

@@ -79,7 +79,6 @@ public class UIManager : NetworkBehaviour
         buttonSpawnToken.onClick.AddListener(() => SpawnToken());
 
         buttonSpawnNewCharSheet.onClick.AddListener(() => SpawnNewCharSheet());
-        //openCharSheet.onClick.AddListener(() => OpenCharSheetServerRpc(0));
         openCharSelector.onClick.AddListener(() => ActivateCharacterSelector());
         closeCharacterSelector.onClick.AddListener(() => DeactivateCharacterSelector());
 
