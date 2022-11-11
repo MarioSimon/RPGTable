@@ -834,7 +834,7 @@ MonoBehaviour:
   buttonSpawnNewCharSheet: {fileID: 2109186628}
   openCharSelector: {fileID: 526961701}
   tokenPrefab: {fileID: 1564062960752013882, guid: 39d74c822aa0ede4d91f3ad7908e00f9, type: 3}
-  charSheetPrefab: {fileID: 6933813031592149426, guid: 5eb991d317d608d4bb6e8fb81a7b6830, type: 3}
+  charSheetPrefab: {fileID: 6933813031592149426, guid: f55a0cf4e36b9984f8a744c78cc547fa, type: 3}
   diceBox: {fileID: 586615381}
   buttonThrowD4: {fileID: 150895744}
   buttonThrowD6: {fileID: 1081046405}
@@ -3200,7 +3200,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.38268346, y: -0.000000022481213, z: 0.000000009312023, w: 0.92387956}
+  m_LocalRotation: {x: 0.38268346, y: 0.000000022481224, z: -0.0000000093120285, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 11, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -5280,7 +5280,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1699353992}
-  m_LocalRotation: {x: 0.38268346, y: -0.000000022481213, z: 0.000000009312023, w: 0.92387956}
+  m_LocalRotation: {x: 0.38268346, y: 0.000000022481224, z: -0.0000000093120285, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 10, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

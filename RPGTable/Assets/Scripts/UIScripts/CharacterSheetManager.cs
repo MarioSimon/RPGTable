@@ -6,14 +6,17 @@ using UnityEngine.UI;
 using Unity.Collections;
 using System;
 
-public class CharacterSheetManager : NetworkBehaviour
+public class CharacterSheetManager : MonoBehaviour
 {
     #region Variables
     public CharacterSheetInfo CSInfo;
-    GameManager gameManager;
+    
+    private GameManager gameManager;
+    private UIManager uiManager;
+
+    private GameObject currentPage;
 
     [SerializeField] GameObject tokenPrefab;
-
     [SerializeField] GameObject characterSheet;
 
     #region Navigation bar
@@ -149,7 +152,7 @@ public class CharacterSheetManager : NetworkBehaviour
     [Header("Personality")]
     [SerializeField] GameObject personailty;
 
-    private GameObject currentPage;
+    
 
     #endregion
 
@@ -157,6 +160,8 @@ public class CharacterSheetManager : NetworkBehaviour
     void Start()
     {
         gameManager = GameObject.FindObjectOfType<GameManager>();
+        uiManager = GameObject.FindObjectOfType<UIManager>();
+
         currentPage = publicInfo;
 
         // navigation related events
@@ -172,7 +177,7 @@ public class CharacterSheetManager : NetworkBehaviour
         buttonPersonality.onClick.AddListener(() => OpenPersonalityPage());        
 
         //quiza sea mejor guardar textos al cambiar de pestaña o cerrar la ficha
-        //charactername.onValueChanged.AddListener(delegate { SetCharName(); });
+        characterName.onValueChanged.AddListener(delegate { uiManager.UpdateCharacterButtonNameClientRpc(CSInfo.sheetID, characterName.text); });
 
         // ability score related logic events
         strScore.onValueChanged.AddListener(delegate { CheckStrScore(); CalculateMaxWeight(); });
@@ -242,13 +247,7 @@ public class CharacterSheetManager : NetworkBehaviour
         else
         {
             CSInfo = new CharacterSheetInfo();
-            CSInfo.ownerID = characterSheet.GetComponent<NetworkObject>().OwnerClientId;
-        }
-
-        if (proficencyBonus.text == "")
-        {
-            proficencyBonus.text = "2";
-        }       
+        }     
     }
 
     #region Navigation Methods
@@ -312,9 +311,10 @@ public class CharacterSheetManager : NetworkBehaviour
     void CloseSheet()
     {
         SetCharacterInfo();
-        gameManager.SaveCharacterSheet(CSInfo);
-        //Destroy(characterSheet);
-        DestroySheetServerRpc();
+        SaveCharacterSheetServerRpc(CSInfo);
+        //gameManager.SaveCharacterSheet(CSInfo);
+        Destroy(characterSheet);
+        
     }
     #endregion
 
@@ -779,9 +779,9 @@ public class CharacterSheetManager : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void DestroySheetServerRpc()
+    private void SaveCharacterSheetServerRpc(CharacterSheetInfo CSInfo)
     {
-        Destroy(characterSheet);
+        gameManager.SaveCharacterSheet(CSInfo);
     }
 
     // ability saving throws

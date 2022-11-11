@@ -12,64 +12,63 @@ public class CharacterSheetInfo : INetworkSerializable
     public int sheetID = -1;
 
     // public info variables
-    public string characterName;
-    public string playerName; 
-    public string appearance;
+    public string characterName = "";
+    public string playerName = ""; 
+    public string appearance = "";
 
     // basic info variables
-    public string clasAndLevel;
-    public string subclass;
-    public string race;
-    public string background;
-    public string alignement;
-    public string experience;
+    public string clasAndLevel = "";
+    public string subclass = "";
+    public string race = "";
+    public string background = "";
+    public string alignement = "";
+    public string experience = "";
 
-    public string strScore;
-    public string dexScore;
-    public string conScore;
-    public string intScore;
-    public string wisScore;
-    public string chaScore;
+    public string strScore = "10";
+    public string dexScore = "10";
+    public string conScore = "10";
+    public string intScore = "10";
+    public string wisScore = "10";
+    public string chaScore = "10";
 
-    public string maxHealthPoints;
-    public string currHealthPoints;
-    public string tempHealthPoints;
-    public string initiativeBonus;
-    public string armorClass;
-    public string speed;
-    public int hitDiceType;
+    public string maxHealthPoints = "0";
+    public string currHealthPoints = "0";
+    public string tempHealthPoints = "0";
+    public string initiativeBonus = "0";
+    public string armorClass = "0";
+    public string speed = "0";
+    public int hitDiceType = 0;
     public int deathSaveSuccesses = 0;
     public int deathSaveFails = 0;
 
     // skills variables
-    public string proficencyBonus;
-    public bool strProf;
-    public bool dexProf;
-    public bool conProf;
-    public bool intProf;
-    public bool wisProf;
-    public bool chaProf;
+    public string proficencyBonus = "2";
+    public bool strProf = false;
+    public bool dexProf = false;
+    public bool conProf = false;
+    public bool intProf = false;
+    public bool wisProf = false;
+    public bool chaProf = false;
 
-    public List<Skill> skillList;
-    public int[] skillProf;
-    public int[] skillCharacteristic;
-    public string[] skillBonus;
-    public string[] skillTotal;
+    public int[] skillProf = new int[18];
+    public int[] skillCharacteristic = new int[18];
+    public string[] skillBonus = new string[18];
+    public string[] skillTotal = new string[18];
 
     // features
-    public string featuresAndTraits;
-    public string proficencies;
+    public string featuresAndTraits = "";
+    public string proficencies = "";
 
     // inventory
     public List<GameObject> itemList;
 
-    public string totalWeight;
-    public string maxWeight;
-    public string copperPieces;
-    public string silverPieces;
-    public string electrumPieces;
-    public string goldPieces;
-    public string platinumPieces;
+    public string totalWeight = "0";
+    public string maxWeight = "0";
+    public string copperPieces = "0";
+    public string silverPieces = "0";
+    public string electrumPieces = "0";
+    public string goldPieces = "0";
+    public string platinumPieces = "0";
 
 
 
@@ -140,7 +139,15 @@ public class CharacterSheetInfo : INetworkSerializable
         {
             serializer.SerializeValue(ref skillProf[i]);
             serializer.SerializeValue(ref skillCharacteristic[i]);
+            if (skillBonus[i] == null)
+            {
+                skillBonus[i] = "";
+            }
             serializer.SerializeValue(ref skillBonus[i]);
+            if (skillTotal[i] == null)
+            {
+                skillTotal[i] = "0";
+            }
             serializer.SerializeValue(ref skillTotal[i]);
         }
 

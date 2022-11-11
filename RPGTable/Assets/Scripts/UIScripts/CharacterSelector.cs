@@ -33,7 +33,7 @@ public class CharacterSelector : MonoBehaviour
         if (CSInfo == null) { return; }
         GameObject charSheet = Instantiate(characterSheetPrefab);
         charSheet.GetComponent<CharacterSheetManager>().CSInfo = CSInfo;
-        charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(CSInfo.ownerID);
+        //charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(CSInfo.ownerID);
         charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
     }
 

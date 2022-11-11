@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManager : NetworkBehaviour
 {
     [SerializeField] UIManager uiManager;
-    List<CharacterSheetInfo> characterSheets = new List<CharacterSheetInfo>();
+    List<CharacterSheetInfo> characterSheets;
 
     [SerializeField] GameObject d4Prefab;
     [SerializeField] GameObject d6Prefab;
@@ -14,6 +14,12 @@ public class GameManager : NetworkBehaviour
     [SerializeField] GameObject pdPrefab;
     [SerializeField] GameObject d12Prefab;
     [SerializeField] GameObject d20Prefab;
+
+    private void Start()
+    {
+        characterSheets = new List<CharacterSheetInfo>();
+        //AddSavedCharactersServerRpc(NetworkManager.Singleton.LocalClientId);
+    }
 
     public void RollDice(diceType type, Vector3 position, string thrownBy, int modifier)
     {
@@ -136,19 +142,53 @@ public class GameManager : NetworkBehaviour
         return characterSheets[index];
     }
 
+    public void AddNewCharacterSheetInfo(CharacterSheetInfo charInfo)
+    {
+        //characterSheets.Add(charInfo);
+        UpdateSheetListClientRpc(charInfo);
+        uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName);
+    }
+
     public void SaveCharacterSheet(CharacterSheetInfo charInfo)
     {
-        if (charInfo.sheetID < 0)
+        if (characterSheets[charInfo.sheetID].characterName != charInfo.characterName)
         {
-            charInfo.sheetID = characterSheets.Count;
-            characterSheets.Add(charInfo);
-            //UpdateSheetListClientRpc(charInfo);
-            uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName);
+            //uiManager.UpdateCharacterButtonNameClientRpc(charInfo.sheetID, charInfo.characterName);
         }
-        else
-            characterSheets[charInfo.sheetID] = charInfo;
+
+        characterSheets[charInfo.sheetID] = charInfo;
         
-        
+    }
+
+    public int GetNewSheetID()
+    {
+        return characterSheets.Count;
+    }
+
+    #region ServerRpc
+
+    [ServerRpc (RequireOwnership = false)]
+    public void AddSavedCharactersServerRpc(ulong clientID)
+    {
+        List<CharacterSheetInfo> charSheets = characterSheets;
+
+        foreach (CharacterSheetInfo charInfo in charSheets)
+        {
+            AddSavedCharactersClientRpc(clientID, charInfo);
+        }
+    }
+
+    #endregion
+
+    #region ClientRpc
+
+    [ClientRpc]
+    public void AddSavedCharactersClientRpc(ulong clientID, CharacterSheetInfo charInfo)
+    {
+        if (NetworkManager.Singleton.LocalClientId != clientID || IsServer) { return; }
+       
+        characterSheets.Add(charInfo);
+        uiManager.AddCharacterButton(charInfo.sheetID, charInfo.characterName);     
     }
 
     [ClientRpc]
@@ -157,5 +197,6 @@ public class GameManager : NetworkBehaviour
         characterSheets.Add(charInfo);
     }
 
+    #endregion
 
 }

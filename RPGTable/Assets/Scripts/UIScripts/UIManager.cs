@@ -101,7 +101,39 @@ public class UIManager : NetworkBehaviour
 
     private void SpawnNewCharSheet()
     {
-        SpawnNewCharSheetServerRpc(NetworkManager.Singleton.LocalClientId, localPlayer.givenName.Value);
+        int newID = gameManager.GetNewSheetID();
+       
+        GameObject charSheet = Instantiate(charSheetPrefab); 
+        charSheet.GetComponent<CharacterSheetManager>().CSInfo = new CharacterSheetInfo();
+        charSheet.GetComponent<CharacterSheetManager>().CSInfo.playerName = localPlayer.givenName.Value.ToString();
+        charSheet.GetComponent<CharacterSheetManager>().CSInfo.sheetID = newID;
+        charSheet.GetComponent<CharacterSheetManager>().CSInfo.ownerID = NetworkManager.Singleton.LocalClientId;
+        charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
+        SpawnNewCharSheetServerRpc(charSheet.GetComponent<CharacterSheetManager>().CSInfo);
+    }
+
+    public void AddCharacterButton(int characterID, string characterName)
+    {
+        Vector3 position;
+
+        if (characterList.Count % 2 == 0)
+        {
+            position = new Vector3(characterListArea.GetComponent<RectTransform>().rect.width / 4, -characterSpace / 2 - characterList.Count / 2 * characterSpace, 0);
+        }
+        else
+        {
+            position = new Vector3(characterListArea.GetComponent<RectTransform>().rect.width / 4 * 3, -characterSpace / 2 - characterList.Count / 2 * characterSpace, 0);
+        }
+
+        GameObject newCharacterButton = Instantiate(characterButtonPrefab);
+
+        newCharacterButton.GetComponent<CharacterSelector>().characterName.text = characterName;
+        newCharacterButton.GetComponent<CharacterSelector>().charID = characterID;
+
+        newCharacterButton.GetComponent<RectTransform>().SetParent(characterListArea.transform);
+        newCharacterButton.GetComponent<RectTransform>().localPosition = position;
+
+        characterList.Add(newCharacterButton);
     }
 
     #region ServerRpc
@@ -120,26 +152,32 @@ public class UIManager : NetworkBehaviour
         gameManager.RollDice(type, position, thrownBy, 0);
     }
 
+    //[ServerRpc(RequireOwnership = false)]
+    //private void SpawnNewCharSheetServerRpc(ulong clientID, FixedString64Bytes ownerName)
+    //{
+    //    GameObject charSheet = Instantiate(charSheetPrefab);
+    //    charSheet.GetComponent<CharacterSheetManager>().playerName.text = ownerName.Value.ToString();
+    //    charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(clientID);
+    //    charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
+    //}
+
     [ServerRpc(RequireOwnership = false)]
-    private void SpawnNewCharSheetServerRpc(ulong clientID, FixedString64Bytes ownerName)
+    private void SpawnNewCharSheetServerRpc(CharacterSheetInfo CSInfo)
     {
-        GameObject charSheet = Instantiate(charSheetPrefab);
-        charSheet.GetComponent<CharacterSheetManager>().playerName.text = ownerName.Value.ToString();
-        charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(clientID);
-        charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
+        gameManager.AddNewCharacterSheetInfo(CSInfo);
     }
 
-    [ServerRpc]
-    private void OpenCharSheetServerRpc(int sheetIndex)
-    {
-        CharacterSheetInfo CSInfo = gameManager.GetSheetInfo(sheetIndex);
-        if (CSInfo == null) { return; }
-        GameObject charSheet = Instantiate(charSheetPrefab);
-        charSheet.GetComponent<CharacterSheetManager>().CSInfo = CSInfo;
-        charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(CSInfo.ownerID);
-        charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
-    }
-
+   //[ServerRpc]
+   //private void OpenCharSheetServerRpc(int sheetIndex)
+   //{
+   //    CharacterSheetInfo CSInfo = gameManager.GetSheetInfo(sheetIndex);
+   //    if (CSInfo == null) { return; }
+   //    GameObject charSheet = Instantiate(charSheetPrefab);
+   //    charSheet.GetComponent<CharacterSheetManager>().CSInfo = CSInfo;
+   //    charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(CSInfo.ownerID);
+   //    charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
+   //}
+    
     #endregion
 
     #region ClientRpc
@@ -151,7 +189,7 @@ public class UIManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void AddCharacterButtonClientRpc(int chararacterID, string characterName)
+    public void AddCharacterButtonClientRpc(int characterID, string characterName)
     {
 
         Vector3 position;
@@ -168,13 +206,19 @@ public class UIManager : NetworkBehaviour
         GameObject newCharacterButton = Instantiate(characterButtonPrefab);
 
         newCharacterButton.GetComponent<CharacterSelector>().characterName.text = characterName;
-        newCharacterButton.GetComponent<CharacterSelector>().charID = chararacterID;
+        newCharacterButton.GetComponent<CharacterSelector>().charID = characterID;
 
         newCharacterButton.GetComponent<RectTransform>().SetParent(characterListArea.transform);
         newCharacterButton.GetComponent<RectTransform>().localPosition = position;
 
         characterList.Add(newCharacterButton);
 
+    }
+
+    [ClientRpc]
+    public void UpdateCharacterButtonNameClientRpc(int charID, string newName)
+    {
+        characterList[charID].GetComponent<CharacterSelector>().characterName.text = newName;
     }
 
     #endregion
@@ -228,7 +272,7 @@ public class UIManager : NetworkBehaviour
     {
         if (!SetIPAndPort()) { return; }
 
-        NetworkManager.Singleton.StartClient();
+        NetworkManager.Singleton.StartClient();      
         DeactivateMainMenu();
         ActivateInGameHUD();
     }
