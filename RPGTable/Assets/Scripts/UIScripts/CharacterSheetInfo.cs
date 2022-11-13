@@ -16,6 +16,15 @@ public class CharacterSheetInfo : INetworkSerializable
     public string playerName = ""; 
     public string appearance = "";
 
+    // page avaliability variables
+    public bool publicBasicInfo = true;
+    public bool publicSkills = true;
+    public bool publicFeatures = true;
+    public bool publicInventory = true;
+    public bool publicSpells = true;
+    public bool publicActions = true;
+    public bool publicPersonality = true;
+
     // basic info variables
     public string clasAndLevel = "";
     public string subclass = "";
@@ -51,7 +60,7 @@ public class CharacterSheetInfo : INetworkSerializable
     public bool chaProf = false;
 
     public int[] skillProf = new int[18];
-    public int[] skillCharacteristic = new int[18];
+    public int[] skillCharacteristic = new int[18] {1, 4, 3, 0, 5, 3, 4, 5, 3, 4, 3, 4, 5, 5, 3, 1, 1, 4 };
     public string[] skillBonus = new string[18];
     public string[] skillTotal = new string[18];
 
@@ -85,6 +94,14 @@ public class CharacterSheetInfo : INetworkSerializable
         serializer.SerializeValue(ref characterName);
         serializer.SerializeValue(ref playerName);
         serializer.SerializeValue(ref appearance);
+
+        serializer.SerializeValue(ref publicBasicInfo);
+        serializer.SerializeValue(ref publicSkills);
+        serializer.SerializeValue(ref publicFeatures);
+        serializer.SerializeValue(ref publicInventory);
+        serializer.SerializeValue(ref publicSpells);
+        serializer.SerializeValue(ref publicActions);
+        serializer.SerializeValue(ref publicPersonality);
 
         serializer.SerializeValue(ref clasAndLevel);
         serializer.SerializeValue(ref subclass);

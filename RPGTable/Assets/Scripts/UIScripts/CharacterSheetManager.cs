@@ -15,6 +15,7 @@ public class CharacterSheetManager : MonoBehaviour
     private UIManager uiManager;
 
     private GameObject currentPage;
+    private bool permisson;
 
     [SerializeField] GameObject tokenPrefab;
     [SerializeField] GameObject characterSheet;
@@ -96,8 +97,9 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] Toggle deathSaveFail3;
     [SerializeField] Button rollDeathSave;
     [SerializeField] Button resetDeathSaves;
-
+    // Other
     [SerializeField] Image basicInfoBlocker;
+    [SerializeField] Toggle basicInfoPublisher;
     #endregion
 
     #region Skills   
@@ -114,8 +116,9 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] Toggle chaProficency;
     // Skill Proficencies
     [SerializeField] List<Skill> skillList;
-
+    // Other
     [SerializeField] Image skillsBlocker;
+    [SerializeField] Toggle skillsPublisher;
 
     #endregion
 
@@ -127,6 +130,7 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] InputField proficencies;
 
     [SerializeField] Image featuresBlocker;
+    [SerializeField] Toggle featuresPublisher;
     #endregion
 
     #region Inventory
@@ -149,6 +153,7 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] InputField platinumPieces;
 
     [SerializeField] Image inventoryBlocker;
+    [SerializeField] Toggle inventoryPublisher;
     #endregion
 
     [Header("Spells")]
@@ -156,16 +161,19 @@ public class CharacterSheetManager : MonoBehaviour
 
     [SerializeField] Image spellsBlocker1;
     [SerializeField] Image spellsBlocker2;
+    [SerializeField] Toggle spellsPublisher;
 
     [Header("Actions")]
     [SerializeField] GameObject actions;
 
     [SerializeField] Image actionsBlocker;
+    [SerializeField] Toggle actionsPublisher;
 
     [Header("Personality")]
     [SerializeField] GameObject personailty;
 
     [SerializeField] Image personalityBlocker;
+    [SerializeField] Toggle personalityPublisher;
 
     #endregion
 
@@ -192,26 +200,15 @@ public class CharacterSheetManager : MonoBehaviour
         // public info events
 
         bool isServer = NetworkManager.Singleton.IsServer;
+        permisson = isServer || NetworkManager.Singleton.LocalClientId == CSInfo.ownerID;
 
-        if (isServer) { 
-            playerName.interactable = true; 
-        }
-
-        if (isServer || NetworkManager.Singleton.LocalClientId == CSInfo.ownerID)
+        if (isServer)
         {
-            publicInfoBlocker.enabled = false;
-            basicInfoBlocker.enabled = false;
-            skillsBlocker.enabled = false;
-            featuresBlocker.enabled = false;
-            inventoryBlocker.enabled = false;
-            spellsBlocker1.enabled = false;
-            spellsBlocker2.enabled = false;
-            actionsBlocker.enabled = false;
-            personalityBlocker.enabled = false;
-
-            buttonSpawnToken.enabled = true;
+            playerName.interactable = true;
         }
-        
+
+        CheckPermisson();
+
         characterName.onValueChanged.AddListener(delegate { uiManager.UpdateCharacterButtonNameClientRpc(CSInfo.sheetID, characterName.text); });
 
         // ability score related logic events
@@ -249,7 +246,7 @@ public class CharacterSheetManager : MonoBehaviour
         rollInitiative.onClick.AddListener(() => RollInitiativeServerRpc());
         rollDeathSave.onClick.AddListener(() => RollDeathSavingThrowServerRpc());
         resetDeathSaves.onClick.AddListener(() => ResetDeathSavingThrows());
-       
+
         // skill related logic events
         proficencyBonus.onValueChanged.AddListener(delegate { CheckProficencyBonus(); });
         foreach (Skill skill in skillList)
@@ -282,7 +279,35 @@ public class CharacterSheetManager : MonoBehaviour
         else
         {
             CSInfo = new CharacterSheetInfo();
-        }     
+        }
+
+        CheckPublicPages(permisson);
+    }
+
+    private void CheckPermisson()
+    {
+        if (permisson)
+        {
+            publicInfoBlocker.enabled = false;
+            basicInfoBlocker.enabled = false;
+            skillsBlocker.enabled = false;
+            featuresBlocker.enabled = false;
+            inventoryBlocker.enabled = false;
+            spellsBlocker1.enabled = false;
+            spellsBlocker2.enabled = false;
+            actionsBlocker.enabled = false;
+            personalityBlocker.enabled = false;
+
+            basicInfoPublisher.gameObject.SetActive(true);
+            skillsPublisher.gameObject.SetActive(true);
+            featuresPublisher.gameObject.SetActive(true);
+            inventoryPublisher.gameObject.SetActive(true);
+            spellsPublisher.gameObject.SetActive(true);
+            actionsPublisher.gameObject.SetActive(true);
+            personalityPublisher.gameObject.SetActive(true);
+
+            buttonSpawnToken.enabled = true;
+        }
     }
 
     #region Navigation Methods
@@ -353,8 +378,11 @@ public class CharacterSheetManager : MonoBehaviour
 
     void CloseSheet()
     {
-        SetCharacterInfo();
-        gameManager.SaveCharacterSheetChanges(CSInfo);
+        if (permisson)
+        {
+            SetCharacterInfo();
+            gameManager.SaveCharacterSheetChanges(CSInfo);
+        }
         Destroy(characterSheet);
        
     }
@@ -367,6 +395,14 @@ public class CharacterSheetManager : MonoBehaviour
         characterName.text = CSInfo.characterName;
         playerName.text = CSInfo.playerName;
         appearance.text = CSInfo.appearance;
+
+        basicInfoPublisher.isOn = CSInfo.publicBasicInfo;
+        skillsPublisher.isOn = CSInfo.publicSkills;
+        featuresPublisher.isOn = CSInfo.publicFeatures;
+        inventoryPublisher.isOn = CSInfo.publicInventory;
+        spellsPublisher.isOn = CSInfo.publicSpells;
+        actionsPublisher.isOn = CSInfo.publicActions;
+        personalityPublisher.isOn = CSInfo.publicPersonality;
 
         clasAndLevel.text = CSInfo.clasAndLevel;
         subclass.text = CSInfo.subclass;
@@ -454,6 +490,14 @@ public class CharacterSheetManager : MonoBehaviour
         CSInfo.playerName = playerName.text;
         CSInfo.appearance = appearance.text;
 
+        CSInfo.publicBasicInfo = basicInfoPublisher.isOn;
+        CSInfo.publicSkills = skillsPublisher.isOn;
+        CSInfo.publicFeatures = featuresPublisher.isOn;
+        CSInfo.publicInventory = inventoryPublisher.isOn;
+        CSInfo.publicSpells = spellsPublisher.isOn;
+        CSInfo.publicActions = actionsPublisher.isOn;
+        CSInfo.publicPersonality = personalityPublisher.isOn;
+
         CSInfo.clasAndLevel = clasAndLevel.text;
         CSInfo.subclass = subclass.text;
         CSInfo.race = race.text;
@@ -521,7 +565,7 @@ public class CharacterSheetManager : MonoBehaviour
         CSInfo.platinumPieces = platinumPieces.text;
     }
 
-    // abilit score methods
+    // ability score methods
 
     void CheckStrScore()
     {
@@ -778,9 +822,23 @@ public class CharacterSheetManager : MonoBehaviour
 
     void RefreshSheetData()
     {
+        if (!permisson) { return; }
         SetCharacterInfo();
         gameManager.SaveCharacterSheetChanges(CSInfo);
-        GetCharacterInfo();
+        //GetCharacterInfo();
+    }
+
+    void CheckPublicPages(bool permisson)
+    {
+        if (permisson) { return; }
+
+        buttonBasicInfo.interactable = basicInfoPublisher.isOn;
+        buttonSkills.interactable = skillsPublisher.isOn;
+        buttonFeatures.interactable = featuresPublisher.isOn;
+        buttonInventory.interactable = inventoryPublisher.isOn;
+        buttonSpells.interactable = spellsPublisher.isOn;
+        buttonActions.interactable = actionsPublisher.isOn;
+        buttonPersonality.interactable = personalityPublisher.isOn;
     }
 
     #endregion
