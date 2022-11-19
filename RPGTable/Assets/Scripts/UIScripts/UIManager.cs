@@ -30,7 +30,8 @@ public class UIManager : NetworkBehaviour
     [SerializeField] GameObject inGameHUD;
     [SerializeField] Button buttonSpawnToken;
     [SerializeField] Button buttonSpawnNewCharSheet;
-    [SerializeField] Button openCharSelector;
+    [SerializeField] Button toggleCharSelector;
+    [SerializeField] Button toggleDiceBox;
 
     //Esto probablemente se mueva mas adelante
     [SerializeField] GameObject tokenPrefab;
@@ -79,8 +80,9 @@ public class UIManager : NetworkBehaviour
         buttonSpawnToken.onClick.AddListener(() => SpawnToken());
 
         buttonSpawnNewCharSheet.onClick.AddListener(() => SpawnNewCharSheet());
-        openCharSelector.onClick.AddListener(() => ActivateCharacterSelector());
-        closeCharacterSelector.onClick.AddListener(() => DeactivateCharacterSelector());
+        toggleCharSelector.onClick.AddListener(() => ToggleCharacterSelector());
+        closeCharacterSelector.onClick.AddListener(() => ToggleCharacterSelector());
+        toggleDiceBox.onClick.AddListener(() => ToggleDiceBox());
 
         buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
         buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
@@ -151,31 +153,11 @@ public class UIManager : NetworkBehaviour
         gameManager.RollDice(type, position, thrownBy, 0);
     }
 
-    //[ServerRpc(RequireOwnership = false)]
-    //private void SpawnNewCharSheetServerRpc(ulong clientID, FixedString64Bytes ownerName)
-    //{
-    //    GameObject charSheet = Instantiate(charSheetPrefab);
-    //    charSheet.GetComponent<CharacterSheetManager>().playerName.text = ownerName.Value.ToString();
-    //    charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(clientID);
-    //    charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
-    //}
-
     [ServerRpc(RequireOwnership = false)]
     private void SpawnNewCharSheetServerRpc(CharacterSheetInfo CSInfo)
     {
         gameManager.AddNewCharacterSheetInfo(CSInfo);
     }
-
-   //[ServerRpc]
-   //private void OpenCharSheetServerRpc(int sheetIndex)
-   //{
-   //    CharacterSheetInfo CSInfo = gameManager.GetSheetInfo(sheetIndex);
-   //    if (CSInfo == null) { return; }
-   //    GameObject charSheet = Instantiate(charSheetPrefab);
-   //    charSheet.GetComponent<CharacterSheetManager>().CSInfo = CSInfo;
-   //    charSheet.GetComponent<NetworkObject>().SpawnWithOwnership(CSInfo.ownerID);
-   //    charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
-   //}
     
     #endregion
 
@@ -244,14 +226,16 @@ public class UIManager : NetworkBehaviour
         inGameHUD.SetActive(false);
     }
 
-    private void ActivateCharacterSelector()
+    private void ToggleCharacterSelector()
     {
-        characterSelector.SetActive(true);
+        bool toggle = !characterSelector.activeInHierarchy;
+        characterSelector.SetActive(toggle);
     }
 
-    private void DeactivateCharacterSelector()
+    private void ToggleDiceBox()
     {
-        characterSelector.SetActive(false);
+        bool toggle = !diceBox.activeInHierarchy;
+        diceBox.SetActive(toggle);
     }
 
     #endregion
