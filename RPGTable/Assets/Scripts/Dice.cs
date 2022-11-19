@@ -1,3 +1,4 @@
+//using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,8 @@ public class Dice : MonoBehaviour
 
     public diceType type;
     public string thrownBy;
+    public int modifier;
+    public string line;
     [SerializeField] private float throwForce = 1.0f;
     private Rigidbody rb;
 
@@ -50,6 +53,7 @@ public class Dice : MonoBehaviour
         return (rb.velocity.x == 0 && rb.velocity.y == 0 && rb.velocity.z == 0);
     }
 }
+
 
 public enum diceType
 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class CameraController : MonoBehaviour
 
     [SerializeField] float rotationSpeed = 1.0f;
     [SerializeField] float movementSpeed = 0.1f;
-    [SerializeField] Vector3 zoomSpeed = new Vector3(0,-0.5f,0.5f);
+    [SerializeField] Vector3 zoomSpeed = new Vector3(0,-1.0f,1.0f);
 
 
 
@@ -32,8 +33,8 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
+        if (EventSystem.current.IsPointerOverGameObject()) { return; }
         HandleMovementInput();
-        //UpdateZoom();
     }
 
     #endregion

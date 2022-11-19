@@ -13,6 +13,7 @@ public class Player : NetworkBehaviour
 
     [SerializeField] private TokenController selectedToken;
     private UIManager UIManager;
+    private GameManager gameManager;
 
     #endregion
 
@@ -21,6 +22,7 @@ public class Player : NetworkBehaviour
     private void Awake()
     {
         UIManager = FindObjectOfType<UIManager>();
+        gameManager = FindObjectOfType<GameManager>();
         NetworkManager.OnClientConnectedCallback += ConfigurePlayer;
 
         givenName = new NetworkVariable<FixedString64Bytes>("");
@@ -55,6 +57,7 @@ public class Player : NetworkBehaviour
         if (IsLocalPlayer)
         {
             SetPlayerNameServerRpc(UIManager.inputFieldName.text);
+            gameManager.AddSavedCharactersServerRpc(NetworkManager.Singleton.LocalClientId);
         }
     }
 

@@ -60,19 +60,19 @@ public class DiceScoreCheck : NetworkBehaviour
             switch (col.gameObject.name)
             {
                 case "Side1":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 1");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 1 + " + dice.modifier + " = " + (1 + dice.modifier));
                     result = true;
                     break;
                 case "Side2":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 2");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 2 + " + dice.modifier + " = " + (2 + dice.modifier));
                     result = true;
                     break;
                 case "Side3":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 3");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 3 + " + dice.modifier + " = " + (3 + dice.modifier));
                     result = true;
                     break;
                 case "Side4":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 4");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D4: 4 + " + dice.modifier + " = " + (4 + dice.modifier));
                     result = true;
                     break;
             }
@@ -350,83 +350,83 @@ public class DiceScoreCheck : NetworkBehaviour
             switch (col.gameObject.name)
             {
                 case "Side1":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 20");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (20 + dice.modifier));
                     result = true;
                     break;
                 case "Side2":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 19");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (19 + dice.modifier));
                     result = true;
                     break;
                 case "Side3":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 18");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (18 + dice.modifier));
                     result = true;
                     break;
                 case "Side4":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 17");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (17 + dice.modifier));
                     result = true;
                     break;
                 case "Side5":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 16");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (16 + dice.modifier));
                     result = true;
                     break;
                 case "Side6":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 15");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (15 + dice.modifier));
                     result = true;
                     break;
                 case "Side7":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 14");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (14 + dice.modifier));
                     result = true;
                     break;
                 case "Side8":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 13");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (13 + dice.modifier));
                     result = true;
                     break;
                 case "Side9":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 12");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (12 + dice.modifier));
                     result = true;
                     break;
                 case "Side10":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 11");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (11 + dice.modifier));
                     result = true;
                     break;
                 case "Side11":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 10");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (10+ dice.modifier));
                     result = true;
                     break;
                 case "Side12":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 9");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (9 + dice.modifier));
                     result = true;
                     break;
                 case "Side13":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 8");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (8 + dice.modifier));
                     result = true;
                     break;
                 case "Side14":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 7");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (7 + dice.modifier));
                     result = true;
                     break;
                 case "Side15":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 6");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (6 + dice.modifier));
                     result = true;
                     break;
                 case "Side16":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 5");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (5 + dice.modifier));
                     result = true;
                     break;
                 case "Side17":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 4");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (4 + dice.modifier));
                     result = true;
                     break;
                 case "Side18":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 3");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (3 + dice.modifier));
                     result = true;
                     break;
                 case "Side19":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 2");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (2 + dice.modifier));
                     result = true;
                     break;
                 case "Side20":
-                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + " rolls a D20: 1");
+                    UIManager.NotifyDiceScoreClientRpc(dice.thrownBy + dice.line + (1 + dice.modifier));
                     result = true;
                     break;
             }
