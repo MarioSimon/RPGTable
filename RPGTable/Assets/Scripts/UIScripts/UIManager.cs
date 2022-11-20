@@ -32,6 +32,7 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button buttonSpawnNewCharSheet;
     [SerializeField] Button toggleCharSelector;
     [SerializeField] Button toggleDiceBox;
+    [SerializeField] Button toggleDmInventory;
 
     //Esto probablemente se mueva mas adelante
     [SerializeField] GameObject tokenPrefab;
@@ -59,8 +60,10 @@ public class UIManager : NetworkBehaviour
     [SerializeField] float characterSpace;
     [SerializeField] GameObject characterButtonPrefab;
 
+    [Header("DM Inventory")]
+    [SerializeField] GameObject dmInventory;
+    [SerializeField] Button closeDmInventory;
 
-    
 
     #endregion
 
@@ -83,6 +86,16 @@ public class UIManager : NetworkBehaviour
         toggleCharSelector.onClick.AddListener(() => ToggleCharacterSelector());
         closeCharacterSelector.onClick.AddListener(() => ToggleCharacterSelector());
         toggleDiceBox.onClick.AddListener(() => ToggleDiceBox());
+
+        if (IsHost)
+        {
+            toggleDmInventory.onClick.AddListener(() => ToggleDmInventory());
+            closeDmInventory.onClick.AddListener(() => ToggleDmInventory());
+        }
+        else
+        {
+            Destroy(toggleDmInventory);
+        }
 
         buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
         buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
@@ -236,6 +249,12 @@ public class UIManager : NetworkBehaviour
     {
         bool toggle = !diceBox.activeInHierarchy;
         diceBox.SetActive(toggle);
+    }
+
+    private void ToggleDmInventory()
+    {
+        bool toggle = !dmInventory.activeInHierarchy;
+        dmInventory.SetActive(toggle);
     }
 
     #endregion
