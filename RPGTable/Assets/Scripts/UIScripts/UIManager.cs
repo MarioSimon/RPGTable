@@ -87,16 +87,6 @@ public class UIManager : NetworkBehaviour
         closeCharacterSelector.onClick.AddListener(() => ToggleCharacterSelector());
         toggleDiceBox.onClick.AddListener(() => ToggleDiceBox());
 
-        if (IsHost)
-        {
-            toggleDmInventory.onClick.AddListener(() => ToggleDmInventory());
-            closeDmInventory.onClick.AddListener(() => ToggleDmInventory());
-        }
-        else
-        {
-            Destroy(toggleDmInventory);
-        }
-
         buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
         buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
         buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(diceType.d8, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
@@ -266,6 +256,10 @@ public class UIManager : NetworkBehaviour
         if (!SetIPAndPort()) { return; }
 
         NetworkManager.Singleton.StartHost();
+
+        toggleDmInventory.onClick.AddListener(() => ToggleDmInventory());
+        closeDmInventory.onClick.AddListener(() => ToggleDmInventory());
+
         DeactivateMainMenu();
         ActivateInGameHUD();
     }
@@ -274,7 +268,10 @@ public class UIManager : NetworkBehaviour
     {
         if (!SetIPAndPort()) { return; }
 
-        NetworkManager.Singleton.StartClient();      
+        NetworkManager.Singleton.StartClient();
+
+        Destroy(toggleDmInventory);
+
         DeactivateMainMenu();
         ActivateInGameHUD();
     }
