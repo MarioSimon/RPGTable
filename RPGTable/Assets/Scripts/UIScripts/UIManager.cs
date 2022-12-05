@@ -63,6 +63,19 @@ public class UIManager : NetworkBehaviour
     [Header("DM Inventory")]
     [SerializeField] GameObject dmInventory;
     [SerializeField] Button closeDmInventory;
+    [SerializeField] Button openSaveLevelPanel;
+    [SerializeField] Button openLoadLevelPanel;
+
+    [SerializeField] GameObject saveLevelPanel;
+    [SerializeField] Button closeSaveLevelPanel;
+    [SerializeField] InputField levelName;
+    [SerializeField] Button saveLevel;
+
+    [SerializeField] GameObject loadLevelPanel;
+    [SerializeField] Button closeLoadLevelPanel;
+    [SerializeField] Dropdown levelList;
+    [SerializeField] Button loadLevel;
+    [SerializeField] Button deleteLevel;
 
 
     #endregion
@@ -138,6 +151,30 @@ public class UIManager : NetworkBehaviour
         newCharacterButton.GetComponent<RectTransform>().localPosition = position;
 
         characterList.Add(newCharacterButton);
+    }
+
+    void SaveLevel()
+    {
+        if (levelName.text == null || levelName.text == "")
+        {
+            levelName.text = "level_" + gameManager.GetLevelNumber().ToString();
+        }
+        bool newSave = gameManager.SaveLevel(levelName.text);
+
+        if (newSave)
+        {
+            List<string> newLevelList = new List<string>();
+            newLevelList.Add(levelName.text);
+
+            levelList.AddOptions(newLevelList);
+        }
+
+        levelName.text = "";
+    }
+
+    void LoadLevel()
+    {
+        gameManager.LoadLevel(levelList.captionText.text);
     }
 
     #region ServerRpc
@@ -247,6 +284,18 @@ public class UIManager : NetworkBehaviour
         dmInventory.SetActive(toggle);
     }
 
+    private void ToggleSaveLevelPanel()
+    {
+        bool toggle = !saveLevelPanel.activeInHierarchy;
+        saveLevelPanel.SetActive(toggle);
+    }
+
+    private void ToggleLoadLevelPanel()
+    {
+        bool toggle = !loadLevelPanel.activeInHierarchy;
+        loadLevelPanel.SetActive(toggle);
+    }
+
     #endregion
 
     #region Netcode Related Methods
@@ -259,6 +308,14 @@ public class UIManager : NetworkBehaviour
 
         toggleDmInventory.onClick.AddListener(() => ToggleDmInventory());
         closeDmInventory.onClick.AddListener(() => ToggleDmInventory());
+        openSaveLevelPanel.onClick.AddListener(() => ToggleSaveLevelPanel());
+        openLoadLevelPanel.onClick.AddListener(() => ToggleLoadLevelPanel());
+
+        closeSaveLevelPanel.onClick.AddListener(() => ToggleSaveLevelPanel());
+        saveLevel.onClick.AddListener(() => SaveLevel());
+
+        closeLoadLevelPanel.onClick.AddListener(() => ToggleLoadLevelPanel());
+        loadLevel.onClick.AddListener(() => LoadLevel());
 
         DeactivateMainMenu();
         ActivateInGameHUD();

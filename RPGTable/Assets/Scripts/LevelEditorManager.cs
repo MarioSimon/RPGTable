@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class LevelEditorManager : NetworkBehaviour
 {
+    [SerializeField] GameManager gameManager;
+
     public LevelItemSpawner[] itemButtons;
     public GameObject[] itemPrefabs;
     public GameObject[] itemPreviews;
@@ -12,6 +14,8 @@ public class LevelEditorManager : NetworkBehaviour
 
     void Update()
     {
+        if (!IsServer) { return; }
+
         if (Input.GetMouseButtonDown(0) && itemButtons[currentButtonPressed].clicked)
         {
             Vector3 worldPosition = GetTablePoint();
@@ -19,7 +23,9 @@ public class LevelEditorManager : NetworkBehaviour
 
             itemButtons[currentButtonPressed].clicked = false;
             GameObject item = Instantiate(itemPrefabs[currentButtonPressed], worldPosition, Quaternion.identity);
+            item.GetComponent<LevelItemHandler>().id = currentButtonPressed;
             item.GetComponent<NetworkObject>().Spawn();
+            gameManager.currentLevel.Add(item);
             Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
         }
     }
@@ -41,4 +47,21 @@ public class LevelEditorManager : NetworkBehaviour
         }
         return worldPosition;
     }
+
+    public void SpawnLevelItem(levelItemInfo itemInfo)
+    {
+        GameObject item = Instantiate(itemPrefabs[itemInfo.itemID],itemInfo.itemPosition, Quaternion.Euler(itemInfo.itemRotation));
+        item.transform.localScale = itemInfo.itemScale;
+        item.GetComponent<LevelItemHandler>().id = itemInfo.itemID;
+        item.GetComponent<NetworkObject>().Spawn();
+        gameManager.currentLevel.Add(item);
+    }
+}
+
+public struct levelItemInfo
+{
+    public int itemID;
+    public Vector3 itemPosition;
+    public Vector3 itemRotation;
+    public Vector3 itemScale;
 }

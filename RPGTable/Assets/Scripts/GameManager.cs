@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : NetworkBehaviour
 {
     [SerializeField] UIManager uiManager;
+    [SerializeField] LevelEditorManager levelEditorManager;
     List<CharacterSheetInfo> characterSheets;
 
     [SerializeField] GameObject d4Prefab;
@@ -15,10 +16,14 @@ public class GameManager : NetworkBehaviour
     [SerializeField] GameObject d12Prefab;
     [SerializeField] GameObject d20Prefab;
 
+    public List<GameObject> currentLevel;
+    Dictionary<string, List<levelItemInfo>> savedLevels;
+
     private void Start()
     {
         characterSheets = new List<CharacterSheetInfo>();
-        //AddSavedCharactersServerRpc(NetworkManager.Singleton.LocalClientId);
+        currentLevel = new List<GameObject>();
+        savedLevels = new Dictionary<string, List<levelItemInfo>>();
     }
 
     public void RollDice(diceType type, Vector3 position, string thrownBy, int modifier)
@@ -144,7 +149,6 @@ public class GameManager : NetworkBehaviour
 
     public void AddNewCharacterSheetInfo(CharacterSheetInfo charInfo)
     {
-        //characterSheets.Add(charInfo);
         UpdateSheetListClientRpc(charInfo);
         uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName);
     }
@@ -156,7 +160,6 @@ public class GameManager : NetworkBehaviour
             SaveCharacterSheetChangesServerRpc(charInfo); 
         } else
         {
-            //characterSheets[charInfo.sheetID] = charInfo;
             SaveCharacterSheetChangesClientRpc(charInfo);
         }            
     }
@@ -166,6 +169,59 @@ public class GameManager : NetworkBehaviour
         return characterSheets.Count;
     }
 
+    void SaveItemInfo(string levelName, int id, Vector3 position, Vector3 rotation, Vector3 scale)
+    {
+        levelItemInfo itemInfo;
+        itemInfo.itemID = id;
+        itemInfo.itemPosition = position;
+        itemInfo.itemRotation = rotation;
+        itemInfo.itemScale = scale;
+
+        savedLevels[levelName].Add(itemInfo);
+    }
+
+    public bool SaveLevel(string levelName)
+    {
+        bool newSave = false;
+        if (!savedLevels.ContainsKey(levelName))
+        {
+            savedLevels.Add(levelName, new List<levelItemInfo>());
+            newSave = true;
+        }
+        else
+        {
+            savedLevels[levelName] = new List<levelItemInfo>();
+        }      
+
+        foreach (GameObject item in currentLevel)
+        {
+            if (item == null) { continue; }
+
+            SaveItemInfo(levelName, item.GetComponent<LevelItemHandler>().id, item.transform.position, item.transform.rotation.eulerAngles, item.transform.localScale);
+        }
+
+        return newSave;
+    }
+
+    public void LoadLevel(string levelName)
+    {
+        foreach (GameObject item in currentLevel)
+        {
+            if (item == null) { continue; }
+            item.GetComponent<NetworkObject>().Despawn();
+        }
+        currentLevel.Clear();
+
+        foreach (levelItemInfo itemInfo in savedLevels[levelName])
+        {
+            levelEditorManager.SpawnLevelItem(itemInfo);
+        }
+    }
+
+    public int GetLevelNumber()
+    {
+        return savedLevels.Count;
+    }
     #region ServerRpc
 
     [ServerRpc (RequireOwnership = false)]

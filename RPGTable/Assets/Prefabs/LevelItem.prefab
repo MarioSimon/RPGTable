@@ -207,7 +207,7 @@ MonoBehaviour:
   snappingType: 0
   positionSnap: {x: 1.5, y: 1.5, z: 1.5}
   rotationSnap: 0
-  scaleSnap: {x: 0, y: 0, z: 0}
+  scaleSnap: {x: 1.5, y: 1.5, z: 1.5}
   autoScale: 0
   autoScaleFactor: 1
   handleCamera: {fileID: 0}

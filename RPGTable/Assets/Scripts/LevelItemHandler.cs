@@ -11,6 +11,8 @@ public class LevelItemHandler : NetworkBehaviour
     [SerializeField] GameObject itemMenu;
     GameObject itemMenuInstance;
 
+    public int id;
+
     void Start()
     {
         canvas = FindObjectOfType<Canvas>();
@@ -25,17 +27,11 @@ public class LevelItemHandler : NetworkBehaviour
         {
             InteractWithSelection();
         }
-
-        if (Input.GetMouseButtonDown(2))
-        {
-            //transformHandle.
-            transformHandle.enabled = false;
-        }
     }
 
     public void SetPositionHandler()
     {
-        transformHandle.enabled = true;
+        transformHandle.DrawAxes();
         transformHandle.type = HandleType.POSITION;
         if (itemMenuInstance != null)
         {
@@ -45,7 +41,7 @@ public class LevelItemHandler : NetworkBehaviour
 
     public void SetRotationHandler()
     {
-        transformHandle.enabled = true;
+        transformHandle.DrawAxes();
         transformHandle.type = HandleType.ROTATION;
         if (itemMenuInstance != null)
         {
@@ -55,7 +51,7 @@ public class LevelItemHandler : NetworkBehaviour
 
     public void SetScaleHandler()
     {
-        transformHandle.enabled = true;
+        transformHandle.DrawAxes();
         transformHandle.type = HandleType.SCALE;
         if (itemMenuInstance != null)
         {
@@ -97,8 +93,6 @@ public class LevelItemHandler : NetworkBehaviour
         RaycastHit hit;
         bool hasHit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit);
 
-
-
         if (hasHit)
         {
             GameObject target = hit.transform.gameObject;
@@ -107,15 +101,13 @@ public class LevelItemHandler : NetworkBehaviour
             {
                 if (itemMenuInstance != null)
                 {
-                    Destroy(itemMenuInstance);
+                    Destroy(itemMenuInstance);                   
                 }
-            
+                transformHandle.ClearAxes();
                 return;
             }
 
-            OpenItemMenu();
-
-            
+            OpenItemMenu();           
         }
     }
 }
