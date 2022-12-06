@@ -65,6 +65,8 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button closeDmInventory;
     [SerializeField] Button openSaveLevelPanel;
     [SerializeField] Button openLoadLevelPanel;
+    [SerializeField] Button saveToFile;
+    [SerializeField] Button loadFromFile;
 
     [SerializeField] GameObject saveLevelPanel;
     [SerializeField] Button closeSaveLevelPanel;
@@ -163,10 +165,10 @@ public class UIManager : NetworkBehaviour
 
         if (newSave)
         {
-            List<string> newLevelList = new List<string>();
-            newLevelList.Add(levelName.text);
+            List<string> newLevel = new List<string>();
+            newLevel.Add(levelName.text);
 
-            levelList.AddOptions(newLevelList);
+            levelList.AddOptions(newLevel);
         }
 
         levelName.text = "";
@@ -175,6 +177,21 @@ public class UIManager : NetworkBehaviour
     void LoadLevel()
     {
         gameManager.LoadLevel(levelList.captionText.text);
+    }
+
+    void SaveLevelsToFile()
+    {
+        gameManager.SaveLevelsToJSON();
+    }
+
+    void LoadLevelsFromFile()
+    {
+        List<string> newLevels = gameManager.LoadLevelsFromJSON();
+
+        if (newLevels.Count > 0)
+        {
+            levelList.AddOptions(newLevels);
+        }
     }
 
     #region ServerRpc
@@ -310,6 +327,8 @@ public class UIManager : NetworkBehaviour
         closeDmInventory.onClick.AddListener(() => ToggleDmInventory());
         openSaveLevelPanel.onClick.AddListener(() => ToggleSaveLevelPanel());
         openLoadLevelPanel.onClick.AddListener(() => ToggleLoadLevelPanel());
+        saveToFile.onClick.AddListener(() => SaveLevelsToFile());
+        loadFromFile.onClick.AddListener(() => LoadLevelsFromFile());
 
         closeSaveLevelPanel.onClick.AddListener(() => ToggleSaveLevelPanel());
         saveLevel.onClick.AddListener(() => SaveLevel());

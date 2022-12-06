@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -48,7 +49,7 @@ public class LevelEditorManager : NetworkBehaviour
         return worldPosition;
     }
 
-    public void SpawnLevelItem(levelItemInfo itemInfo)
+    public void SpawnLevelItem(LevelItemInfo itemInfo)
     {
         GameObject item = Instantiate(itemPrefabs[itemInfo.itemID],itemInfo.itemPosition, Quaternion.Euler(itemInfo.itemRotation));
         item.transform.localScale = itemInfo.itemScale;
@@ -58,7 +59,8 @@ public class LevelEditorManager : NetworkBehaviour
     }
 }
 
-public struct levelItemInfo
+[Serializable]
+public struct LevelItemInfo
 {
     public int itemID;
     public Vector3 itemPosition;
