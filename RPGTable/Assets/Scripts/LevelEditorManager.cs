@@ -26,6 +26,7 @@ public class LevelEditorManager : NetworkBehaviour
             GameObject item = Instantiate(itemPrefabs[currentButtonPressed], worldPosition, Quaternion.identity);
             item.GetComponent<LevelItemHandler>().id = currentButtonPressed;
             item.GetComponent<NetworkObject>().Spawn();
+            //item.GetComponent<RuntimeTransformHandle>()
             gameManager.currentLevel.Add(item);
             Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
         }

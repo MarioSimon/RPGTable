@@ -172,11 +172,13 @@ public class UIManager : NetworkBehaviour
         }
 
         levelName.text = "";
+        ToggleSaveLevelPanel();
     }
 
     void LoadLevel()
     {
         gameManager.LoadLevel(levelList.captionText.text);
+        ToggleLoadLevelPanel();
     }
 
     void SaveLevelsToFile()
