@@ -222,6 +222,39 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public List<LevelItemInfo> GetLevelState()
+    {
+        List<LevelItemInfo> state = new List<LevelItemInfo>();
+
+        foreach (GameObject item in currentLevel)
+        {
+            LevelItemInfo itemInfo;
+            itemInfo.itemID = item.GetComponent<LevelItemHandler>().id;
+            itemInfo.itemPosition = item.transform.position;
+            itemInfo.itemRotation = item.transform.rotation.eulerAngles;
+            itemInfo.itemScale = item.transform.localScale;
+
+            state.Add(itemInfo);
+        }
+
+        return state;
+    }
+
+    public void LoadLevelState(List<LevelItemInfo> levelState)
+    {
+        foreach (GameObject item in currentLevel)
+        {
+            if (item == null) { continue; }
+            item.GetComponent<NetworkObject>().Despawn();
+        }
+        currentLevel.Clear();
+
+        foreach (LevelItemInfo itemInfo in levelState)
+        {
+            levelEditorManager.SpawnLevelItem(itemInfo);
+        }
+    }
+
     public int GetLevelNumber()
     {
         return savedLevels.Count;

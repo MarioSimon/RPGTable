@@ -13,12 +13,27 @@ public class LevelEditorManager : NetworkBehaviour
     public GameObject[] itemPreviews;
     public int currentButtonPressed;
 
+    [SerializeField] List<List<LevelItemInfo>> previousStates;
+    const int MAX_SAVED_STATES = 20;
+
+    private void Start()
+    {
+        previousStates = new List<List<LevelItemInfo>>();
+    }
+
     void Update()
     {
         if (!IsServer) { return; }
 
+        if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.Z))
+        {
+            LoadPreviousState();
+        }
+
         if (Input.GetMouseButtonDown(0) && itemButtons[currentButtonPressed].clicked)
         {
+            SaveState();
+
             Vector3 worldPosition = GetTablePoint();
             if (worldPosition == new Vector3(-99, -99, -99)) { return; }
 
@@ -26,7 +41,6 @@ public class LevelEditorManager : NetworkBehaviour
             GameObject item = Instantiate(itemPrefabs[currentButtonPressed], worldPosition, Quaternion.identity);
             item.GetComponent<LevelItemHandler>().id = currentButtonPressed;
             item.GetComponent<NetworkObject>().Spawn();
-            //item.GetComponent<RuntimeTransformHandle>()
             gameManager.currentLevel.Add(item);
             Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
         }
@@ -57,6 +71,30 @@ public class LevelEditorManager : NetworkBehaviour
         item.GetComponent<LevelItemHandler>().id = itemInfo.itemID;
         item.GetComponent<NetworkObject>().Spawn();
         gameManager.currentLevel.Add(item);
+    }
+
+    public void SaveState()
+    {
+        List<LevelItemInfo> state = gameManager.GetLevelState();
+
+        if (previousStates.Count >= MAX_SAVED_STATES)
+        {
+            previousStates.RemoveAt(0);
+            previousStates.Add(state);
+        }
+        else
+        {
+            previousStates.Add(state);
+        }
+    }
+
+    public void LoadPreviousState()
+    {
+        if (previousStates.Count < 1) { return; }
+        List<LevelItemInfo> state = previousStates[previousStates.Count - 1];
+        previousStates.RemoveAt(previousStates.Count - 1);
+
+        gameManager.LoadLevelState(state);
     }
 }
 

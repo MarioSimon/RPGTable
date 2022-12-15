@@ -3,20 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using RuntimeHandle;
 using Unity.Netcode;
+using System;
 
 public class LevelItemHandler : NetworkBehaviour
 {
+    LevelEditorManager levelEditorManager;
     RuntimeTransformHandle transformHandle;
     Canvas canvas;
+
     [SerializeField] GameObject itemMenu;
     GameObject itemMenuInstance;
 
     public int id;
 
-    void Start()
+    private void Awake()
     {
+        levelEditorManager = FindObjectOfType<LevelEditorManager>();
         canvas = FindObjectOfType<Canvas>();
         transformHandle = GetComponent<RuntimeTransformHandle>();
+    }
+
+    void Start()
+    {
+        transformHandle.ClearAxes();
+        transformHandle.enabled = false;
     }
 
     private void Update()
@@ -31,8 +41,9 @@ public class LevelItemHandler : NetworkBehaviour
 
     public void SetPositionHandler()
     {
-        transformHandle.DrawAxes();
+        transformHandle.enabled = true;       
         transformHandle.type = HandleType.POSITION;
+        transformHandle.DrawAxes();
         if (itemMenuInstance != null)
         {
             Destroy(itemMenuInstance);
@@ -41,8 +52,9 @@ public class LevelItemHandler : NetworkBehaviour
 
     public void SetRotationHandler()
     {
-        transformHandle.DrawAxes();
+        transformHandle.enabled = true;
         transformHandle.type = HandleType.ROTATION;
+        transformHandle.DrawAxes();      
         if (itemMenuInstance != null)
         {
             Destroy(itemMenuInstance);
@@ -51,8 +63,10 @@ public class LevelItemHandler : NetworkBehaviour
 
     public void SetScaleHandler()
     {
-        transformHandle.DrawAxes();
+        transformHandle.enabled = true;
         transformHandle.type = HandleType.SCALE;
+        transformHandle.DrawAxes();
+        
         if (itemMenuInstance != null)
         {
             Destroy(itemMenuInstance);
@@ -61,6 +75,9 @@ public class LevelItemHandler : NetworkBehaviour
 
     public void DestroyLevelItem()
     {
+        levelEditorManager.SaveState();
+        transformHandle.ClearAxes();
+
         this.gameObject.GetComponent<NetworkObject>().Despawn();
         if (itemMenuInstance != null)
         {
@@ -104,6 +121,8 @@ public class LevelItemHandler : NetworkBehaviour
                     Destroy(itemMenuInstance);                   
                 }
                 transformHandle.ClearAxes();
+
+                transformHandle.enabled = false;
                 return;
             }
 

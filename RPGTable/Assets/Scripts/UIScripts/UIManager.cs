@@ -63,6 +63,10 @@ public class UIManager : NetworkBehaviour
     [Header("DM Inventory")]
     [SerializeField] GameObject dmInventory;
     [SerializeField] Button closeDmInventory;
+    [SerializeField] Dropdown itemType;
+    [SerializeField] GameObject structureItems;
+    [SerializeField] GameObject floorTileItems;
+    [SerializeField] GameObject decorItems;
     [SerializeField] Button openSaveLevelPanel;
     [SerializeField] Button openLoadLevelPanel;
     [SerializeField] Button saveToFile;
@@ -315,6 +319,28 @@ public class UIManager : NetworkBehaviour
         loadLevelPanel.SetActive(toggle);
     }
 
+    private void SwitchItemType(int newType)
+    {
+        switch (newType)
+        {
+            case 0:
+                structureItems.SetActive(true);
+                floorTileItems.SetActive(false);
+                decorItems.SetActive(false);
+                break;
+            case 1:
+                structureItems.SetActive(false);
+                floorTileItems.SetActive(true);
+                decorItems.SetActive(false);
+                break;
+            case 2:
+                structureItems.SetActive(false);
+                floorTileItems.SetActive(false);
+                decorItems.SetActive(true);
+                break;
+        }
+    }
+
     #endregion
 
     #region Netcode Related Methods
@@ -327,6 +353,7 @@ public class UIManager : NetworkBehaviour
 
         toggleDmInventory.onClick.AddListener(() => ToggleDmInventory());
         closeDmInventory.onClick.AddListener(() => ToggleDmInventory());
+        itemType.onValueChanged.AddListener(delegate { SwitchItemType(itemType.value); });
         openSaveLevelPanel.onClick.AddListener(() => ToggleSaveLevelPanel());
         openLoadLevelPanel.onClick.AddListener(() => ToggleLoadLevelPanel());
         saveToFile.onClick.AddListener(() => SaveLevelsToFile());
