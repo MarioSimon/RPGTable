@@ -96,7 +96,7 @@ MonoBehaviour:
   type: 0
   snappingType: 0
   positionSnap: {x: 1.5, y: 1.5, z: 1.5}
-  rotationSnap: 45
+  rotationSnap: 90
   scaleSnap: {x: 1.5, y: 1.5, z: 1.5}
   autoScale: 0
   autoScaleFactor: 1
@@ -115,7 +115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemMenu: {fileID: 1878711165183701654, guid: f2ae9da069cf31e4aa370ecf88678252, type: 3}
-  id: 1
+  id: 5
 --- !u!1001 &3426827884165332054
 PrefabInstance:
   m_ObjectHideFlags: 0
