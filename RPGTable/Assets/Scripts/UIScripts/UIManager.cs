@@ -185,6 +185,16 @@ public class UIManager : NetworkBehaviour
         ToggleLoadLevelPanel();
     }
 
+    void DeleteLevel()
+    {
+        bool deleted = gameManager.DeleteLevel(levelList.captionText.text);
+
+        if (deleted)
+        {
+            // borrar el nivel borrado
+        }
+    }
+
     void SaveLevelsToFile()
     {
         gameManager.SaveLevelsToJSON();
@@ -192,7 +202,9 @@ public class UIManager : NetworkBehaviour
 
     void LoadLevelsFromFile()
     {
-        List<string> newLevels = gameManager.LoadLevelsFromJSON();
+        if (!System.IO.File.Exists(Application.dataPath + "/levels.json")) { return; }
+
+            List<string> newLevels = gameManager.LoadLevelsFromJSON();
 
         if (newLevels.Count > 0)
         {
@@ -358,12 +370,15 @@ public class UIManager : NetworkBehaviour
         openLoadLevelPanel.onClick.AddListener(() => ToggleLoadLevelPanel());
         saveToFile.onClick.AddListener(() => SaveLevelsToFile());
         loadFromFile.onClick.AddListener(() => LoadLevelsFromFile());
+        deleteLevel.onClick.AddListener(() => DeleteLevel());
 
         closeSaveLevelPanel.onClick.AddListener(() => ToggleSaveLevelPanel());
         saveLevel.onClick.AddListener(() => SaveLevel());
 
         closeLoadLevelPanel.onClick.AddListener(() => ToggleLoadLevelPanel());
         loadLevel.onClick.AddListener(() => LoadLevel());
+
+        LoadLevelsFromFile();
 
         DeactivateMainMenu();
         ActivateInGameHUD();

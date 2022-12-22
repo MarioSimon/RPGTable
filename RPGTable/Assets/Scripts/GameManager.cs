@@ -207,8 +207,25 @@ public class GameManager : NetworkBehaviour
         return newSave;
     }
 
+    public bool DeleteLevel(string levelName)
+    {
+        if (!savedLevels.ContainsKey(levelName))
+        {
+            return false;
+        }
+
+        savedLevels.Remove(levelName);
+        return true;
+    }
+
     public void LoadLevel(string levelName)
     {
+        if (!savedLevels.ContainsKey(levelName))
+        {
+            Debug.Log("Error: selected level doesn't exist");
+            return;
+        }
+
         foreach (GameObject item in currentLevel)
         {
             if (item == null) { continue; }

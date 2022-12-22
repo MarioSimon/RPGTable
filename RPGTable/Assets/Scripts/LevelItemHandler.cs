@@ -41,6 +41,7 @@ public class LevelItemHandler : NetworkBehaviour
 
     public void SetPositionHandler()
     {
+        levelEditorManager.SaveState();
         transformHandle.enabled = true;       
         transformHandle.type = HandleType.POSITION;
         transformHandle.DrawAxes();
@@ -52,6 +53,7 @@ public class LevelItemHandler : NetworkBehaviour
 
     public void SetRotationHandler()
     {
+        levelEditorManager.SaveState();
         transformHandle.enabled = true;
         transformHandle.type = HandleType.ROTATION;
         transformHandle.DrawAxes();      
@@ -63,6 +65,7 @@ public class LevelItemHandler : NetworkBehaviour
 
     public void SetScaleHandler()
     {
+        levelEditorManager.SaveState();
         transformHandle.enabled = true;
         transformHandle.type = HandleType.SCALE;
         transformHandle.DrawAxes();
