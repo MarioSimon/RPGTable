@@ -1,10 +1,15 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using Unity.Netcode;
 using UnityEngine;
+
+
 
 public class GameManager : NetworkBehaviour
 {
     [SerializeField] UIManager uiManager;
+    [SerializeField] LevelEditorManager levelEditorManager;
     List<CharacterSheetInfo> characterSheets;
 
     [SerializeField] GameObject d4Prefab;
@@ -15,10 +20,14 @@ public class GameManager : NetworkBehaviour
     [SerializeField] GameObject d12Prefab;
     [SerializeField] GameObject d20Prefab;
 
+    public List<GameObject> currentLevel;
+    Dictionary<string, List<LevelItemInfo>> savedLevels;
+
     private void Start()
     {
         characterSheets = new List<CharacterSheetInfo>();
-        //AddSavedCharactersServerRpc(NetworkManager.Singleton.LocalClientId);
+        currentLevel = new List<GameObject>();
+        savedLevels = new Dictionary<string, List<LevelItemInfo>>();
     }
 
     public void RollDice(diceType type, Vector3 position, string thrownBy, int modifier)
@@ -144,7 +153,6 @@ public class GameManager : NetworkBehaviour
 
     public void AddNewCharacterSheetInfo(CharacterSheetInfo charInfo)
     {
-        //characterSheets.Add(charInfo);
         UpdateSheetListClientRpc(charInfo);
         uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName);
     }
@@ -156,7 +164,6 @@ public class GameManager : NetworkBehaviour
             SaveCharacterSheetChangesServerRpc(charInfo); 
         } else
         {
-            //characterSheets[charInfo.sheetID] = charInfo;
             SaveCharacterSheetChangesClientRpc(charInfo);
         }            
     }
@@ -166,6 +173,160 @@ public class GameManager : NetworkBehaviour
         return characterSheets.Count;
     }
 
+    void SaveItemInfo(string levelName, int id, Vector3 position, Vector3 rotation, Vector3 scale)
+    {
+        LevelItemInfo itemInfo;
+        itemInfo.itemID = id;
+        itemInfo.itemPosition = position;
+        itemInfo.itemRotation = rotation;
+        itemInfo.itemScale = scale;
+
+        savedLevels[levelName].Add(itemInfo);
+    }
+
+    public bool SaveLevel(string levelName)
+    {
+        bool newSave = false;
+        if (!savedLevels.ContainsKey(levelName))
+        {
+            savedLevels.Add(levelName, new List<LevelItemInfo>());
+            newSave = true;
+        }
+        else
+        {
+            savedLevels[levelName] = new List<LevelItemInfo>();
+        }      
+
+        foreach (GameObject item in currentLevel)
+        {
+            if (item == null) { continue; }
+
+            SaveItemInfo(levelName, item.GetComponent<LevelItemHandler>().id, item.transform.position, item.transform.rotation.eulerAngles, item.transform.localScale);
+        }
+
+        return newSave;
+    }
+
+    public bool DeleteLevel(string levelName)
+    {
+        if (!savedLevels.ContainsKey(levelName))
+        {
+            return false;
+        }
+
+        savedLevels.Remove(levelName);
+        return true;
+    }
+
+    public void LoadLevel(string levelName)
+    {
+        if (!savedLevels.ContainsKey(levelName))
+        {
+            Debug.Log("Error: selected level doesn't exist");
+            return;
+        }
+
+        foreach (GameObject item in currentLevel)
+        {
+            if (item == null) { continue; }
+            item.GetComponent<NetworkObject>().Despawn();
+        }
+        currentLevel.Clear();
+
+        foreach (LevelItemInfo itemInfo in savedLevels[levelName])
+        {
+            levelEditorManager.SpawnLevelItem(itemInfo);
+        }
+    }
+
+    public List<LevelItemInfo> GetLevelState()
+    {
+        List<LevelItemInfo> state = new List<LevelItemInfo>();
+
+        foreach (GameObject item in currentLevel)
+        {
+            LevelItemInfo itemInfo;
+            itemInfo.itemID = item.GetComponent<LevelItemHandler>().id;
+            itemInfo.itemPosition = item.transform.position;
+            itemInfo.itemRotation = item.transform.rotation.eulerAngles;
+            itemInfo.itemScale = item.transform.localScale;
+
+            state.Add(itemInfo);
+        }
+
+        return state;
+    }
+
+    public void LoadLevelState(List<LevelItemInfo> levelState)
+    {
+        foreach (GameObject item in currentLevel)
+        {
+            if (item == null) { continue; }
+            item.GetComponent<NetworkObject>().Despawn();
+        }
+        currentLevel.Clear();
+
+        foreach (LevelItemInfo itemInfo in levelState)
+        {
+            levelEditorManager.SpawnLevelItem(itemInfo);
+        }
+    }
+
+    public int GetLevelNumber()
+    {
+        return savedLevels.Count;
+    }
+
+    public void SaveLevelsToJSON()
+    {
+        if (savedLevels.Count < 1) { return; }
+
+        SerializableList<SavedLevelParams> savedLevelsInfo = new SerializableList<SavedLevelParams>();
+
+        foreach (string level in savedLevels.Keys)
+        {
+            SavedLevelParams levelParams;
+            levelParams.levelItems = new SerializableList<LevelItemInfo>();
+
+            levelParams.levelName = level;
+            levelParams.levelItems.list = savedLevels[level];
+
+            savedLevelsInfo.list.Add(levelParams);
+        }
+
+        string json = JsonUtility.ToJson(savedLevelsInfo);
+        File.WriteAllText(Application.dataPath + "/levels.json", json);
+
+        Debug.Log("SAVED LEVELS AT " + Application.dataPath + "/levels.json");
+    }
+
+    public List<string> LoadLevelsFromJSON()
+    {
+        string jsonString = File.ReadAllText(Application.dataPath + "/levels.json");
+        SerializableList<SavedLevelParams> savedLevelsInfo = JsonUtility.FromJson<SerializableList<SavedLevelParams>>(jsonString);
+
+        List<string> newLevels = new List<string>();
+
+        foreach (SavedLevelParams levelInfo in savedLevelsInfo.list)
+        {
+            string levelName = levelInfo.levelName;
+            List<LevelItemInfo> levelItems = levelInfo.levelItems.list;
+
+            if (savedLevels.ContainsKey(levelName))
+            {
+                savedLevels[levelName] = levelItems;
+            }
+            else
+            {
+                savedLevels.Add(levelName, levelItems);
+                newLevels.Add(levelName);
+            }            
+        }
+        Debug.Log("LOADED LEVELS FROM " + Application.dataPath + "/levels.json");
+
+        return newLevels;
+    }
+    
     #region ServerRpc
 
     [ServerRpc (RequireOwnership = false)]
@@ -213,4 +374,17 @@ public class GameManager : NetworkBehaviour
 
     #endregion
 
+}
+
+[Serializable]
+struct SavedLevelParams
+{
+    public string levelName;
+    public SerializableList<LevelItemInfo> levelItems;
+}
+
+[Serializable]
+public class SerializableList<T>
+{
+    public List<T> list = new List<T>();
 }

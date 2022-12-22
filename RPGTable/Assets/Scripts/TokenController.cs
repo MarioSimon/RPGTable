@@ -26,6 +26,7 @@ public class TokenController : NetworkBehaviour
     private void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
+        
     }
 
     #endregion

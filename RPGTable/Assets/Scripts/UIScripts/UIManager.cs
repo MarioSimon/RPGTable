@@ -32,6 +32,7 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button buttonSpawnNewCharSheet;
     [SerializeField] Button toggleCharSelector;
     [SerializeField] Button toggleDiceBox;
+    [SerializeField] Button toggleDmInventory;
 
     //Esto probablemente se mueva mas adelante
     [SerializeField] GameObject tokenPrefab;
@@ -59,8 +60,29 @@ public class UIManager : NetworkBehaviour
     [SerializeField] float characterSpace;
     [SerializeField] GameObject characterButtonPrefab;
 
+    [Header("DM Inventory")]
+    [SerializeField] GameObject dmInventory;
+    [SerializeField] Button closeDmInventory;
+    [SerializeField] Dropdown itemType;
+    [SerializeField] GameObject structureItems;
+    [SerializeField] GameObject floorTileItems;
+    [SerializeField] GameObject decorItems;
+    [SerializeField] Button openSaveLevelPanel;
+    [SerializeField] Button openLoadLevelPanel;
+    [SerializeField] Button saveToFile;
+    [SerializeField] Button loadFromFile;
 
-    
+    [SerializeField] GameObject saveLevelPanel;
+    [SerializeField] Button closeSaveLevelPanel;
+    [SerializeField] InputField levelName;
+    [SerializeField] Button saveLevel;
+
+    [SerializeField] GameObject loadLevelPanel;
+    [SerializeField] Button closeLoadLevelPanel;
+    [SerializeField] Dropdown levelList;
+    [SerializeField] Button loadLevel;
+    [SerializeField] Button deleteLevel;
+
 
     #endregion
 
@@ -135,6 +157,59 @@ public class UIManager : NetworkBehaviour
         newCharacterButton.GetComponent<RectTransform>().localPosition = position;
 
         characterList.Add(newCharacterButton);
+    }
+
+    void SaveLevel()
+    {
+        if (levelName.text == null || levelName.text == "")
+        {
+            levelName.text = "level_" + gameManager.GetLevelNumber().ToString();
+        }
+        bool newSave = gameManager.SaveLevel(levelName.text);
+
+        if (newSave)
+        {
+            List<string> newLevel = new List<string>();
+            newLevel.Add(levelName.text);
+
+            levelList.AddOptions(newLevel);
+        }
+
+        levelName.text = "";
+        ToggleSaveLevelPanel();
+    }
+
+    void LoadLevel()
+    {
+        gameManager.LoadLevel(levelList.captionText.text);
+        ToggleLoadLevelPanel();
+    }
+
+    void DeleteLevel()
+    {
+        bool deleted = gameManager.DeleteLevel(levelList.captionText.text);
+
+        if (deleted)
+        {
+            // borrar el nivel borrado
+        }
+    }
+
+    void SaveLevelsToFile()
+    {
+        gameManager.SaveLevelsToJSON();
+    }
+
+    void LoadLevelsFromFile()
+    {
+        if (!System.IO.File.Exists(Application.dataPath + "/levels.json")) { return; }
+
+            List<string> newLevels = gameManager.LoadLevelsFromJSON();
+
+        if (newLevels.Count > 0)
+        {
+            levelList.AddOptions(newLevels);
+        }
     }
 
     #region ServerRpc
@@ -238,6 +313,46 @@ public class UIManager : NetworkBehaviour
         diceBox.SetActive(toggle);
     }
 
+    private void ToggleDmInventory()
+    {
+        bool toggle = !dmInventory.activeInHierarchy;
+        dmInventory.SetActive(toggle);
+    }
+
+    private void ToggleSaveLevelPanel()
+    {
+        bool toggle = !saveLevelPanel.activeInHierarchy;
+        saveLevelPanel.SetActive(toggle);
+    }
+
+    private void ToggleLoadLevelPanel()
+    {
+        bool toggle = !loadLevelPanel.activeInHierarchy;
+        loadLevelPanel.SetActive(toggle);
+    }
+
+    private void SwitchItemType(int newType)
+    {
+        switch (newType)
+        {
+            case 0:
+                structureItems.SetActive(true);
+                floorTileItems.SetActive(false);
+                decorItems.SetActive(false);
+                break;
+            case 1:
+                structureItems.SetActive(false);
+                floorTileItems.SetActive(true);
+                decorItems.SetActive(false);
+                break;
+            case 2:
+                structureItems.SetActive(false);
+                floorTileItems.SetActive(false);
+                decorItems.SetActive(true);
+                break;
+        }
+    }
+
     #endregion
 
     #region Netcode Related Methods
@@ -247,6 +362,24 @@ public class UIManager : NetworkBehaviour
         if (!SetIPAndPort()) { return; }
 
         NetworkManager.Singleton.StartHost();
+
+        toggleDmInventory.onClick.AddListener(() => ToggleDmInventory());
+        closeDmInventory.onClick.AddListener(() => ToggleDmInventory());
+        itemType.onValueChanged.AddListener(delegate { SwitchItemType(itemType.value); });
+        openSaveLevelPanel.onClick.AddListener(() => ToggleSaveLevelPanel());
+        openLoadLevelPanel.onClick.AddListener(() => ToggleLoadLevelPanel());
+        saveToFile.onClick.AddListener(() => SaveLevelsToFile());
+        loadFromFile.onClick.AddListener(() => LoadLevelsFromFile());
+        deleteLevel.onClick.AddListener(() => DeleteLevel());
+
+        closeSaveLevelPanel.onClick.AddListener(() => ToggleSaveLevelPanel());
+        saveLevel.onClick.AddListener(() => SaveLevel());
+
+        closeLoadLevelPanel.onClick.AddListener(() => ToggleLoadLevelPanel());
+        loadLevel.onClick.AddListener(() => LoadLevel());
+
+        LoadLevelsFromFile();
+
         DeactivateMainMenu();
         ActivateInGameHUD();
     }
@@ -255,7 +388,10 @@ public class UIManager : NetworkBehaviour
     {
         if (!SetIPAndPort()) { return; }
 
-        NetworkManager.Singleton.StartClient();      
+        NetworkManager.Singleton.StartClient();
+
+        Destroy(toggleDmInventory);
+
         DeactivateMainMenu();
         ActivateInGameHUD();
     }
