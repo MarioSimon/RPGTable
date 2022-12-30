@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 3166844284863223884}
   - component: {fileID: 6750090896570783859}
   - component: {fileID: 6049272269166617968}
-  - component: {fileID: 2116161939126370762}
   - component: {fileID: 6100720092841656220}
+  - component: {fileID: 9109383131537467996}
   m_Layer: 0
   m_Name: Stone_Pillar_B
   m_TagString: Untagged
@@ -78,29 +78,6 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
---- !u!114 &2116161939126370762
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3166844284863223880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecfa17e94c9ff9c47b43ede109092ac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  axes: 6
-  space: 1
-  type: 0
-  snappingType: 0
-  positionSnap: {x: 1.5, y: 1.5, z: 1.5}
-  rotationSnap: 90
-  scaleSnap: {x: 1.5, y: 1.5, z: 1.5}
-  autoScale: 0
-  autoScaleFactor: 1
-  handleCamera: {fileID: 0}
-  target: {fileID: 0}
 --- !u!114 &6100720092841656220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,6 +92,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemMenu: {fileID: 1878711165183701654, guid: f2ae9da069cf31e4aa370ecf88678252, type: 3}
   id: 3
+--- !u!114 &9109383131537467996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166844284863223880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23786c5da38d1aa4c9832784de1fc3bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axes: 6
+  space: 1
+  type: 0
+  snappingType: 0
+  positionSnap: {x: 1.5, y: 1.5, z: 1.5}
+  rotationSnap: 90
+  scaleSnap: {x: 1.5, y: 1.5, z: 1.5}
+  autoScale: 0
+  autoScaleFactor: 1
+  handleCamera: {fileID: 0}
+  target: {fileID: 0}
 --- !u!1001 &5945114963985988184
 PrefabInstance:
   m_ObjectHideFlags: 0
