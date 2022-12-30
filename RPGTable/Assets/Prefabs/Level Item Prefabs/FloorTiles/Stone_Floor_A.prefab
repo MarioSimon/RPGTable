@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 3166844284863223884}
   - component: {fileID: 6750090896570783859}
   - component: {fileID: 6049272269166617968}
-  - component: {fileID: 2116161939126370762}
   - component: {fileID: 6100720092841656220}
   - component: {fileID: 3061151705556045153}
+  - component: {fileID: 2084262219631998374}
   m_Layer: 0
   m_Name: Stone_Floor_A
   m_TagString: Untagged
@@ -78,29 +78,6 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
---- !u!114 &2116161939126370762
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3166844284863223880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecfa17e94c9ff9c47b43ede109092ac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  axes: 6
-  space: 1
-  type: 0
-  snappingType: 0
-  positionSnap: {x: 1.5, y: 1.5, z: 1.5}
-  rotationSnap: 90
-  scaleSnap: {x: 1.5, y: 1.5, z: 1.5}
-  autoScale: 0
-  autoScaleFactor: 1
-  handleCamera: {fileID: 0}
-  target: {fileID: 0}
 --- !u!114 &6100720092841656220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,6 +104,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90bbea09dc059934f89744c8d52e14ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2084262219631998374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166844284863223880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23786c5da38d1aa4c9832784de1fc3bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axes: 6
+  space: 1
+  type: 0
+  snappingType: 0
+  positionSnap: {x: 1.5, y: 1.5, z: 1.5}
+  rotationSnap: 90
+  scaleSnap: {x: 1.5, y: 1.5, z: 1.5}
+  autoScale: 0
+  autoScaleFactor: 1
+  handleCamera: {fileID: 0}
+  target: {fileID: 0}
 --- !u!1001 &7890409983017449819
 PrefabInstance:
   m_ObjectHideFlags: 0
