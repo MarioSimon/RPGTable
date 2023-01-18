@@ -1,18 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class CharacterCreator : MonoBehaviour
+public class CharacterCreator : NetworkBehaviour
 {
-    // Start is called before the first frame update
+    
+    [SerializeField] GameManager gameManager;
+    [SerializeField] Button raceMenuNext;
+    [SerializeField] Button classMenuBack;
+    [SerializeField] Button classMenuNext;
+    [SerializeField] Button backgroundMenuBack;
+    [SerializeField] Button backgroundMenuNext;
+    [SerializeField] Button scoresMenuBack;
+    [SerializeField] Button scoresMenuNext;
+
+    private CharacterSheetInfo newCharacterSheet;
+
     void Start()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

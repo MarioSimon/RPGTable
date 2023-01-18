@@ -28,7 +28,7 @@ public class UIManager : NetworkBehaviour
 
     [Header("In Game HUD")]
     [SerializeField] GameObject inGameHUD;
-    [SerializeField] Button buttonSpawnToken;
+    [SerializeField] Button toggleLibrary;
     [SerializeField] Button buttonSpawnNewCharSheet;
     [SerializeField] Button toggleCharSelector;
     [SerializeField] Button toggleDiceBox;
@@ -48,17 +48,20 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button buttonThrowD20;
     [SerializeField] Button buttonThrowD100;
 
-    [Header("Dice Registry")]
+    [Header("Dice Registry/Chat")]
     [SerializeField] GameObject diceRegistry;
     [SerializeField] Text diceRegistryText;
 
-    [Header("Character Selector")]
+    [Header("Characters")]
     [SerializeField] GameObject characterSelector;
     [SerializeField] Button closeCharacterSelector;
     [SerializeField] GameObject characterListArea;
     List<GameObject> characterList = new List<GameObject>();
     [SerializeField] float characterSpace;
     [SerializeField] GameObject characterButtonPrefab;
+
+    [SerializeField] GameObject characterCreator;
+    [SerializeField] Button closeCharacterCreator;
 
     [Header("DM Inventory")]
     [SerializeField] GameObject dmInventory;
@@ -83,7 +86,9 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button loadLevel;
     [SerializeField] Button deleteLevel;
 
-
+    [Header("Library")]
+    [SerializeField] GameObject library;
+    [SerializeField] Button closeLibrary;
     #endregion
 
     #region Unity Event Functions
@@ -99,9 +104,11 @@ public class UIManager : NetworkBehaviour
 
         buttonHost.onClick.AddListener(() => StartHost());
         buttonClient.onClick.AddListener(() => StartClient());
-        buttonSpawnToken.onClick.AddListener(() => SpawnToken());
 
-        buttonSpawnNewCharSheet.onClick.AddListener(() => SpawnNewCharSheet());
+        toggleLibrary.onClick.AddListener(() => ToggleLibrary());
+        closeLibrary.onClick.AddListener(() => ToggleLibrary());
+        buttonSpawnNewCharSheet.onClick.AddListener(() => ToggleCharacterCreator());
+        closeCharacterCreator.onClick.AddListener(() => ToggleCharacterCreator());
         toggleCharSelector.onClick.AddListener(() => ToggleCharacterSelector());
         closeCharacterSelector.onClick.AddListener(() => ToggleCharacterSelector());
         toggleDiceBox.onClick.AddListener(() => ToggleDiceBox());
@@ -191,7 +198,7 @@ public class UIManager : NetworkBehaviour
 
         if (deleted)
         {
-            // borrar el nivel borrado
+            // borrar el nivel borrado de la lista
         }
     }
 
@@ -351,6 +358,18 @@ public class UIManager : NetworkBehaviour
                 decorItems.SetActive(true);
                 break;
         }
+    }
+
+    private void ToggleLibrary()
+    {
+        bool toggle = !library.activeInHierarchy;
+        library.SetActive(toggle);
+    }
+
+    private void ToggleCharacterCreator()
+    {
+        bool toggle = !characterCreator.activeInHierarchy;
+        characterCreator.SetActive(toggle);
     }
 
     #endregion
