@@ -21,26 +21,21 @@ public class LibraryManager : MonoBehaviour
     [SerializeField] Dropdown spellList;
     [SerializeField] Text information;
 
-    List<Race> races;
-    List<List<Subrace>> subraces;
+    public List<Race> races;
+     
+    public List<Class> classes;
+    
+    public List<Background> backgrounds;
+     
+    public List<Feat> feats;
+     
+    public List<List<Spell>> spells;
 
-    List<Class> classes;
-    List<List<Subclass>> subclasses;
-
-    List<Background> backgrounds;
-
-    List<Feat> feats;
-
-    List<List<Spell>> spells;
+    public bool loadedData;
 
     void Start()
     {
-        subraces = new List<List<Subrace>>();
-        subclasses = new List<List<Subclass>>();
-
-        LoadRacesFromJSON();
-        LoadClassesFromJSON();
-        LoadBackgroundsFromJSON();
+        LoadData();
 
         showRaces.onClick.AddListener(() => OpenRaces());
         baseRacesList.onValueChanged.AddListener(delegate { ShowRace(); });
@@ -59,6 +54,16 @@ public class LibraryManager : MonoBehaviour
         showSpells.onClick.AddListener(() => OpenSpells());
         spellLevelList.onValueChanged.AddListener(delegate { ShowSpellList(); });
         spellList.onValueChanged.AddListener(delegate { ShowSpell(); });
+    }
+
+    public void LoadData()
+    {
+        if (loadedData) { return; }
+
+        LoadRacesFromJSON();
+        LoadClassesFromJSON();
+        LoadBackgroundsFromJSON();
+        loadedData = true;
     }
 
     #region navigation methods
@@ -152,7 +157,7 @@ public class LibraryManager : MonoBehaviour
 
         List<string> subraceOptions = new List<string>();
         subraceOptions.Add("");
-        foreach (Subrace subrace in subraces[raceID-1])
+        foreach (Subrace subrace in races[raceID-1].subraces.list)
         {
             subraceOptions.Add(subrace.subraceName);
         }
@@ -178,7 +183,7 @@ public class LibraryManager : MonoBehaviour
             information.text = newInfo;
             return;
         }
-        newInfo += "\n\n" + subraces[raceID-1][subraceID-1].subraceName + "\n\n" + subraces[raceID - 1][subraceID - 1].subraceDescription;
+        newInfo += "\n\n" + races[raceID-1].subraces.list[subraceID-1].subraceName + "\n\n" + races[raceID - 1].subraces.list[subraceID - 1].subraceDescription;
         information.text = newInfo;
     }
 
@@ -196,7 +201,7 @@ public class LibraryManager : MonoBehaviour
 
         List<string> subclassOptions = new List<string>();
         subclassOptions.Add("Base");
-        foreach (Subclass subrace in subclasses[classID - 1])
+        foreach (Subclass subrace in classes[classID - 1].subclasses.list)
         {
             subclassOptions.Add(subrace.subclassName);
         }
@@ -222,7 +227,7 @@ public class LibraryManager : MonoBehaviour
             information.text = newInfo;
             return;
         }
-        newInfo = subclasses[classID - 1][subclassID - 1].subclassName + "\n\n" + subclasses[classID - 1][subclassID - 1].subclassDescription;
+        newInfo = classes[classID - 1].subclasses.list[subclassID - 1].subclassName + "\n\n" + classes[classID - 1].subclasses.list[subclassID - 1].subclassDescription;
         information.text = newInfo;
     }
 
@@ -316,20 +321,10 @@ public class LibraryManager : MonoBehaviour
         foreach (Race race in races)
         {
             raceNames.Add(race.raceName);
-
-            List<Subrace> newSubraces = new List<Subrace>();
-            newSubraces = race.subraces.list;
-            subraces.Add(newSubraces);
-
-            List<string> subraceNames = new List<string>();
-            foreach (Subrace subrace in newSubraces)
-            {
-                subraceNames.Add(subrace.subraceName);
-            }
         }
         baseRacesList.AddOptions(raceNames);
 
-        Debug.Log("LOADED RACES FROM " + Application.dataPath + "/races.json");
+        //Debug.Log("LOADED RACES FROM " + Application.dataPath + "/races.json");
     }
 
     void LoadClassesFromJSON()
@@ -345,20 +340,10 @@ public class LibraryManager : MonoBehaviour
         foreach (Class @class in classes)
         {
             classNames.Add(@class.className);
-
-            List<Subclass> newSubclasses = new List<Subclass>();
-            newSubclasses = @class.subclasses.list;
-            subclasses.Add(newSubclasses);
-            
-            List<string> subraceNames = new List<string>();
-            foreach (Subclass subclass in newSubclasses)
-            {
-                subraceNames.Add(subclass.subclassName);
-            }
         }
         baseClassesList.AddOptions(classNames);
 
-        Debug.Log("LOADED CLASSES FROM " + Application.dataPath + "/classes.json");
+        //Debug.Log("LOADED CLASSES FROM " + Application.dataPath + "/classes.json");
     }
 
     void LoadBackgroundsFromJSON()
@@ -377,7 +362,7 @@ public class LibraryManager : MonoBehaviour
         }
         backgroundsList.AddOptions(backgroundNames);
 
-        Debug.Log("LOADED BACKGROUNDS FROM " + Application.dataPath + "/backgrounds.json");
+        //Debug.Log("LOADED BACKGROUNDS FROM " + Application.dataPath + "/backgrounds.json");
     }
 
     void LoadFeatsFromJSON()
@@ -414,12 +399,15 @@ public class LibraryManager : MonoBehaviour
     #endregion
 }
 
+#region data structs
+
 [System.Serializable]
 public struct Race
 {
     public string raceName;
     public string raceDescription;
     public int[] raceBonus;
+    public int raceSpeed;
     public SerializableList<Subrace> subraces;
 }
 
@@ -436,6 +424,7 @@ public struct Class
 {
     public string className;
     public string classDescription;
+    public int hitDice;
     public SerializableList<string> startingClassTraits;
     public SerializableList<Subclass> subclasses;
 }
@@ -468,3 +457,5 @@ public struct Spell
     public string spellName;
     public string spellDescription;
 }
+
+#endregion

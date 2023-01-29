@@ -7951,7 +7951,7 @@ MonoBehaviour:
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 0
-    m_HorizontalOverflow: 1
+    m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 
@@ -27845,7 +27845,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6548192187812020570
 RectTransform:
   m_ObjectHideFlags: 0
@@ -47338,7 +47338,7 @@ MonoBehaviour:
   m_InputType: 0
   m_AsteriskChar: 42
   m_KeyboardType: 0
-  m_LineType: 0
+  m_LineType: 1
   m_HideMobileInput: 0
   m_CharacterValidation: 0
   m_CharacterLimit: 0
@@ -64713,7 +64713,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5056130813955814741
 RectTransform:
   m_ObjectHideFlags: 0
@@ -72872,6 +72872,7 @@ MonoBehaviour:
     characterName: 
     playerName: 
     appearance: 
+    avatarID: 0
     publicBasicInfo: 1
     publicSkills: 1
     publicFeatures: 1

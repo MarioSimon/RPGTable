@@ -156,6 +156,8 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] Toggle inventoryPublisher;
     #endregion
 
+    #region Spells
+
     [Header("Spells")]
     [SerializeField] GameObject spells;
 
@@ -214,6 +216,10 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] Image spellsBlocker3;
     [SerializeField] Toggle spellsPublisher;
 
+    #endregion
+
+    #region Actions
+
     [Header("Actions")]
     [SerializeField] GameObject actions;
     [SerializeField] InputField actionsText;
@@ -222,6 +228,10 @@ public class CharacterSheetManager : MonoBehaviour
 
     [SerializeField] Image actionsBlocker;
     [SerializeField] Toggle actionsPublisher;
+
+    #endregion
+
+    #region Personality
 
     [Header("Personality")]
     [SerializeField] GameObject personailty;
@@ -235,13 +245,12 @@ public class CharacterSheetManager : MonoBehaviour
 
     #endregion
 
+    #endregion
 
     void Start()
     {
         gameManager = GameObject.FindObjectOfType<GameManager>();
         uiManager = GameObject.FindObjectOfType<UIManager>();
-
-        
 
         // navigation related events
         buttonClose.onClick.AddListener(() => CloseSheet());
@@ -255,8 +264,6 @@ public class CharacterSheetManager : MonoBehaviour
         buttonActions.onClick.AddListener(() => OpenActionsPage());
         buttonPersonality.onClick.AddListener(() => OpenPersonalityPage());
 
-        // public info events
-
         bool isServer = NetworkManager.Singleton.IsServer;
         permisson = isServer || NetworkManager.Singleton.LocalClientId == CSInfo.ownerID;
 
@@ -267,6 +274,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         CheckPermisson();
 
+        // basic info related events
         characterName.onValueChanged.AddListener(delegate { uiManager.UpdateCharacterButtonNameClientRpc(CSInfo.sheetID, characterName.text); });
 
         // ability score related logic events

@@ -3,10 +3,11 @@
     {
       "className": "Barbarian",
       "classDescription": "As a barbarian, you gain the following class features.\n\nHit Points\nHit Dice: 1d12 per barbarian level\nHit Points at 1st Level: 12 + your Constitution modifier\nHit Points at Higher Levels: 1d12 (or 7) + your Constitution modifier per barbarian level after 1st\n\nProficiencies\nArmor: Light armor, medium armor, shields\nWeapons: Simple weapons, martial weapons\nTools: None\nSaving Throws: Strength, Constitution\nSkills: Choose two from Animal Handling, Athletics, Intimidation, Nature, Perception, and Survival\n\nEquipment\nYou start with the following equipment, in addition to the equipment granted by your background:\n- (a) a greataxe or (b) any martial melee weapon\n- (a) two handaxes or (b) any simple weapon\n- An explorer’s pack and four javelins\n\nRage\nIn battle, you fight with primal ferocity. On your turn, you can enter a rage as a bonus action.\nWhile raging, you gain the following benefits if you aren’t wearing heavy armor:\n- You have advantage on Strength checks and Strength saving throws.\n- When you make a melee weapon attack using Strength, you gain a bonus to the damage roll that increases as you gain levels as a barbarian, as shown in the Rage Damage column of the Barbarian table.\n- You have resistance to bludgeoning, piercing, and slashing damage\nIf you are able to cast spells, you can’t cast them or concentrate on them while raging.\nYour rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven’t attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action. \nOnce you have raged the number of times shown for your barbarian level in the Rages column of the Barbarian table, you must finish a long rest before you can rage again. \n\nUnarmored Defense\nWhile you are not wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.\n\nReckless Attack\nStarting at 2nd level, you can throw aside all concern for defense to attack with fierce desperation. When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls using Strength during this turn, but attack rolls against you have advantage until your next turn.\n\nDanger Sense\nAt 2nd level, you gain an uncanny sense of when things nearby aren’t as they should be, giving you an edge when you dodge away from danger.\nYou have advantage on Dexterity saving throws against effects that you can see, such as traps and spells. To gain this benefit, you can’t be blinded, deafened, or incapacitated\n\nPrimal Path\nAt 3rd level, you choose a path that shapes the nature of your rage. Choose the Path of the Berserker or the Path of the Totem Warrior, both detailed at the end of the class description. Your choice grants you features at 3rd level and again at 6th, 10th, and 14th levels.\n\nAbility Score Improvement\nWhen you reach 4th level, and again at 8th, 12th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can’t increase an ability score above 20 using this feature.\n\nExtra Attack\nBeginning at 5th level, you can attack twice, instead of once, whenever you take the Attack action on your turn.\n\nFast Movement\nStarting at 5th level, your speed increases by 10 feet while you aren’t wearing heavy armor.\n\nFeral Instinct\nBy 7th level, your instincts are so honed that you have advantage on initiative rolls.\nAdditionally, if you are surprised at the beginning of combat and aren’t incapacitated, you can act normally on your first turn, but only if you enter your rage before doing anything else on that turn.\n\nBrutal Critical\nBeginning at 9th level, you can roll one additional weapon damage die when determining the extra damage for a critical hit with a melee attack.\nThis increases to two additional dice at 13th level and three additional dice at 17th level.\n\nRelentless Rage\nStarting at 11th level, your rage can keep you fighting despite grievous wounds. If you drop to 0 hit points while you’re raging and don’t die outright, you can make a DC 10 Constitution saving throw. If you succeed, you drop to 1 hit point instead.\nEach time you use this feature after the first, the DC increases by 5. When you finish a short or long rest, the DC resets to 10.\n\nPersistent Rage\nBeginning at 15th level, your rage is so fierce that it ends early only if you fall unconscious or if you choose to end it.\n\nIndomitable Might\nBeginning at 18th level, if your total for a Strength check is less than your Strength score, you can use that score in place of the total.\n\nPrimal Champion\nAt 20th level, you embody the power of the wilds.Your Strength and Constitution scores increase by 4. Your maximum for those scores is now 24.",
+      "hitDice":  3,
       "startingClassTraits": {
         "list": [
-          "Rage\nIn battle, you fight with primal ferocity. On your turn, you can enter a rage as a bonus action.\nWhile raging, you gain the following benefits if you aren’t wearing heavy armor:\n- You have advantage on Strength checks and Strength saving throws.\n- When you make a melee weapon attack using Strength, you gain a bonus to the damage roll that increases as you gain levels as a barbarian, as shown in the Rage Damage column of the Barbarian table.\n- You have resistance to bludgeoning, piercing, and slashing damage\nIf you are able to cast spells, you can’t cast them or concentrate on them while raging.\nYour rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven’t attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action. \nOnce you have raged the number of times shown for your barbarian level in the Rages column of the Barbarian table, you must finish a long rest before you can rage again.",
-          "Unarmored Defense\nWhile you are not wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit."
+          "Rage",
+          "Unarmored Defense"
         ]
       },
       "subclasses": {
@@ -21,10 +22,12 @@
     },
     {
       "className": "Bard",
-      "classDescription": "",
+      "classDescription": "As a bard, you gain the following class features.\n\nHit Points\nHit Dice: 1d8 per bard level\nHit Points at 1st Level: 8 + your Constitution modifier\nHit Points at Higher Levels: 1d8 (or 5) + your Constitution modifier per bard level after 1st\n\nProficiencies\nArmor: Light armor\nWeapons: Simple weapons, hand crossbows, longswords, rapiers, shortswords\nTools: Three musical instruments of your choice\nSaving Throws: Dexterity, Charisma\nSkills: Choose any three\n\nEquipment\nYou start with the following equipment, in addition to the equipment granted by your background:\n- (a) a rapier, (b) a longsword, or (c) any simple weapon\n- (a) a diplomat’s pack or (b) an entertainer’s pack\n- (a) a lute or (b) any other musical instrument\n- Leather armor and a dagger\n\nSpellcasting\nYou have learned to untangle and reshape the fabric of reality in harmony with your wishes and music.Your spells are part of your vast repertoire, magic that you can tune to different situations.  \n\nCantrips\nYou know two cantrips of your choice from the bard spell list. You learn additional bard cantrips of your choice at higher levels, as shown in the Cantrips Known column of the Bard table.\n\nSpell Slots\nThe Bard table shows how many spell slots you have to cast your spells of 1st level and higher. To cast one of these spells, you must expend a slot of the spell’s level or higher. You regain all expended spell slots when you finish a long rest.\nFor example, if you know the 1st‑level spell cure wounds and have a 1st‑level and a 2nd‑level spell slot available, you can cast cure wounds using either slot.\n\nSpells Known of 1st Level and Higher\nYou know four 1st‑level spells of your choice from the bard spell list.\nThe Spells Known column of the Bard table shows when you learn more bard spells of your choice. Each of these spells must be of a level for which you have spell slots, as shown on the table. For instance, when you reach 3rd level in this class, you can learn one new spell of 1st or 2nd level.\nAdditionally, when you gain a level in this class, you can choose one of the bard spells you know and replace it with another spell from the bard spell list, which also must be of a level for which you have spell slots.\n\nSpellcasting Ability\nCharisma is your spellcasting ability for your bard spells. Your magic comes from the heart and soul you pour into the performance of your music or oration. You use your Charisma whenever a spell refers to your spellcasting ability. In addition, you use your Charisma modifier when setting the saving throw DC for a bard spell you cast and when making an attack roll with one.\nSpell save DC = 8 + your proficiency bonus + your Charisma modifier\nSpell attack modifier = your proficiency bonus + your Charisma modifier\n\nRitual Casting\nYou can cast any bard spell you know as a ritual if that spell has the ritual tag.\n\nSpellcasting Focus\nYou can use a musical instrument (see “Equipment”) as a spellcasting focus for your bard spells.  \n\nBardic Inspiration\nYou can inspire others through stirring words or music. To do so, you use a bonus action on your turn to choose one creature other than yourself within 60 feet of you who can hear you. That creature gains one Bardic Inspiration die, a d6.\nOnce within the next 10 minutes, the creature can roll the die and add the number rolled to one ability check, attack roll, or saving throw it makes. The creature can wait until after it rolls the d20 before deciding to use the Bardic Inspiration die, but must decide before the GM says whether the roll succeeds or fails. Once the Bardic Inspiration die is rolled, it is lost. A creature can have only one Bardic Inspiration die at a time.\nYou can use this feature a number of times equal to your Charisma modifier (a minimum of once). You regain any expended uses when you finish a long rest.\nYour Bardic Inspiration die changes when youreach certain levels in this class. The die becomes a d8 at 5th level, a d10 at 10th level, and a d12 at 15th level.",
+      "hitDice": 1,
       "startingClassTraits": {
         "list": [
-
+          "Spellcasting",
+          "Bardic Inspiration"
         ]
       },
       "subclasses": {
@@ -39,10 +42,12 @@
     },
     {
       "className": "Cleric",
-      "classDescription": "",
+      "classDescription": "Class Features\nAs a cleric, you gain the following class features.\n\nHit Points\nHit Dice: 1d8 per cleric level\nHit Points at 1st Level: 8 + your Constitution modifier\nHit Points at Higher Levels: 1d8 (or 5) + your Constitution modifier per cleric level after 1st\n\nProficiencies\nArmor: Light armor, medium armor, shields\nWeapons: Simple weapons\nTools: None\nSaving Throws: Wisdom, Charisma\nSkills: Choose two from History, Insight, Medicine, Persuasion, and Religion\n\nEquipment\nYou start with the following equipment, in addition to the equipment granted by your background:\n- (a) a mace or (b) a warhammer (if proficient)\n- (a) scale mail, (b) leather armor, or (c) chain mail (if proficient)\n- (a) a light crossbow and 20 bolts or (b) any simple weapon\n- (a) a priest’s pack or (b) an explorer’s pack\n- A shield and a holy symbol\n\nSpellcasting\nAs a conduit for divine power, you can cast cleric spells.\n\nCantrips\nAt 1st level, you know three cantrips of your choice from the cleric spell list. You learn additional cleric cantrips of your choice at higher levels, as shown in the Cantrips Known column of the Cleric table.\n\nPreparing and Casting Spells\nThe Cleric table shows how many spell slots you have to cast your spells of 1st level and higher. To cast one of these spells, you must expend a slot of the spell’s level or higher. You regain all expended spell slots when you finish a long rest.\nYou prepare the list of cleric spells that are available for you to cast, choosing from the cleric spell list. When you do so, choose a number of cleric spells equal to your Wisdom modifier + your cleric level (minimum of one spell). The spells must be of a level for which you have spell slots.\nFor example, if you are a 3rd‑level cleric, you have four 1st‑level and two 2nd‑level spell slots. With a Wisdom of 16, your list of prepared spells can include six spells of 1st or 2nd level, in any combination. If you prepare the 1st‑level spell cure wounds, you can cast it using a 1st‑level or 2nd‑level slot. Casting the spell doesn’t remove it from your list of prepared spells.\nYou can change your list of prepared spells when you finish a long rest. Preparing a new list of cleric spells requires time spent in prayer and meditation: at least 1 minute per spell level for each spell on your list.\n\nSpellcasting Ability\nWisdom is your spellcasting ability for your cleric spells. The power of your spells comes from your devotion to your deity. You use your Wisdom whenever a cleric spell refers to your spellcasting ability. In addition, you use your Wisdom modifier when setting the saving throw DC for a cleric spell you cast and when making an attack roll with one.\nSpell save DC = 8 + your proficiency bonus + your Wisdom modifier\nSpell attack modifier = your proficiency bonus + your Wisdom modifier\n\nRitual Casting\nYou can cast a cleric spell as a ritual if that spell has the ritual tag and you have the spell prepared.\n\nSpellcasting Focus\nYou can use a holy symbol (see “Equipment”) as a spellcasting focus for your cleric spells.\n\nDivine Domain\nChoose one domain related to your deity, such as Life. Each domain is detailed at the end of the class description, and each one provides examples of gods associated with it. Your choice grants you domain spells and other features when you choose it at 1st level. It also grants you additional ways to use Channel Divinity when you gain that feature at 2nd level, and additional benefits at 6th, 8th, and 17th levels.\nDomain Spells\nEach domain has a list of spells -its domain spells- that you gain at the cleric levels noted in the domain description. Once you gain a domain spell, you always have it prepared, and it doesn’t count against the number of spells you can prepare each day.\nIf you have a domain spell that doesn’t appear on the cleric spell list, the spell is nonetheless a cleric spell for you.",
+      "hitDice": 1,
       "startingClassTraits": {
         "list": [
-
+          "Spellcasting",
+          "Divine Domain"
         ]
       },
       "subclasses": {
@@ -50,7 +55,11 @@
           {
             "subclassName": "Life Domain",
             "subclassDescription": "",
-            "startingSubclassTraits": null
+            "startingSubclassTraits": {
+              "list": [
+                "Disciple of Life"
+              ]
+            }
           }
         ]
       }
@@ -58,9 +67,10 @@
     {
       "className": "Druid",
       "classDescription": "",
+      "hitDice": 1,
       "startingClassTraits": {
         "list": [
-
+          "Spellcasting"
         ]
       },
       "subclasses": {
@@ -76,9 +86,11 @@
     {
       "className": "Fighter",
       "classDescription": "",
+      "hitDice": 2,
       "startingClassTraits": {
         "list": [
-
+          "Fighting Style",
+          "Second Wind"
         ]
       },
       "subclasses": {
@@ -94,9 +106,11 @@
     {
       "className": "Monk",
       "classDescription": "",
+      "hitDice": 1,
       "startingClassTraits": {
         "list": [
-
+          "Unarmored Defense",
+          "Martial Arts"
         ]
       },
       "subclasses": {
@@ -112,9 +126,11 @@
     {
       "className": "Paladin",
       "classDescription": "",
+      "hitDice": 2,
       "startingClassTraits": {
         "list": [
-
+          "Divine Sense",
+          "Lay on Hands"
         ]
       },
       "subclasses": {
@@ -130,9 +146,11 @@
     {
       "className": "Ranger",
       "classDescription": "",
+      "hitDice": 2,
       "startingClassTraits": {
         "list": [
-
+          "Favored Enemy",
+          "Natural Explorer"
         ]
       },
       "subclasses": {
@@ -148,9 +166,12 @@
     {
       "className": "Rogue",
       "classDescription": "",
+      "hitDice": 1,
       "startingClassTraits": {
         "list": [
-
+          "Expertise",
+          "Sneak Attack",
+          "Thieves' Cant"
         ]
       },
       "subclasses": {
@@ -166,9 +187,11 @@
     {
       "className": "Sorcerer",
       "classDescription": "",
+      "hitDice": 0,
       "startingClassTraits": {
         "list": [
-
+          "Spellcasting",
+          "Sorcerous Origin"
         ]
       },
       "subclasses": {
@@ -176,7 +199,11 @@
           {
             "subclassName": "Draconic bloodline",
             "subclassDescription": "",
-            "startingSubclassTraits": null
+            "startingSubclassTraits": {
+              "list": [
+                "Dragon ancestor"
+              ]
+            }
           }
         ]
       }
@@ -184,9 +211,11 @@
     {
       "className": "Warlock",
       "classDescription": "",
+      "hitDice": 1,
       "startingClassTraits": {
         "list": [
-
+          "Otherworldly Patron",
+          "Pact Magic"
         ]
       },
       "subclasses": {
@@ -194,7 +223,11 @@
           {
             "subclassName": "The Fiend",
             "subclassDescription": "",
-            "startingSubclassTraits": null
+            "startingSubclassTraits": {
+              "list": [
+                "Dark One's Blessing"
+              ]
+            }
           }
         ]
       }
@@ -202,9 +235,11 @@
     {
       "className": "Wizard",
       "classDescription": "",
+      "hitDice": 0,
       "startingClassTraits": {
         "list": [
-
+          "Spellcasting",
+          "Arcane Recovery"
         ]
       },
       "subclasses": {

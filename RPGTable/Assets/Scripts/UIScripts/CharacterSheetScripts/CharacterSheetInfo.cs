@@ -17,6 +17,7 @@ public class CharacterSheetInfo : INetworkSerializable
     public string characterName = "";
     public string playerName = ""; 
     public string appearance = "";
+    public int avatarID = 0;
 
     // page avaliability variables
     public bool publicBasicInfo = true;
@@ -210,7 +211,6 @@ public class CharacterSheetInfo : INetworkSerializable
 
     #endregion
 
-
     #region NetworkSerializable Methods
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -221,6 +221,7 @@ public class CharacterSheetInfo : INetworkSerializable
         serializer.SerializeValue(ref characterName);
         serializer.SerializeValue(ref playerName);
         serializer.SerializeValue(ref appearance);
+        serializer.SerializeValue(ref avatarID);
 
         serializer.SerializeValue(ref publicBasicInfo);
         serializer.SerializeValue(ref publicSkills);

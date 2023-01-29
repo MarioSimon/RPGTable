@@ -153,14 +153,15 @@ public class GameManager : NetworkBehaviour
 
     public void AddNewCharacterSheetInfo(CharacterSheetInfo charInfo)
     {
+        charInfo.ownerID = NetworkManager.Singleton.LocalClientId;
         UpdateSheetListClientRpc(charInfo);
         uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName);
     }
 
     public void SaveCharacterSheetChanges(CharacterSheetInfo charInfo)
-    {
+    {        
         if (!IsServer) 
-        { 
+        {
             SaveCharacterSheetChangesServerRpc(charInfo); 
         } else
         {
@@ -322,7 +323,7 @@ public class GameManager : NetworkBehaviour
                 newLevels.Add(levelName);
             }            
         }
-        Debug.Log("LOADED LEVELS FROM " + Application.dataPath + "/levels.json");
+        //Debug.Log("LOADED LEVELS FROM " + Application.dataPath + "/levels.json");
 
         return newLevels;
     }
