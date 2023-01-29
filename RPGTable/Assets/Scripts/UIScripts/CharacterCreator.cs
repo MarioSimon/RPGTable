@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -17,8 +18,10 @@ public class CharacterCreator : MonoBehaviour
     [SerializeField] InputField characterName;
     [SerializeField] Image avatarPortrait;
     [SerializeField] Button selectNewAvatar;
-    [SerializeField] GameObject avatarSelectionPanel;
-    private int avatarID;
+    [SerializeField] GameObject avatarSelector;
+    [SerializeField] Button closeAvatarSelector;
+    [SerializeField] List<Button> avatarButtons;
+    private int avatarID = 0;
 
     [Header("Race")]
     [SerializeField] GameObject raceSelector;   
@@ -147,6 +150,14 @@ public class CharacterCreator : MonoBehaviour
         LoadClassOptions();
         LoadBackgroundOptions();
 
+        selectNewAvatar.onClick.AddListener(() => ToggleAvatarSelector());
+        closeAvatarSelector.onClick.AddListener(() => ToggleAvatarSelector());
+        for (int i = 0; i < avatarButtons.Count; i++)
+        {
+            int avatarID = i;
+            avatarButtons[avatarID].onClick.AddListener(delegate { SetNewAvatar(avatarID); ToggleAvatarSelector(); });
+        }
+
         race.onValueChanged.AddListener(delegate { LoadSubraceOptions(); ShowRaceInfo(); });
         raceMenuNext.onClick.AddListener(delegate { WriteRaceTraits(); OpenClassSelector(); });
 
@@ -184,6 +195,8 @@ public class CharacterCreator : MonoBehaviour
         resumeMenuFinish.onClick.AddListener(delegate { WriteFinalDetails(); gameManager.AddNewCharacterSheetInfo(newCharacterSheet); characterCreatorWindow.SetActive(false); });
     }
 
+    
+
     private void OnEnable()
     {
         ResetCharacterCreator();
@@ -218,6 +231,11 @@ public class CharacterCreator : MonoBehaviour
         description.text = "";
 
         OpenRaceSelector();
+    }
+
+    private void SetNewAvatar(int id)
+    {
+        avatarID = id;
     }
 
     #region race
@@ -646,6 +664,7 @@ public class CharacterCreator : MonoBehaviour
         newCharacterSheet.characterName = characterName.text;       
         newCharacterSheet.playerName = uIManager.localPlayer.givenName.Value.ToString();
         newCharacterSheet.sheetID = gameManager.GetNewSheetID();
+        newCharacterSheet.avatarID = avatarID;
 
         newCharacterSheet.initiativeBonus = CalculateAbilityModifier(pointBuyDexterity).ToString();
         newCharacterSheet.armorClass = (10 + CalculateAbilityModifier(pointBuyDexterity)).ToString();
@@ -674,11 +693,17 @@ public class CharacterCreator : MonoBehaviour
 
     #region navigation methods
 
+    private void ToggleAvatarSelector()
+    {
+        bool toggle = !avatarSelector.activeInHierarchy;
+        avatarSelector.SetActive(toggle);
+    }
+
     private void OpenRaceSelector()
     {
         classSelector.SetActive(false);
         backgroundSelector.SetActive(false);
-        scoresSelector.SetActive(false);
+        resume.SetActive(false);
 
         raceSelector.SetActive(true);
         descriptionView.SetActive(true);

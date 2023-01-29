@@ -16,7 +16,6 @@ public class UIManager : NetworkBehaviour
     UnityTransport transport;
     readonly ushort port = 7777;
 
-    //Esto no me gusta, estoy probando cosas y luego veré si puedo arreglarlo
     public Player localPlayer;
 
     [Header("Main Menu")]
@@ -33,9 +32,6 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button toggleCharSelector;
     [SerializeField] Button toggleDiceBox;
     [SerializeField] Button toggleDmInventory;
-
-    //Esto probablemente se mueva mas adelante
-    [SerializeField] GameObject tokenPrefab;
     [SerializeField] GameObject charSheetPrefab;
 
     [Header("Dice Box")]
@@ -124,24 +120,6 @@ public class UIManager : NetworkBehaviour
 
     #endregion
 
-    private void SpawnToken()
-    {
-        SpawnTokenServerRpc(localPlayer.givenName.Value);
-    }    
-
-    private void SpawnNewCharSheet()
-    {
-        int newID = gameManager.GetNewSheetID();
-       
-        GameObject charSheet = Instantiate(charSheetPrefab); 
-        charSheet.GetComponent<CharacterSheetManager>().CSInfo = new CharacterSheetInfo();
-        charSheet.GetComponent<CharacterSheetManager>().CSInfo.playerName = localPlayer.givenName.Value.ToString();
-        charSheet.GetComponent<CharacterSheetManager>().CSInfo.sheetID = newID;
-        charSheet.GetComponent<CharacterSheetManager>().CSInfo.ownerID = NetworkManager.Singleton.LocalClientId;
-        charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
-        SpawnNewCharSheetServerRpc(charSheet.GetComponent<CharacterSheetManager>().CSInfo);
-    }
-
     public void AddCharacterButton(int characterID, string characterName)
     {
         Vector3 position;
@@ -222,23 +200,9 @@ public class UIManager : NetworkBehaviour
     #region ServerRpc
 
     [ServerRpc(RequireOwnership = false)]
-    private void SpawnTokenServerRpc(FixedString64Bytes ownerName)
-    {       
-        GameObject token = Instantiate(tokenPrefab, Vector3.zero, Quaternion.identity);
-        token.GetComponent<TokenController>().ownerName.Value = ownerName;
-        token.GetComponent<NetworkObject>().Spawn();
-    }
-
-    [ServerRpc(RequireOwnership = false)]
     private void RollDiceServerRpc(diceType type, Vector3 position, string thrownBy)
     {
         gameManager.RollDice(type, position, thrownBy, 0);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void SpawnNewCharSheetServerRpc(CharacterSheetInfo CSInfo)
-    {
-        gameManager.AddNewCharacterSheetInfo(CSInfo);
     }
     
     #endregion
@@ -308,7 +272,7 @@ public class UIManager : NetworkBehaviour
         inGameHUD.SetActive(false);
     }
 
-    private void ToggleCharacterSelector()
+    public void ToggleCharacterSelector()
     {
         bool toggle = !characterSelector.activeInHierarchy;
         characterSelector.SetActive(toggle);

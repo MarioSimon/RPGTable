@@ -17,7 +17,6 @@ public class CharacterSheetManager : MonoBehaviour
     private GameObject currentPage;
     private bool permisson;
 
-    [SerializeField] GameObject tokenPrefab;
     [SerializeField] GameObject characterSheet;
 
     #region Navigation bar
@@ -254,7 +253,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         // navigation related events
         buttonClose.onClick.AddListener(() => CloseSheet());
-        buttonSpawnToken.onClick.AddListener(() => SpawnTokenServerRpc(NetworkManager.Singleton.LocalClientId, playerName.text));
+        buttonSpawnToken.onClick.AddListener(() => SpawnTokenServerRpc(NetworkManager.Singleton.LocalClientId, playerName.text, CSInfo.avatarID));
         buttonPublicInfo.onClick.AddListener(() => OpenPublicInfoPage());
         buttonBasicInfo.onClick.AddListener(() => OpenBasicInfoPage());
         buttonSkills.onClick.AddListener(() => OpenSkillsPage());
@@ -1487,11 +1486,9 @@ public class CharacterSheetManager : MonoBehaviour
     #region ServerRpc
 
     [ServerRpc]
-    void SpawnTokenServerRpc(ulong ownerID, string ownerName)
+    void SpawnTokenServerRpc(ulong ownerID, string ownerName, int avatarID)
     {
-        GameObject token = Instantiate(tokenPrefab, Vector3.zero, Quaternion.identity);
-        token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
-        token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
+        gameManager.SpawnToken(ownerID, ownerName, avatarID);
     }
 
     // ability checks

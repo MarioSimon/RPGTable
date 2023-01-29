@@ -10,6 +10,8 @@ public class TokenController : NetworkBehaviour
 {
     #region Variables
 
+    [SerializeField] GameObject tokenModel;
+
     bool selected = false;
     NavMeshAgent navMeshAgent;
 
@@ -17,7 +19,7 @@ public class TokenController : NetworkBehaviour
     public NetworkVariable<FixedString64Bytes> ownerName;
 
     Color selectedColor = new Color(0, 0.75f, 0);
-    Color standardColor = new Color(0.5f, 0.5f, 0.5f);
+    [SerializeField] Color standardColor = new Color(0.5f, 0.5f, 0.5f);
 
     #endregion
 
@@ -26,7 +28,7 @@ public class TokenController : NetworkBehaviour
     private void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
-        
+        tokenModel.GetComponent<Renderer>().material.color = standardColor;
     }
 
     #endregion
@@ -43,11 +45,11 @@ public class TokenController : NetworkBehaviour
     {
         if (selected)
         {
-            GetComponent<Renderer>().material.color = selectedColor;
+            tokenModel.GetComponent<Renderer>().material.color = selectedColor;
         }
         else
         {
-            GetComponent<Renderer>().material.color = standardColor;
+            tokenModel.GetComponent<Renderer>().material.color = standardColor;
         }
     }
 

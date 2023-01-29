@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -19,6 +20,8 @@ public class GameManager : NetworkBehaviour
     [SerializeField] GameObject pdPrefab;
     [SerializeField] GameObject d12Prefab;
     [SerializeField] GameObject d20Prefab;
+
+    [SerializeField] List<GameObject> avatarList;
 
     public List<GameObject> currentLevel;
     Dictionary<string, List<LevelItemInfo>> savedLevels;
@@ -144,6 +147,15 @@ public class GameManager : NetworkBehaviour
                 d20Dice.GetComponent<NetworkObject>().Spawn();
                 break;
         }
+    }
+
+    public void SpawnToken(ulong ownerID, string ownerName, int avatarID)
+    {
+        if (!IsServer) { return; }
+
+        GameObject token = Instantiate(avatarList[avatarID], Vector3.zero, Quaternion.identity);
+        token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
+        token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
     }
 
     public CharacterSheetInfo GetSheetInfo(int index)

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class CharacterSelector : MonoBehaviour
 {
+    UIManager uIManager;
     GameManager gameManager;
     Canvas canvas;
     
@@ -20,10 +21,11 @@ public class CharacterSelector : MonoBehaviour
 
     void Start()
     {
+        uIManager = FindObjectOfType<UIManager>();
         gameManager = FindObjectOfType<GameManager>();
         canvas = FindObjectOfType<Canvas>();
 
-        selectCharacter.onClick.AddListener(() => OpenCharacterSheetServerRpc());
+        selectCharacter.onClick.AddListener(delegate { OpenCharacterSheetServerRpc(); uIManager.ToggleCharacterSelector(); });
     }
 
     [ServerRpc(RequireOwnership = false)]
