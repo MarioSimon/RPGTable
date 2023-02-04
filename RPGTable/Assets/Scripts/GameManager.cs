@@ -4,8 +4,7 @@ using System.IO;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
-
-
+using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour
 {
@@ -22,6 +21,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] GameObject d20Prefab;
 
     [SerializeField] List<GameObject> avatarList;
+    public List<Sprite> avatarPortrait;
 
     public List<GameObject> currentLevel;
     Dictionary<string, List<LevelItemInfo>> savedLevels;
@@ -167,7 +167,7 @@ public class GameManager : NetworkBehaviour
     {
         charInfo.ownerID = NetworkManager.Singleton.LocalClientId;
         UpdateSheetListClientRpc(charInfo);
-        uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName);
+        uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName, charInfo.avatarID);
     }
 
     public void SaveCharacterSheetChanges(CharacterSheetInfo charInfo)

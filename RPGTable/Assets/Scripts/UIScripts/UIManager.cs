@@ -216,7 +216,7 @@ public class UIManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void AddCharacterButtonClientRpc(int characterID, string characterName)
+    public void AddCharacterButtonClientRpc(int characterID, string characterName, int portraitID)
     {
 
         Vector3 position;
@@ -234,6 +234,7 @@ public class UIManager : NetworkBehaviour
 
         newCharacterButton.GetComponent<CharacterSelector>().characterName.text = characterName;
         newCharacterButton.GetComponent<CharacterSelector>().charID = characterID;
+        newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.avatarPortrait[portraitID];
 
         newCharacterButton.GetComponent<RectTransform>().SetParent(characterListArea.transform);
         newCharacterButton.GetComponent<RectTransform>().localPosition = position;

@@ -236,6 +236,7 @@ public class CharacterCreator : MonoBehaviour
     private void SetNewAvatar(int id)
     {
         avatarID = id;
+        avatarPortrait.sprite = gameManager.avatarPortrait[id];
     }
 
     #region race
