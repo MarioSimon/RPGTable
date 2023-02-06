@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -145,10 +144,7 @@ public class CharacterCreator : MonoBehaviour
 
     private void Start()
     {
-        libraryManager.LoadData();
-        LoadRaceOptions();
-        LoadClassOptions();
-        LoadBackgroundOptions();
+        LoadCharacterCreationOptions();
 
         selectNewAvatar.onClick.AddListener(() => ToggleAvatarSelector());
         closeAvatarSelector.onClick.AddListener(() => ToggleAvatarSelector());
@@ -172,7 +168,7 @@ public class CharacterCreator : MonoBehaviour
         scoresMenuBack.onClick.AddListener(delegate { OpenBackgroundSelector(); });
         scoresMenuNext.onClick.AddListener(delegate { WriteScores(); OpenResume(); });
         scoreType.onValueChanged.AddListener(delegate { SwitchScoringType(); });
-        strScore.onValueChanged.AddListener(delegate { CheckInt(strScore);  UpdateTotalAbilityScoreAndModifier(strScore, strRacialBonus, strTotalScore, strModifier, ref passingStrenght); });
+        strScore.onValueChanged.AddListener(delegate { CheckInt(strScore); UpdateTotalAbilityScoreAndModifier(strScore, strRacialBonus, strTotalScore, strModifier, ref passingStrenght); });
         dexScore.onValueChanged.AddListener(delegate { CheckInt(dexScore); UpdateTotalAbilityScoreAndModifier(dexScore, dexRacialBonus, dexTotalScore, dexModifier, ref passingDexterity); });
         conScore.onValueChanged.AddListener(delegate { CheckInt(conScore); UpdateTotalAbilityScoreAndModifier(conScore, conRacialBonus, conTotalScore, conModifier, ref passingConstitution); });
         intScore.onValueChanged.AddListener(delegate { CheckInt(intScore); UpdateTotalAbilityScoreAndModifier(intScore, intRacialBonus, intTotalScore, intModifier, ref passingIntelligence); });
@@ -188,14 +184,14 @@ public class CharacterCreator : MonoBehaviour
         takeIntelligence.onClick.AddListener(() => Take1(ref pointBuyIntelligence, intScore));
         addWisdom.onClick.AddListener(() => Add1(ref pointBuyWisdom, wisScore));
         takeWisdom.onClick.AddListener(() => Take1(ref pointBuyWisdom, wisScore));
-        addCharisma.onClick.AddListener(() => Add1(ref pointBuyCharisma, chaScore));       
+        addCharisma.onClick.AddListener(() => Add1(ref pointBuyCharisma, chaScore));
         takeCharisma.onClick.AddListener(() => Take1(ref pointBuyCharisma, chaScore));
 
         resumeMenuBack.onClick.AddListener(delegate { OpenScoreSelector(); });
         resumeMenuFinish.onClick.AddListener(delegate { WriteFinalDetails(); gameManager.AddNewCharacterSheetInfo(newCharacterSheet); characterCreatorWindow.SetActive(false); });
-    }
 
-    
+        characterCreatorWindow.SetActive(false);
+    } 
 
     private void OnEnable()
     {
@@ -203,13 +199,21 @@ public class CharacterCreator : MonoBehaviour
     }
 
     #endregion
+   
+    private void LoadCharacterCreationOptions()
+    {
+        libraryManager.LoadData();
+        LoadRaceOptions();
+        LoadClassOptions();
+        LoadBackgroundOptions();
+    }
 
     private void ResetCharacterCreator()
     {
         newCharacterSheet = new CharacterSheetInfo();
 
         characterName.text = "";
-        avatarID = 0;
+        SetNewAvatar(0);
 
         race.value = 0;
         subrace.value = 0;
@@ -363,6 +367,12 @@ public class CharacterCreator : MonoBehaviour
         }
 
         List<Subclass> subclassList = libraryManager.classes[classID - 1].subclasses.list;
+
+        if (subclassList.Count == 0 || subclassList[0].startingSubclassTraits.list.Count == 0) 
+        {
+            subclasses.gameObject.SetActive(false);
+            return;
+        }  
 
         if (subclassList.Count > 0)
         {
@@ -749,4 +759,5 @@ public class CharacterCreator : MonoBehaviour
         resume.SetActive(true);
     }
     #endregion
+
 }

@@ -596,6 +596,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FemaleGnome1
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 10714746f5f782149bb3aa3d15638826, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 1c5da0b04451fe0488631542b2158e33, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10714746f5f782149bb3aa3d15638826, type: 3}
 --- !u!4 &3880261215136661826 stripped
