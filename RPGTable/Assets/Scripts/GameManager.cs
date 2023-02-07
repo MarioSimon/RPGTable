@@ -10,7 +10,7 @@ public class GameManager : NetworkBehaviour
 {
     [SerializeField] UIManager uiManager;
     [SerializeField] LevelEditorManager levelEditorManager;
-    List<CharacterSheetInfo> characterSheets;
+    [SerializeField] List<CharacterSheetInfo> characterSheets;
 
     [SerializeField] GameObject d4Prefab;
     [SerializeField] GameObject d6Prefab;
@@ -165,7 +165,7 @@ public class GameManager : NetworkBehaviour
 
     public void AddNewCharacterSheetInfo(CharacterSheetInfo charInfo)
     {
-        charInfo.ownerID = NetworkManager.Singleton.LocalClientId;
+        //characterSheets.Add(charInfo);
         UpdateSheetListClientRpc(charInfo);
         uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName, charInfo.avatarID);
     }
@@ -376,7 +376,8 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     void UpdateSheetListClientRpc(CharacterSheetInfo charInfo)
     {
-        characterSheets.Add(charInfo);
+        //if (!IsServer)
+            characterSheets.Add(charInfo);
     }
 
     [ClientRpc]
@@ -386,7 +387,6 @@ public class GameManager : NetworkBehaviour
     }
 
     #endregion
-
 }
 
 [Serializable]

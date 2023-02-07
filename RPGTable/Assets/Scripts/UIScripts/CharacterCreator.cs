@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CharacterCreator : MonoBehaviour
+public class CharacterCreator : NetworkBehaviour
 {
 
     #region variables
@@ -145,6 +146,7 @@ public class CharacterCreator : MonoBehaviour
     private void Start()
     {
         LoadCharacterCreationOptions();
+        ResetCharacterCreator();
 
         selectNewAvatar.onClick.AddListener(() => ToggleAvatarSelector());
         closeAvatarSelector.onClick.AddListener(() => ToggleAvatarSelector());
@@ -188,15 +190,8 @@ public class CharacterCreator : MonoBehaviour
         takeCharisma.onClick.AddListener(() => Take1(ref pointBuyCharisma, chaScore));
 
         resumeMenuBack.onClick.AddListener(delegate { OpenScoreSelector(); });
-        resumeMenuFinish.onClick.AddListener(delegate { WriteFinalDetails(); gameManager.AddNewCharacterSheetInfo(newCharacterSheet); characterCreatorWindow.SetActive(false); });
-
-        characterCreatorWindow.SetActive(false);
+        resumeMenuFinish.onClick.AddListener(delegate { WriteFinalDetails(); CreateCharacterServerRpc(newCharacterSheet); ResetCharacterCreator(); characterCreatorWindow.SetActive(false); });
     } 
-
-    private void OnEnable()
-    {
-        ResetCharacterCreator();
-    }
 
     #endregion
    
@@ -672,6 +667,8 @@ public class CharacterCreator : MonoBehaviour
 
     private void WriteFinalDetails()
     {
+        newCharacterSheet.ownerID = NetworkManager.Singleton.LocalClientId;
+
         newCharacterSheet.characterName = characterName.text;       
         newCharacterSheet.playerName = uIManager.localPlayer.givenName.Value.ToString();
         newCharacterSheet.sheetID = gameManager.GetNewSheetID();
@@ -758,6 +755,16 @@ public class CharacterCreator : MonoBehaviour
 
         resume.SetActive(true);
     }
+    #endregion
+
+    #region serverRpc
+
+    [ServerRpc(RequireOwnership = false)]
+    private void CreateCharacterServerRpc(CharacterSheetInfo newCSInfo)
+    {
+        gameManager.AddNewCharacterSheetInfo(newCSInfo);
+    }
+
     #endregion
 
 }

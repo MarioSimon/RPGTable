@@ -1613,7 +1613,7 @@ public class CharacterSheetManager : MonoBehaviour
         }
     }
 
-    // other basic rolls
+    // other rolls
     [ServerRpc]
     void RollInitiativeServerRpc()
     {
@@ -1639,7 +1639,6 @@ public class CharacterSheetManager : MonoBehaviour
         gameManager.RollDice(hitDice, Camera.main.transform.position, characterName.text, int.Parse(conModifier.text), " [Hit dice (+" + conModifier.text + "]: ");
     }
 
-    // skill rolls
     [ServerRpc]
     void RollSkillCheckServerRpc(string skillName, string skillTotalBonus)
     {
