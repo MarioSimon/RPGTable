@@ -370,7 +370,7 @@ public class GameManager : NetworkBehaviour
         if (NetworkManager.Singleton.LocalClientId != clientID || IsServer) { return; }
        
         characterSheets.Add(charInfo);
-        uiManager.AddCharacterButton(charInfo.sheetID, charInfo.characterName);     
+        uiManager.AddCharacterButton(charInfo.sheetID, charInfo.characterName, charInfo.avatarID);     
     }
 
     [ClientRpc]
