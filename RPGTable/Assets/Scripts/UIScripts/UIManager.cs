@@ -188,7 +188,7 @@ public class UIManager : NetworkBehaviour
 
     void LoadLevelsFromFile()
     {
-        if (!System.IO.File.Exists(Application.dataPath + "/levels.json")) { return; }
+        if (!System.IO.File.Exists(Application.dataPath + "/StreamingAssets/levels.json")) { return; }
 
             List<string> newLevels = gameManager.LoadLevelsFromJSON();
 

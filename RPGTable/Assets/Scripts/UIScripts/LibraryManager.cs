@@ -303,16 +303,16 @@ public class LibraryManager : MonoBehaviour
         savedRacesData.list = races;
 
         string json = JsonUtility.ToJson(savedRacesData);
-        File.WriteAllText(Application.dataPath + "/races.json", json);
+        File.WriteAllText(Application.dataPath + "/StreamingAssets/races.json", json);
 
-        Debug.Log("SAVED RACES AT " + Application.dataPath + "/races.json");
+        Debug.Log("SAVED RACES AT " + Application.dataPath + "/StreamingAssets/races.json");
     }
 
     void LoadRacesFromJSON()
     {
-        if (!File.Exists(Application.dataPath + "/races.json")) { return; }
+        if (!File.Exists(Application.dataPath + "/StreamingAssets/races.json")) { return; }
 
-        string jsonString = File.ReadAllText(Application.dataPath + "/races.json");
+        string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/races.json");
         SerializableList<Race> savedData = JsonUtility.FromJson<SerializableList<Race>>(jsonString);
 
         races = savedData.list;
@@ -329,9 +329,9 @@ public class LibraryManager : MonoBehaviour
 
     void LoadClassesFromJSON()
     {
-        if (!File.Exists(Application.dataPath + "/classes.json")) { return; }
+        if (!File.Exists(Application.dataPath + "/StreamingAssets/classes.json")) { return; }
 
-        string jsonString = File.ReadAllText(Application.dataPath + "/classes.json");
+        string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/classes.json");
         SerializableList<Class> savedData = JsonUtility.FromJson<SerializableList<Class>>(jsonString);
 
         classes = savedData.list;
@@ -348,9 +348,9 @@ public class LibraryManager : MonoBehaviour
 
     void LoadBackgroundsFromJSON()
     {
-        if (!File.Exists(Application.dataPath + "/backgrounds.json")) { return; }
+        if (!File.Exists(Application.dataPath + "/StreamingAssets/backgrounds.json")) { return; }
 
-        string jsonString = File.ReadAllText(Application.dataPath + "/backgrounds.json");
+        string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/backgrounds.json");
         SerializableList<Background> savedData = JsonUtility.FromJson<SerializableList<Background>>(jsonString);
 
          backgrounds = savedData.list;
@@ -367,9 +367,9 @@ public class LibraryManager : MonoBehaviour
 
     void LoadFeatsFromJSON()
     {
-        if (!File.Exists(Application.dataPath + "/feats.json")) { return; }
+        if (!File.Exists(Application.dataPath + "/StreamingAssets/feats.json")) { return; }
 
-        string jsonString = File.ReadAllText(Application.dataPath + "/feats.json");
+        string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/feats.json");
         SerializableList<Feat> savedData = JsonUtility.FromJson<SerializableList<Feat>>(jsonString);
 
         feats = savedData.list;
@@ -381,19 +381,19 @@ public class LibraryManager : MonoBehaviour
         }
         backgroundsList.AddOptions(featNames);
 
-        Debug.Log("LOADED FEATS FROM " + Application.dataPath + "/feats.json");
+        Debug.Log("LOADED FEATS FROM " + Application.dataPath + "/StreamingAssets/feats.json");
     }
 
     void LoadSpellsFromJSON()
     {
-        if (!File.Exists(Application.dataPath + "/spells.json")) { return; }
+        if (!File.Exists(Application.dataPath + "/StreamingAssets/spells.json")) { return; }
 
-        string jsonString = File.ReadAllText(Application.dataPath + "/spells.json");
+        string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/spells.json");
         SerializableList<List<Spell>> savedData = JsonUtility.FromJson<SerializableList<List<Spell>>>(jsonString);
 
         spells = savedData.list;
 
-        Debug.Log("LOADED SPELLS FROM " + Application.dataPath + "/spells.json");
+        Debug.Log("LOADED SPELLS FROM " + Application.dataPath + "/StreamingAssets/spells.json");
     }
 
     #endregion

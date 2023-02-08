@@ -308,14 +308,14 @@ public class GameManager : NetworkBehaviour
         }
 
         string json = JsonUtility.ToJson(savedLevelsInfo);
-        File.WriteAllText(Application.dataPath + "/levels.json", json);
+        File.WriteAllText(Application.dataPath + "/StreamingAssets/levels.json", json);
 
-        Debug.Log("SAVED LEVELS AT " + Application.dataPath + "/levels.json");
+        Debug.Log("SAVED LEVELS AT " + Application.dataPath + "/StreamingAssets/levels.json");
     }
 
     public List<string> LoadLevelsFromJSON()
     {
-        string jsonString = File.ReadAllText(Application.dataPath + "/levels.json");
+        string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/levels.json");
         SerializableList<SavedLevelParams> savedLevelsInfo = JsonUtility.FromJson<SerializableList<SavedLevelParams>>(jsonString);
 
         List<string> newLevels = new List<string>();
@@ -335,7 +335,7 @@ public class GameManager : NetworkBehaviour
                 newLevels.Add(levelName);
             }            
         }
-        //Debug.Log("LOADED LEVELS FROM " + Application.dataPath + "/levels.json");
+        Debug.Log("LOADED LEVELS FROM " + Application.dataPath + "/StreamingAssets/levels.json");
 
         return newLevels;
     }
