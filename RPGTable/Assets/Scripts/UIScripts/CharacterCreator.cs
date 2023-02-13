@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -145,7 +146,6 @@ public class CharacterCreator : NetworkBehaviour
 
     private void Start()
     {
-        LoadCharacterCreationOptions();
         ResetCharacterCreator();
 
         selectNewAvatar.onClick.AddListener(() => ToggleAvatarSelector());
@@ -191,13 +191,18 @@ public class CharacterCreator : NetworkBehaviour
 
         resumeMenuBack.onClick.AddListener(delegate { OpenScoreSelector(); });
         resumeMenuFinish.onClick.AddListener(delegate { WriteFinalDetails(); CreateCharacterServerRpc(newCharacterSheet); ResetCharacterCreator(); characterCreatorWindow.SetActive(false); });
-    } 
+    }
 
     #endregion
-   
-    private void LoadCharacterCreationOptions()
+
+    public IEnumerator LoadCharacterCreationOptions()
     {
-        libraryManager.LoadData();
+        yield return new WaitForSeconds(1);
+
+        if (IsHost)
+        {
+            libraryManager.LoadData();
+        }     
         LoadRaceOptions();
         LoadClassOptions();
         LoadBackgroundOptions();
@@ -243,12 +248,20 @@ public class CharacterCreator : NetworkBehaviour
     private void LoadRaceOptions()
     {
         List<string> raceOptions = new List<string>();
-        foreach (Race race in libraryManager.races)
+        
+        if (IsHost)
         {
-            raceOptions.Add(race.raceName);
+            foreach (Race race in libraryManager.races)
+            {
+                raceOptions.Add(race.raceName);
+            }
+        }
+        else
+        {         
+            GetRaceListServerRpc();
         }
         race.AddOptions(raceOptions);
-    }
+    }  
 
     private void LoadSubraceOptions()
     {
@@ -260,27 +273,35 @@ public class CharacterCreator : NetworkBehaviour
             return;           
         }
 
-        List<Subrace> subraceList = libraryManager.races[raceID - 1].subraces.list;
-
-        if (subraceList.Count > 0)
+        if (IsHost)
         {
-            subrace.gameObject.SetActive(true);
+            List<Subrace> subraceList = libraryManager.races[raceID - 1].subraces.list;
 
-            List<string> subraceOptions = new List<string>();
-            subraceOptions.Add("");            
-
-            foreach(Subrace subrace in subraceList)
+            if (subraceList.Count > 0)
             {
-                subraceOptions.Add(subrace.subraceName);
-            }
+                subrace.gameObject.SetActive(true);
 
-            subrace.ClearOptions();
-            subrace.AddOptions(subraceOptions);
+                List<string> subraceOptions = new List<string>();
+                subraceOptions.Add("");
+
+                foreach (Subrace subrace in subraceList)
+                {
+                    subraceOptions.Add(subrace.subraceName);
+                }
+
+                subrace.ClearOptions();
+                subrace.AddOptions(subraceOptions);
+            }
+            else
+            {
+                subrace.gameObject.SetActive(false);
+            }
         }
         else
         {
-            subrace.gameObject.SetActive(false);
+            GetSubraceListServerRpc(raceID);
         }
+        
     }
 
     private void ShowRaceInfo()
@@ -293,10 +314,18 @@ public class CharacterCreator : NetworkBehaviour
             return;
         }
 
-        string raceDescription = libraryManager.races[raceID - 1].raceDescription;
+        if (IsHost)
+        {
+            string raceDescription = libraryManager.races[raceID - 1].raceDescription;
 
-        description.text = raceDescription;
-    }
+            description.text = raceDescription;
+        }
+        else
+        {
+            GetRaceDescripionServerRpc(raceID);
+        }
+
+    } 
 
     private void WriteRaceTraits()
     {
@@ -305,36 +334,40 @@ public class CharacterCreator : NetworkBehaviour
 
         if (raceID == 0) { return; }
 
-        newCharacterSheet.race = libraryManager.races[raceID - 1].raceName;
-
-        resumeRace.text = "Race: " + libraryManager.races[raceID - 1].raceName;
-        raceBonus = libraryManager.races[raceID - 1].raceBonus;
-
-        newCharacterSheet.speed = libraryManager.races[raceID - 1].raceSpeed.ToString();
-
-
-        if (subrace.isActiveAndEnabled && subraceID > 0)
+        if (IsHost)
         {
-            subraceBonus = libraryManager.races[raceID - 1].subraces.list[subraceID - 1].subraceBonus;
+            newCharacterSheet.race = libraryManager.races[raceID - 1].raceName;
+            resumeRace.text = "Race: " + newCharacterSheet.race;
 
-            strRacialBonus.text = (raceBonus[0] + subraceBonus[0]).ToString();
-            dexRacialBonus.text = (raceBonus[1] + subraceBonus[1]).ToString();
-            conRacialBonus.text = (raceBonus[2] + subraceBonus[2]).ToString();
-            intRacialBonus.text = (raceBonus[3] + subraceBonus[3]).ToString();
-            wisRacialBonus.text = (raceBonus[4] + subraceBonus[4]).ToString();
-            chaRacialBonus.text = (raceBonus[5] + subraceBonus[5]).ToString();
+            raceBonus = libraryManager.races[raceID - 1].raceBonus;
+
+            newCharacterSheet.speed = libraryManager.races[raceID - 1].raceSpeed.ToString();
+
+            if (subrace.isActiveAndEnabled && subraceID > 0)
+            {
+                subraceBonus = libraryManager.races[raceID - 1].subraces.list[subraceID - 1].subraceBonus;
+
+                strRacialBonus.text = (raceBonus[0] + subraceBonus[0]).ToString();
+                dexRacialBonus.text = (raceBonus[1] + subraceBonus[1]).ToString();
+                conRacialBonus.text = (raceBonus[2] + subraceBonus[2]).ToString();
+                intRacialBonus.text = (raceBonus[3] + subraceBonus[3]).ToString();
+                wisRacialBonus.text = (raceBonus[4] + subraceBonus[4]).ToString();
+                chaRacialBonus.text = (raceBonus[5] + subraceBonus[5]).ToString();
+            }
+            else
+            {
+                strRacialBonus.text = raceBonus[0].ToString();
+                dexRacialBonus.text = raceBonus[1].ToString();
+                conRacialBonus.text = raceBonus[2].ToString();
+                intRacialBonus.text = raceBonus[3].ToString();
+                wisRacialBonus.text = raceBonus[4].ToString();
+                chaRacialBonus.text = raceBonus[5].ToString();
+            }
         }
         else
         {
-            strRacialBonus.text = raceBonus[0].ToString();
-            dexRacialBonus.text = raceBonus[1].ToString();
-            conRacialBonus.text = raceBonus[2].ToString();
-            intRacialBonus.text = raceBonus[3].ToString();
-            wisRacialBonus.text = raceBonus[4].ToString();
-            chaRacialBonus.text = raceBonus[5].ToString();
+            GetRaceTraitsServerRpc(raceID, subraceID);
         }
-
-        //have to separate race traits in the json to write them in the sheet
     }
 
     #endregion
@@ -343,12 +376,22 @@ public class CharacterCreator : NetworkBehaviour
 
     private void LoadClassOptions()
     {
-        List<string> classOptions = new List<string>();
-        foreach (Class @class in libraryManager.classes)
+        if (IsHost)
         {
-            classOptions.Add(@class.className);
+            List<string> classOptions = new List<string>();
+
+            foreach (Class @class in libraryManager.classes)
+            {
+                classOptions.Add(@class.className);
+            }
+            classes.AddOptions(classOptions);
+
         }
-        classes.AddOptions(classOptions);
+        else
+        {
+            GetClassListServerRpc();
+        }
+        
     }
 
     private void LoadSubclassOptions()
@@ -361,32 +404,39 @@ public class CharacterCreator : NetworkBehaviour
             return;
         }
 
-        List<Subclass> subclassList = libraryManager.classes[classID - 1].subclasses.list;
-
-        if (subclassList.Count == 0 || subclassList[0].startingSubclassTraits.list.Count == 0) 
+        if (IsHost)
         {
-            subclasses.gameObject.SetActive(false);
-            return;
-        }  
+            List<Subclass> subclassList = libraryManager.classes[classID - 1].subclasses.list;
 
-        if (subclassList.Count > 0)
-        {
-            subclasses.gameObject.SetActive(true);
-
-            List<string> subclassOptions = new List<string>();
-            subclassOptions.Add("");
-            subclasses.ClearOptions();
-
-            foreach (Subclass subclass in subclassList)
+            if (subclassList.Count == 0 || subclassList[0].startingSubclassTraits.list.Count == 0)
             {
-                subclassOptions.Add(subclass.subclassName);
+                subclasses.gameObject.SetActive(false);
+                return;
             }
 
-            subclasses.AddOptions(subclassOptions);
+            if (subclassList.Count > 0)
+            {
+                subclasses.gameObject.SetActive(true);
+
+                List<string> subclassOptions = new List<string>();
+                subclassOptions.Add("");
+                subclasses.ClearOptions();
+
+                foreach (Subclass subclass in subclassList)
+                {
+                    subclassOptions.Add(subclass.subclassName);
+                }
+
+                subclasses.AddOptions(subclassOptions);
+            }
+            else
+            {
+                subclasses.gameObject.SetActive(false);
+            }
         }
         else
         {
-            subclasses.gameObject.SetActive(false);
+            GetSubclassListServerRpc(classID);
         }
     }
 
@@ -400,9 +450,16 @@ public class CharacterCreator : NetworkBehaviour
             return;
         }
 
-        string classDescription = libraryManager.classes[classID - 1].classDescription;
+        if (IsHost)
+        {
+            string classDescription = libraryManager.classes[classID - 1].classDescription;
 
-        description.text = classDescription;
+            description.text = classDescription;
+        }
+        else
+        {
+            GetClassDescripionServerRpc(classID);
+        }
     }
 
     private void WriteClassTraits()
@@ -412,26 +469,37 @@ public class CharacterCreator : NetworkBehaviour
 
         if (classID == 0) { return; }
 
-        newCharacterSheet.clasAndLevel = libraryManager.classes[classID - 1].className + " 1";
-
-        resumeClass.text = "Class: " + libraryManager.classes[classID - 1].className;
-
-        newCharacterSheet.hitDiceType = libraryManager.classes[classID- 1].hitDice;
-
-        List<string> classTraits = libraryManager.classes[classID - 1].startingClassTraits.list;
-
-        
-
-        foreach (string trait in classTraits)
+        if (IsHost)
         {
-            newCharacterSheet.featuresAndTraits += trait + "\n";
+            newCharacterSheet.clasAndLevel = libraryManager.classes[classID - 1].className + " 1";
+
+            resumeClass.text = "Class: " + libraryManager.classes[classID - 1].className;
+
+            newCharacterSheet.hitDiceType = libraryManager.classes[classID - 1].hitDice;
+
+            List<string> classTraits = libraryManager.classes[classID - 1].startingClassTraits.list;
+
+            foreach (string trait in classTraits)
+            {
+                newCharacterSheet.featuresAndTraits += trait + "\n";
+            }
+
+            if (subclasses.isActiveAndEnabled && subclassID > 0)
+            {
+                newCharacterSheet.subclass = libraryManager.classes[classID - 1].subclasses.list[subclassID - 1].subclassName;
+
+                List<string> subclassTraits = libraryManager.classes[classID - 1].subclasses.list[subclassID - 1].startingSubclassTraits.list;
+                foreach (string trait in subclassTraits)
+                {
+                    newCharacterSheet.featuresAndTraits += trait + "\n";
+                }
+            }
         }
-        
-        if (subclasses.isActiveAndEnabled && subclassID > 0)
+        else
         {
-            newCharacterSheet.subclass = libraryManager.classes[classID - 1].subclasses.list[subclassID - 1].subclassName; ;
+            GetClassTraitsServerRpc(classID, subclassID);
         }
-    }
+    }  
 
     #endregion
 
@@ -439,14 +507,21 @@ public class CharacterCreator : NetworkBehaviour
 
     private void LoadBackgroundOptions()
     {
-        List<string> backgroundOptions = new List<string>();
-        foreach (Background background in libraryManager.backgrounds)
+        if (IsHost)
         {
-            backgroundOptions.Add(background.backgroundName);
+            List<string> backgroundOptions = new List<string>();
+            foreach (Background background in libraryManager.backgrounds)
+            {
+                backgroundOptions.Add(background.backgroundName);
+            }
+            background.AddOptions(backgroundOptions);
         }
-        background.AddOptions(backgroundOptions);
+        else
+        {
+            GetBackgroundListServerRpc();
+        }
     }
-
+ 
     private void ShowBackgroundInfo()
     {
         int backgroundID = background.value;
@@ -457,9 +532,16 @@ public class CharacterCreator : NetworkBehaviour
             return;
         }
 
-        string backgroundDescription = libraryManager.backgrounds[backgroundID - 1].backgroundDescription;
+       if (IsHost)
+        {
+            string backgroundDescription = libraryManager.backgrounds[backgroundID - 1].backgroundDescription;
 
-        description.text = backgroundDescription;
+            description.text = backgroundDescription;
+        }
+        else
+        {
+            GetBackgroundDescriptionServerRpc(backgroundID);
+        }
     }
 
     private void WriteBackgroundTraits()
@@ -468,9 +550,15 @@ public class CharacterCreator : NetworkBehaviour
 
         if (backgroundID == 0) { return; }
 
-        newCharacterSheet.background = libraryManager.backgrounds[backgroundID - 1].backgroundName;
-
-        resumeBackground.text = "Background: " + libraryManager.backgrounds[backgroundID - 1].backgroundName;
+        if (IsHost)
+        {
+            newCharacterSheet.background = libraryManager.backgrounds[backgroundID - 1].backgroundName;
+            resumeBackground.text = "Background: " + libraryManager.backgrounds[backgroundID - 1].backgroundName;
+        }
+        else
+        {
+            GetBackgroundTraitsServerRpc(backgroundID);
+        }
     }
 
     #endregion
@@ -765,6 +853,572 @@ public class CharacterCreator : NetworkBehaviour
         gameManager.AddNewCharacterSheetInfo(newCSInfo);
     }
 
+    #region race serverRpc
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetRaceListServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        if (!IsServer) { return; }
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            List<Race> races = libraryManager.races;
+            int raceCount = races.Count;
+
+            StringContainer[] raceList = new StringContainer[raceCount];
+
+
+            for (int i = 0; i < raceCount; i++)
+            {
+                raceList[i] = new StringContainer();
+                raceList[i].SomeText = races[i].raceName;
+            }
+
+            LoadRaceListClientRpc(raceList, clientRpcParams);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetSubraceListServerRpc(int raceID, ServerRpcParams serverRpcParams = default)
+    {
+        if (!IsServer) { return; }
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            List<Subrace> subraces = libraryManager.races[raceID - 1].subraces.list;
+            int subraceCount = subraces.Count;
+
+            StringContainer[] subraceList = new StringContainer[subraceCount];
+
+            for (int i = 0; i < subraceCount; i++)
+            {
+                subraceList[i] = new StringContainer();
+                subraceList[i].SomeText = subraces[i].subraceName;
+            }
+
+            LoadSubraceListClientRpc(subraceList, clientRpcParams);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetRaceDescripionServerRpc(int raceID, ServerRpcParams serverRpcParams = default)
+    {
+        if (!IsServer) { return; }
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            StringContainer raceDescription = new StringContainer();
+            raceDescription.SomeText = libraryManager.races[raceID - 1].raceDescription;
+
+            LoadRaceDescriptionClientRpc(raceDescription, clientRpcParams);
+        }
+
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetRaceTraitsServerRpc(int raceID, int subraceID, ServerRpcParams serverRpcParams = default)
+    {
+        if (!IsServer) { return; }
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            StringContainer raceName = new StringContainer();
+            raceName.SomeText = libraryManager.races[raceID - 1].raceName;
+
+            int raceSpeed = libraryManager.races[raceID - 1].raceSpeed;
+
+            int[] scoreBonus = libraryManager.races[raceID - 1].raceBonus;
+
+            if (subrace.isActiveAndEnabled && subraceID > 0)
+            {
+                int[] subraceScoreBonus = libraryManager.races[raceID - 1].subraces.list[subraceID - 1].subraceBonus;
+
+                scoreBonus[0] += subraceScoreBonus[0];
+                scoreBonus[1] += subraceScoreBonus[1];
+                scoreBonus[2] += subraceScoreBonus[2];
+                scoreBonus[3] += subraceScoreBonus[3];
+                scoreBonus[4] += subraceScoreBonus[4];
+                scoreBonus[5] += subraceScoreBonus[5];
+            }
+
+            WriteRaceTraitsClientRpc(raceName, raceSpeed, scoreBonus, clientRpcParams);
+        }
+    }
+
     #endregion
 
+    #region class serverRpc
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetClassListServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        if (!IsServer) { return; }
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            List<Class> classes = libraryManager.classes;
+            int raceCount = classes.Count;
+
+            StringContainer[] classList = new StringContainer[raceCount];
+
+
+            for (int i = 0; i < raceCount; i++)
+            {
+                classList[i] = new StringContainer();
+                classList[i].SomeText = classes[i].className;
+            }
+
+            LoadClassListClientRpc(classList, clientRpcParams);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetSubclassListServerRpc(int classID, ServerRpcParams serverRpcParams = default)
+    {
+        if (!IsServer) { return; }
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            List<Subclass> subclasses = libraryManager.classes[classID - 1].subclasses.list;
+            int subclassCount = subclasses.Count;
+
+            StringContainer[] subclassList;
+
+            if (subclassCount == 0 || subclasses[0].startingSubclassTraits.list.Count == 0)
+            {
+                subclassList = new StringContainer[0];
+            }
+            else
+            {
+                subclassList = new StringContainer[subclassCount];
+
+                for (int i = 0; i < subclassCount; i++)
+                {
+                    subclassList[i] = new StringContainer();
+                    subclassList[i].SomeText = subclasses[i].subclassName;
+                }
+            }
+
+            LoadSubclassListClientRpc(subclassList, clientRpcParams);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetClassDescripionServerRpc(int classID, ServerRpcParams serverRpcParams = default)
+    {
+        if (!IsServer) { return; }
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            StringContainer classDescription = new StringContainer();
+            classDescription.SomeText = libraryManager.classes[classID - 1].classDescription;
+
+            LoadClassDescriptionClientRpc(classDescription, clientRpcParams);
+        }
+
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetClassTraitsServerRpc(int classID, int subclassID, ServerRpcParams serverRpcParams = default)
+    {
+        if (!IsServer) { return; }
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+
+            StringContainer className = new StringContainer();
+            className.SomeText = libraryManager.classes[classID - 1].className;
+
+            int hitDice = libraryManager.classes[classID - 1].hitDice;
+
+            List<string> classTraits = libraryManager.classes[classID - 1].startingClassTraits.list;
+            int classTraitCount = classTraits.Count;
+
+            List<string> subclassTraits = new List<string>();
+            int subclassTraitCount = 0;
+
+            StringContainer subclassName = new StringContainer();
+
+            if (subclassID > 0)
+            {
+                subclassName.SomeText = libraryManager.classes[classID - 1].subclasses.list[subclassID - 1].subclassName;
+
+                subclassTraits = libraryManager.classes[classID - 1].subclasses.list[subclassID - 1].startingSubclassTraits.list;
+                subclassTraitCount = libraryManager.classes[classID - 1].subclasses.list[subclassID - 1].startingSubclassTraits.list.Count;
+            }
+            else
+            {
+                subclassName.SomeText = "";
+            }
+            StringContainer traits = new StringContainer();
+
+            for (int i = 0; i < classTraitCount; i++)
+            {
+                traits.SomeText += classTraits[i] + "\n";
+            }
+
+            for (int i = 0; i < subclassTraitCount; i++)
+            {
+                traits.SomeText += subclassTraits[i] + "\n";
+            }
+
+            WriteClassTraitsClientRpc(className, subclassName, hitDice, traits, clientRpcParams);
+        }
+    }
+
+    #endregion
+
+    #region background serverRpc
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetBackgroundListServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        if (!IsServer) { return; }
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            List<Background> backgrounds = libraryManager.backgrounds;
+            int raceCount = backgrounds.Count;
+
+            StringContainer[] backgroundList = new StringContainer[raceCount];
+
+
+            for (int i = 0; i < raceCount; i++)
+            {
+                backgroundList[i] = new StringContainer();
+                backgroundList[i].SomeText = backgrounds[i].backgroundName;
+            }
+
+            LoadBackgroundListClientRpc(backgroundList, clientRpcParams);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetBackgroundDescriptionServerRpc(int backgroundID, ServerRpcParams serverRpcParams = default)
+    {
+        if (!IsServer) { return; }
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            StringContainer backgroundDescription = new StringContainer();
+            backgroundDescription.SomeText = libraryManager.backgrounds[backgroundID - 1].backgroundDescription;
+
+            LoadBackgroundDescriptionClientRpc(backgroundDescription, clientRpcParams);
+        }
+
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetBackgroundTraitsServerRpc(int backgroundID, ServerRpcParams serverRpcParams = default)
+    {
+        if (!IsServer) { return; }
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            StringContainer backgroundName = new StringContainer();
+            backgroundName.SomeText = libraryManager.backgrounds[backgroundID - 1].backgroundName;
+
+
+            WriteBackgroundTraitsClientRpc(backgroundName, clientRpcParams);
+        }
+    }
+
+    #endregion
+
+    #endregion
+
+    #region clientRpc
+
+    #region race clientRpc
+
+    [ClientRpc]
+    private void LoadRaceListClientRpc(StringContainer[] raceList, ClientRpcParams clientRpcParams)
+    {
+
+        if (IsOwner) { return; }
+
+        List<string> raceOptions = new List<string>();
+
+        foreach (StringContainer raceName in raceList)
+        {
+            raceOptions.Add(raceName.SomeText);
+        }
+
+        race.AddOptions(raceOptions);
+    }
+
+    [ClientRpc]
+    private void LoadSubraceListClientRpc(StringContainer[] subraceList, ClientRpcParams clientRpcParams)
+    {
+        if (IsOwner) { return; }
+
+        if (subraceList.Length > 0)
+        {
+            subrace.gameObject.SetActive(true);
+
+            List<string> subraceOptions = new List<string>();
+            subraceOptions.Add("");
+
+            foreach (StringContainer container in subraceList)
+            {
+                subraceOptions.Add(container.SomeText);
+            }
+
+            subrace.ClearOptions();
+            subrace.AddOptions(subraceOptions);
+        }
+        else
+        {
+            subrace.gameObject.SetActive(false);
+        }
+    }
+
+    [ClientRpc]
+    private void LoadRaceDescriptionClientRpc(StringContainer raceDescription, ClientRpcParams clientRpcParams)
+    {
+        if (IsOwner) { return; }
+
+        description.text = raceDescription.SomeText;
+    }
+
+    [ClientRpc]
+    private void WriteRaceTraitsClientRpc(StringContainer raceName, int raceSpeed, int[] scoreBonus, ClientRpcParams clientRpcParams)
+    {
+        if (IsOwner) { return; }
+
+        newCharacterSheet.race = raceName.SomeText;
+        resumeRace.text = "Race: " + raceName.SomeText;
+
+        newCharacterSheet.speed = raceSpeed.ToString();
+
+        strRacialBonus.text = scoreBonus[0].ToString();
+        dexRacialBonus.text = scoreBonus[1].ToString();
+        conRacialBonus.text = scoreBonus[2].ToString();
+        intRacialBonus.text = scoreBonus[3].ToString();
+        wisRacialBonus.text = scoreBonus[4].ToString();
+        chaRacialBonus.text = scoreBonus[5].ToString();
+    }
+
+    #endregion
+
+    #region class clientRpc
+
+    [ClientRpc]
+    private void LoadClassListClientRpc(StringContainer[] classList, ClientRpcParams clientRpcParams)
+    {
+
+        if (IsOwner) { return; }
+
+        List<string> classOptions = new List<string>();
+
+        foreach (StringContainer raceName in classList)
+        {
+            classOptions.Add(raceName.SomeText);
+        }
+
+        classes.AddOptions(classOptions);
+    }
+
+    [ClientRpc]
+    private void LoadSubclassListClientRpc(StringContainer[] subclassList, ClientRpcParams clientRpcParams)
+    {
+        if (IsOwner) { return; }
+
+        if (subclassList.Length > 0)
+        {
+            subclasses.gameObject.SetActive(true);
+
+            List<string> subclassOptions = new List<string>();
+            subclassOptions.Add("");
+
+            foreach (StringContainer container in subclassList)
+            {
+                subclassOptions.Add(container.SomeText);
+            }
+
+            subclasses.ClearOptions();
+            subclasses.AddOptions(subclassOptions);
+        }
+        else
+        {
+            subclasses.gameObject.SetActive(false);
+        }
+    }
+
+    [ClientRpc]
+    private void LoadClassDescriptionClientRpc(StringContainer classDescription, ClientRpcParams clientRpcParams)
+    {
+        if (IsOwner) { return; }
+
+        description.text = classDescription.SomeText;
+    }
+    
+    [ClientRpc]
+    private void WriteClassTraitsClientRpc(StringContainer className, StringContainer subclassName, int hitDice, StringContainer traits, ClientRpcParams clientRpcParams)
+    {
+        if (IsOwner) { return; }
+
+        newCharacterSheet.clasAndLevel = className.SomeText + " 1";
+        resumeClass.text = "Class: " + className.SomeText;
+
+        if (subclasses.isActiveAndEnabled)
+        {
+            newCharacterSheet.subclass = subclassName.SomeText;
+        }
+
+        newCharacterSheet.hitDiceType = hitDice;
+
+        newCharacterSheet.featuresAndTraits += traits.SomeText;
+    }
+
+    #endregion
+
+    #region background clientRpc
+
+    [ClientRpc]
+    private void LoadBackgroundListClientRpc(StringContainer[] backgroundList, ClientRpcParams clientRpcParams)
+    {
+
+        if (IsOwner) { return; }
+
+        List<string> backgroundOptions = new List<string>();
+
+        foreach (StringContainer backgroundName in backgroundList)
+        {
+            backgroundOptions.Add(backgroundName.SomeText);
+        }
+
+        background.AddOptions(backgroundOptions);
+    }
+
+    [ClientRpc]
+    private void LoadBackgroundDescriptionClientRpc(StringContainer backgroundDescription, ClientRpcParams clientRpcParams)
+    {
+        if (IsOwner) { return; }
+
+        description.text = backgroundDescription.SomeText;
+    }
+
+    [ClientRpc]
+    private void WriteBackgroundTraitsClientRpc(StringContainer backgroundName, ClientRpcParams clientRpcParams)
+    {
+        if (IsOwner) { return; }
+
+        newCharacterSheet.background = backgroundName.SomeText;
+        resumeBackground.text = "Background: " + backgroundName.SomeText;
+    }
+
+    #endregion
+
+    #endregion
 }

@@ -366,6 +366,8 @@ public class UIManager : NetworkBehaviour
 
         DeactivateMainMenu();
         ActivateInGameHUD();
+
+        StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
     }
 
     private void StartClient()
@@ -374,10 +376,12 @@ public class UIManager : NetworkBehaviour
 
         NetworkManager.Singleton.StartClient();
 
-        Destroy(toggleDmInventory);
+        Destroy(toggleDmInventory.gameObject);
 
         DeactivateMainMenu();
         ActivateInGameHUD();
+
+        StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
     }
 
     private bool SetIPAndPort()
