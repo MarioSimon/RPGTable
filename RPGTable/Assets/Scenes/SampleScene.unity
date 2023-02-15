@@ -1925,12 +1925,12 @@ GameObject:
   - component: {fileID: 52346426}
   - component: {fileID: 52346425}
   m_Layer: 5
-  m_Name: LibraryBg
+  m_Name: LibraryWindow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &52346424
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8667,7 +8667,7 @@ MonoBehaviour:
   levelList: {fileID: 1976974433}
   loadLevel: {fileID: 748511484}
   deleteLevel: {fileID: 1172442811}
-  library: {fileID: 489265314}
+  library: {fileID: 52346423}
   closeLibrary: {fileID: 2070854326}
 --- !u!4 &316338589
 Transform:
@@ -12857,7 +12857,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &489265315
 RectTransform:
   m_ObjectHideFlags: 0
@@ -25461,7 +25461,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.38268346, y: 0.000000022481224, z: -0.0000000093120285, w: 0.92387956}
+  m_LocalRotation: {x: 0.38268346, y: -0.000000022481213, z: 0.000000009312023, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 11, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -41788,7 +41788,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1699353992}
-  m_LocalRotation: {x: 0.38268346, y: 0.000000022481224, z: -0.0000000093120285, w: 0.92387956}
+  m_LocalRotation: {x: 0.38268346, y: -0.000000022481213, z: 0.000000009312023, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 10, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
