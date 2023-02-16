@@ -17,7 +17,6 @@ public class CharacterSheetManager : MonoBehaviour
     private GameObject currentPage;
     private bool permisson;
 
-    [SerializeField] GameObject tokenPrefab;
     [SerializeField] GameObject characterSheet;
 
     #region Navigation bar
@@ -156,6 +155,8 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] Toggle inventoryPublisher;
     #endregion
 
+    #region Spells
+
     [Header("Spells")]
     [SerializeField] GameObject spells;
 
@@ -214,6 +215,10 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] Image spellsBlocker3;
     [SerializeField] Toggle spellsPublisher;
 
+    #endregion
+
+    #region Actions
+
     [Header("Actions")]
     [SerializeField] GameObject actions;
     [SerializeField] InputField actionsText;
@@ -222,6 +227,10 @@ public class CharacterSheetManager : MonoBehaviour
 
     [SerializeField] Image actionsBlocker;
     [SerializeField] Toggle actionsPublisher;
+
+    #endregion
+
+    #region Personality
 
     [Header("Personality")]
     [SerializeField] GameObject personailty;
@@ -235,17 +244,16 @@ public class CharacterSheetManager : MonoBehaviour
 
     #endregion
 
+    #endregion
 
     void Start()
     {
         gameManager = GameObject.FindObjectOfType<GameManager>();
         uiManager = GameObject.FindObjectOfType<UIManager>();
 
-        
-
         // navigation related events
         buttonClose.onClick.AddListener(() => CloseSheet());
-        buttonSpawnToken.onClick.AddListener(() => SpawnTokenServerRpc(NetworkManager.Singleton.LocalClientId, playerName.text));
+        buttonSpawnToken.onClick.AddListener(() => SpawnTokenServerRpc(NetworkManager.Singleton.LocalClientId, playerName.text, CSInfo.avatarID));
         buttonPublicInfo.onClick.AddListener(() => OpenPublicInfoPage());
         buttonBasicInfo.onClick.AddListener(() => OpenBasicInfoPage());
         buttonSkills.onClick.AddListener(() => OpenSkillsPage());
@@ -254,8 +262,6 @@ public class CharacterSheetManager : MonoBehaviour
         buttonSpells.onClick.AddListener(() => OpenSpellsPage());
         buttonActions.onClick.AddListener(() => OpenActionsPage());
         buttonPersonality.onClick.AddListener(() => OpenPersonalityPage());
-
-        // public info events
 
         bool isServer = NetworkManager.Singleton.IsServer;
         permisson = isServer || NetworkManager.Singleton.LocalClientId == CSInfo.ownerID;
@@ -267,6 +273,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         CheckPermisson();
 
+        // basic info related events
         characterName.onValueChanged.AddListener(delegate { uiManager.UpdateCharacterButtonNameClientRpc(CSInfo.sheetID, characterName.text); });
 
         // ability score related logic events
@@ -1479,11 +1486,9 @@ public class CharacterSheetManager : MonoBehaviour
     #region ServerRpc
 
     [ServerRpc]
-    void SpawnTokenServerRpc(ulong ownerID, string ownerName)
+    void SpawnTokenServerRpc(ulong ownerID, string ownerName, int avatarID)
     {
-        GameObject token = Instantiate(tokenPrefab, Vector3.zero, Quaternion.identity);
-        token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
-        token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
+        gameManager.SpawnToken(ownerID, ownerName, avatarID);
     }
 
     // ability checks
@@ -1608,7 +1613,7 @@ public class CharacterSheetManager : MonoBehaviour
         }
     }
 
-    // other basic rolls
+    // other rolls
     [ServerRpc]
     void RollInitiativeServerRpc()
     {
@@ -1634,7 +1639,6 @@ public class CharacterSheetManager : MonoBehaviour
         gameManager.RollDice(hitDice, Camera.main.transform.position, characterName.text, int.Parse(conModifier.text), " [Hit dice (+" + conModifier.text + "]: ");
     }
 
-    // skill rolls
     [ServerRpc]
     void RollSkillCheckServerRpc(string skillName, string skillTotalBonus)
     {

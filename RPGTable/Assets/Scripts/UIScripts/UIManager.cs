@@ -16,7 +16,6 @@ public class UIManager : NetworkBehaviour
     UnityTransport transport;
     readonly ushort port = 7777;
 
-    //Esto no me gusta, estoy probando cosas y luego veré si puedo arreglarlo
     public Player localPlayer;
 
     [Header("Main Menu")]
@@ -28,14 +27,11 @@ public class UIManager : NetworkBehaviour
 
     [Header("In Game HUD")]
     [SerializeField] GameObject inGameHUD;
-    [SerializeField] Button buttonSpawnToken;
+    [SerializeField] Button toggleLibrary;
     [SerializeField] Button buttonSpawnNewCharSheet;
     [SerializeField] Button toggleCharSelector;
     [SerializeField] Button toggleDiceBox;
     [SerializeField] Button toggleDmInventory;
-
-    //Esto probablemente se mueva mas adelante
-    [SerializeField] GameObject tokenPrefab;
     [SerializeField] GameObject charSheetPrefab;
 
     [Header("Dice Box")]
@@ -48,17 +44,20 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button buttonThrowD20;
     [SerializeField] Button buttonThrowD100;
 
-    [Header("Dice Registry")]
+    [Header("Dice Registry/Chat")]
     [SerializeField] GameObject diceRegistry;
     [SerializeField] Text diceRegistryText;
 
-    [Header("Character Selector")]
+    [Header("Characters")]
     [SerializeField] GameObject characterSelector;
     [SerializeField] Button closeCharacterSelector;
     [SerializeField] GameObject characterListArea;
     List<GameObject> characterList = new List<GameObject>();
     [SerializeField] float characterSpace;
     [SerializeField] GameObject characterButtonPrefab;
+
+    [SerializeField] GameObject characterCreator;
+    [SerializeField] Button closeCharacterCreator;
 
     [Header("DM Inventory")]
     [SerializeField] GameObject dmInventory;
@@ -83,7 +82,9 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button loadLevel;
     [SerializeField] Button deleteLevel;
 
-
+    [Header("Library")]
+    [SerializeField] GameObject library;
+    [SerializeField] Button closeLibrary;
     #endregion
 
     #region Unity Event Functions
@@ -99,9 +100,11 @@ public class UIManager : NetworkBehaviour
 
         buttonHost.onClick.AddListener(() => StartHost());
         buttonClient.onClick.AddListener(() => StartClient());
-        buttonSpawnToken.onClick.AddListener(() => SpawnToken());
 
-        buttonSpawnNewCharSheet.onClick.AddListener(() => SpawnNewCharSheet());
+        toggleLibrary.onClick.AddListener(() => ToggleLibrary());
+        closeLibrary.onClick.AddListener(() => ToggleLibrary());
+        buttonSpawnNewCharSheet.onClick.AddListener(() => ToggleCharacterCreator());
+        closeCharacterCreator.onClick.AddListener(() => ToggleCharacterCreator());
         toggleCharSelector.onClick.AddListener(() => ToggleCharacterSelector());
         closeCharacterSelector.onClick.AddListener(() => ToggleCharacterSelector());
         toggleDiceBox.onClick.AddListener(() => ToggleDiceBox());
@@ -117,25 +120,7 @@ public class UIManager : NetworkBehaviour
 
     #endregion
 
-    private void SpawnToken()
-    {
-        SpawnTokenServerRpc(localPlayer.givenName.Value);
-    }    
-
-    private void SpawnNewCharSheet()
-    {
-        int newID = gameManager.GetNewSheetID();
-       
-        GameObject charSheet = Instantiate(charSheetPrefab); 
-        charSheet.GetComponent<CharacterSheetManager>().CSInfo = new CharacterSheetInfo();
-        charSheet.GetComponent<CharacterSheetManager>().CSInfo.playerName = localPlayer.givenName.Value.ToString();
-        charSheet.GetComponent<CharacterSheetManager>().CSInfo.sheetID = newID;
-        charSheet.GetComponent<CharacterSheetManager>().CSInfo.ownerID = NetworkManager.Singleton.LocalClientId;
-        charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
-        SpawnNewCharSheetServerRpc(charSheet.GetComponent<CharacterSheetManager>().CSInfo);
-    }
-
-    public void AddCharacterButton(int characterID, string characterName)
+    public void AddCharacterButton(int characterID, string characterName, int portraitID)
     {
         Vector3 position;
 
@@ -152,6 +137,7 @@ public class UIManager : NetworkBehaviour
 
         newCharacterButton.GetComponent<CharacterSelector>().characterName.text = characterName;
         newCharacterButton.GetComponent<CharacterSelector>().charID = characterID;
+        newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.avatarPortrait[portraitID];
 
         newCharacterButton.GetComponent<RectTransform>().SetParent(characterListArea.transform);
         newCharacterButton.GetComponent<RectTransform>().localPosition = position;
@@ -191,7 +177,7 @@ public class UIManager : NetworkBehaviour
 
         if (deleted)
         {
-            // borrar el nivel borrado
+            // borrar el nivel borrado de la lista
         }
     }
 
@@ -202,7 +188,7 @@ public class UIManager : NetworkBehaviour
 
     void LoadLevelsFromFile()
     {
-        if (!System.IO.File.Exists(Application.dataPath + "/levels.json")) { return; }
+        if (!System.IO.File.Exists(Application.dataPath + "/StreamingAssets/levels.json")) { return; }
 
             List<string> newLevels = gameManager.LoadLevelsFromJSON();
 
@@ -215,23 +201,9 @@ public class UIManager : NetworkBehaviour
     #region ServerRpc
 
     [ServerRpc(RequireOwnership = false)]
-    private void SpawnTokenServerRpc(FixedString64Bytes ownerName)
-    {       
-        GameObject token = Instantiate(tokenPrefab, Vector3.zero, Quaternion.identity);
-        token.GetComponent<TokenController>().ownerName.Value = ownerName;
-        token.GetComponent<NetworkObject>().Spawn();
-    }
-
-    [ServerRpc(RequireOwnership = false)]
     private void RollDiceServerRpc(diceType type, Vector3 position, string thrownBy)
     {
         gameManager.RollDice(type, position, thrownBy, 0);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void SpawnNewCharSheetServerRpc(CharacterSheetInfo CSInfo)
-    {
-        gameManager.AddNewCharacterSheetInfo(CSInfo);
     }
     
     #endregion
@@ -245,9 +217,8 @@ public class UIManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void AddCharacterButtonClientRpc(int characterID, string characterName)
+    public void AddCharacterButtonClientRpc(int characterID, string characterName, int portraitID)
     {
-
         Vector3 position;
 
         if (characterList.Count % 2 == 0)
@@ -263,6 +234,7 @@ public class UIManager : NetworkBehaviour
 
         newCharacterButton.GetComponent<CharacterSelector>().characterName.text = characterName;
         newCharacterButton.GetComponent<CharacterSelector>().charID = characterID;
+        newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.avatarPortrait[portraitID];
 
         newCharacterButton.GetComponent<RectTransform>().SetParent(characterListArea.transform);
         newCharacterButton.GetComponent<RectTransform>().localPosition = position;
@@ -301,7 +273,7 @@ public class UIManager : NetworkBehaviour
         inGameHUD.SetActive(false);
     }
 
-    private void ToggleCharacterSelector()
+    public void ToggleCharacterSelector()
     {
         bool toggle = !characterSelector.activeInHierarchy;
         characterSelector.SetActive(toggle);
@@ -353,6 +325,18 @@ public class UIManager : NetworkBehaviour
         }
     }
 
+    private void ToggleLibrary()
+    {
+        bool toggle = !library.activeInHierarchy;
+        library.SetActive(toggle);
+    }
+
+    private void ToggleCharacterCreator()
+    {
+        bool toggle = !characterCreator.activeInHierarchy;
+        characterCreator.SetActive(toggle);
+    }
+
     #endregion
 
     #region Netcode Related Methods
@@ -382,6 +366,8 @@ public class UIManager : NetworkBehaviour
 
         DeactivateMainMenu();
         ActivateInGameHUD();
+
+        StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
     }
 
     private void StartClient()
@@ -390,10 +376,12 @@ public class UIManager : NetworkBehaviour
 
         NetworkManager.Singleton.StartClient();
 
-        Destroy(toggleDmInventory);
+        Destroy(toggleDmInventory.gameObject);
 
         DeactivateMainMenu();
         ActivateInGameHUD();
+
+        StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
     }
 
     private bool SetIPAndPort()

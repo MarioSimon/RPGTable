@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
-
-
+using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour
 {
     [SerializeField] UIManager uiManager;
     [SerializeField] LevelEditorManager levelEditorManager;
-    List<CharacterSheetInfo> characterSheets;
+    [SerializeField] List<CharacterSheetInfo> characterSheets;
 
     [SerializeField] GameObject d4Prefab;
     [SerializeField] GameObject d6Prefab;
@@ -19,6 +19,9 @@ public class GameManager : NetworkBehaviour
     [SerializeField] GameObject pdPrefab;
     [SerializeField] GameObject d12Prefab;
     [SerializeField] GameObject d20Prefab;
+
+    [SerializeField] List<GameObject> avatarList;
+    public List<Sprite> avatarPortrait;
 
     public List<GameObject> currentLevel;
     Dictionary<string, List<LevelItemInfo>> savedLevels;
@@ -146,6 +149,15 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public void SpawnToken(ulong ownerID, string ownerName, int avatarID)
+    {
+        if (!IsServer) { return; }
+
+        GameObject token = Instantiate(avatarList[avatarID], Vector3.zero, Quaternion.identity);
+        token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
+        token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
+    }
+
     public CharacterSheetInfo GetSheetInfo(int index)
     {
         return characterSheets[index];
@@ -153,14 +165,15 @@ public class GameManager : NetworkBehaviour
 
     public void AddNewCharacterSheetInfo(CharacterSheetInfo charInfo)
     {
+        //characterSheets.Add(charInfo);
         UpdateSheetListClientRpc(charInfo);
-        uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName);
+        uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName, charInfo.avatarID);
     }
 
     public void SaveCharacterSheetChanges(CharacterSheetInfo charInfo)
-    {
+    {        
         if (!IsServer) 
-        { 
+        {
             SaveCharacterSheetChangesServerRpc(charInfo); 
         } else
         {
@@ -295,14 +308,14 @@ public class GameManager : NetworkBehaviour
         }
 
         string json = JsonUtility.ToJson(savedLevelsInfo);
-        File.WriteAllText(Application.dataPath + "/levels.json", json);
+        File.WriteAllText(Application.dataPath + "/StreamingAssets/levels.json", json);
 
-        Debug.Log("SAVED LEVELS AT " + Application.dataPath + "/levels.json");
+        Debug.Log("SAVED LEVELS AT " + Application.dataPath + "/StreamingAssets/levels.json");
     }
 
     public List<string> LoadLevelsFromJSON()
     {
-        string jsonString = File.ReadAllText(Application.dataPath + "/levels.json");
+        string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/levels.json");
         SerializableList<SavedLevelParams> savedLevelsInfo = JsonUtility.FromJson<SerializableList<SavedLevelParams>>(jsonString);
 
         List<string> newLevels = new List<string>();
@@ -322,7 +335,7 @@ public class GameManager : NetworkBehaviour
                 newLevels.Add(levelName);
             }            
         }
-        Debug.Log("LOADED LEVELS FROM " + Application.dataPath + "/levels.json");
+        Debug.Log("LOADED LEVELS FROM " + Application.dataPath + "/StreamingAssets/levels.json");
 
         return newLevels;
     }
@@ -357,13 +370,14 @@ public class GameManager : NetworkBehaviour
         if (NetworkManager.Singleton.LocalClientId != clientID || IsServer) { return; }
        
         characterSheets.Add(charInfo);
-        uiManager.AddCharacterButton(charInfo.sheetID, charInfo.characterName);     
+        uiManager.AddCharacterButton(charInfo.sheetID, charInfo.characterName, charInfo.avatarID);     
     }
 
     [ClientRpc]
     void UpdateSheetListClientRpc(CharacterSheetInfo charInfo)
     {
-        characterSheets.Add(charInfo);
+        //if (!IsServer)
+            characterSheets.Add(charInfo);
     }
 
     [ClientRpc]
@@ -373,7 +387,6 @@ public class GameManager : NetworkBehaviour
     }
 
     #endregion
-
 }
 
 [Serializable]
