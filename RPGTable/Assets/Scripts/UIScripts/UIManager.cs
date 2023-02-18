@@ -45,7 +45,24 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button buttonThrowD100;
 
     [Header("Dice Registry/Chat")]
+    [SerializeField] GameObject minimizedBar;
+    [SerializeField] Button minimizedBarOpenChat;
+    [SerializeField] Button minimizedBarOpenRegistry;
+    [SerializeField] GameObject minimizedBarChatNotification;
+    [SerializeField] GameObject minimizedBarRegistryNotification;
+
+    [SerializeField] GameObject textChat;
+    [SerializeField] Button textChatOpenRegistry;
+    [SerializeField] Button textChatCloseChat;
+    [SerializeField] GameObject textChatRegistryNotification;
+    [SerializeField] GameObject textChatContent;
+    [SerializeField] InputField textChatInput;
+    [SerializeField] GameObject messagePrefab;
+
     [SerializeField] GameObject diceRegistry;
+    [SerializeField] Button diceRegistryOpenChat;
+    [SerializeField] Button diceRegistryCloseRegistry;
+    [SerializeField] GameObject diceRegistryChatNotification;
     [SerializeField] Text diceRegistryText;
 
     [Header("Characters")]
@@ -109,6 +126,14 @@ public class UIManager : NetworkBehaviour
         closeCharacterSelector.onClick.AddListener(() => ToggleCharacterSelector());
         toggleDiceBox.onClick.AddListener(() => ToggleDiceBox());
 
+        minimizedBarOpenChat.onClick.AddListener(delegate { ToggleMinimizedBar(); ToggleTextChat(); });
+        minimizedBarOpenRegistry.onClick.AddListener(delegate { ToggleMinimizedBar(); ToggleDiceRegistry(); });
+        textChatOpenRegistry.onClick.AddListener(delegate { ToggleTextChat(); ToggleDiceRegistry(); });
+        textChatCloseChat.onClick.AddListener(delegate { ToggleTextChat(); ToggleMinimizedBar(); });
+        diceRegistryOpenChat.onClick.AddListener(delegate { ToggleDiceRegistry(); ToggleTextChat(); });
+        diceRegistryCloseRegistry.onClick.AddListener(delegate { ToggleDiceRegistry(); ToggleMinimizedBar(); });
+
+
         buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
         buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
         buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(diceType.d8, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
@@ -116,6 +141,14 @@ public class UIManager : NetworkBehaviour
         buttonThrowD12.onClick.AddListener(() => RollDiceServerRpc(diceType.d12, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
         buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(diceType.d20, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
         buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(diceType.pd, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
+    }
+
+    private void LateUpdate()
+    {
+        if (textChatInput.text.Length > 0 && Input.GetKeyDown(KeyCode.Return))
+        {
+            SendChatMessage();
+        }
     }
 
     #endregion
@@ -145,7 +178,7 @@ public class UIManager : NetworkBehaviour
         characterList.Add(newCharacterButton);
     }
 
-    void SaveLevel()
+    private void SaveLevel()
     {
         if (levelName.text == null || levelName.text == "")
         {
@@ -165,13 +198,13 @@ public class UIManager : NetworkBehaviour
         ToggleSaveLevelPanel();
     }
 
-    void LoadLevel()
+    private void LoadLevel()
     {
         gameManager.LoadLevel(levelList.captionText.text);
         ToggleLoadLevelPanel();
     }
 
-    void DeleteLevel()
+    private void DeleteLevel()
     {
         bool deleted = gameManager.DeleteLevel(levelList.captionText.text);
 
@@ -181,12 +214,12 @@ public class UIManager : NetworkBehaviour
         }
     }
 
-    void SaveLevelsToFile()
+    private void SaveLevelsToFile()
     {
         gameManager.SaveLevelsToJSON();
     }
 
-    void LoadLevelsFromFile()
+    private void LoadLevelsFromFile()
     {
         if (!System.IO.File.Exists(Application.dataPath + "/StreamingAssets/levels.json")) { return; }
 
@@ -198,6 +231,26 @@ public class UIManager : NetworkBehaviour
         }
     }
 
+    private void SendChatMessage()
+    {
+
+        StringContainer msg = new StringContainer();
+        msg.SomeText = localPlayer.givenName.Value.ToString() + ": " + textChatInput.text;
+        textChatInput.text = "";
+
+        textChatInput.Select();
+        textChatInput.ActivateInputField();
+
+        if (IsHost)
+        {
+            PostChatMessageClientRpc(msg);
+        }
+        else
+        {
+            SendChatMessageServerRpc(msg);
+        }
+    }
+
     #region ServerRpc
 
     [ServerRpc(RequireOwnership = false)]
@@ -205,6 +258,13 @@ public class UIManager : NetworkBehaviour
     {
         gameManager.RollDice(type, position, thrownBy, 0);
     }
+    
+    [ServerRpc(RequireOwnership = false)]
+    private void SendChatMessageServerRpc(StringContainer msg)
+    {
+        PostChatMessageClientRpc(msg);
+    }
+
     
     #endregion
 
@@ -249,6 +309,17 @@ public class UIManager : NetworkBehaviour
         characterList[charID].GetComponent<CharacterSelector>().characterName.text = newName;
     }
 
+    [ClientRpc]
+    private void PostChatMessageClientRpc(StringContainer msg)
+    {
+        GameObject message = Instantiate(messagePrefab);
+
+        message.GetComponent<Text>().text = msg.SomeText;
+
+        message.GetComponent<RectTransform>().SetParent(textChatContent.GetComponent<RectTransform>());
+        message.GetComponent<RectTransform>().SetAsLastSibling();
+    }
+
     #endregion
 
     #region UI Related Methods
@@ -283,6 +354,24 @@ public class UIManager : NetworkBehaviour
     {
         bool toggle = !diceBox.activeInHierarchy;
         diceBox.SetActive(toggle);
+    }
+
+    private void ToggleTextChat()
+    {
+        bool toggle = !textChat.activeInHierarchy;
+        textChat.SetActive(toggle);
+    }
+
+    private void ToggleDiceRegistry()
+    {
+        bool toggle = !diceRegistry.activeInHierarchy;
+        diceRegistry.SetActive(toggle);
+    }
+
+    private void ToggleMinimizedBar()
+    {
+        bool toggle = !minimizedBar.activeInHierarchy;
+        minimizedBar.SetActive(toggle);
     }
 
     private void ToggleDmInventory()
