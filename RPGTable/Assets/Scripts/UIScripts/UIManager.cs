@@ -233,9 +233,10 @@ public class UIManager : NetworkBehaviour
 
     private void SendChatMessage()
     {
-
+        StringContainer username = new StringContainer();
+        username.SomeText = localPlayer.givenName.Value.ToString();
         StringContainer msg = new StringContainer();
-        msg.SomeText = localPlayer.givenName.Value.ToString() + ": " + textChatInput.text;
+        msg.SomeText = textChatInput.text;
         textChatInput.text = "";
 
         textChatInput.Select();
@@ -243,11 +244,33 @@ public class UIManager : NetworkBehaviour
 
         if (IsHost)
         {
-            PostChatMessageClientRpc(msg);
+            if (msg.SomeText.StartsWith("/"))
+            {
+                string firstWord = msg.SomeText.Split(new char[] { ' ' })[0];
+
+                if (firstWord == "/clear")
+                {
+                    foreach (Transform message in textChatContent.transform)
+                    {
+                        Destroy(message.gameObject);
+                    }
+                    return;
+                }
+
+                if (firstWord == "/whisp")
+                {
+                    string secondWord = msg.SomeText.Split(new char[] { ' ' })[1];
+                }
+
+                return;
+            }
+
+
+            PostChatMessageClientRpc(username, msg);
         }
         else
         {
-            SendChatMessageServerRpc(msg);
+            SendChatMessageServerRpc(username, msg);
         }
     }
 
@@ -260,9 +283,39 @@ public class UIManager : NetworkBehaviour
     }
     
     [ServerRpc(RequireOwnership = false)]
-    private void SendChatMessageServerRpc(StringContainer msg)
+    private void SendChatMessageServerRpc(StringContainer username, StringContainer msg, ServerRpcParams serverRpcParams = default)
     {
-        PostChatMessageClientRpc(msg);
+        if (msg.SomeText.StartsWith("/"))
+        {
+            string firstWord = msg.SomeText.Split(new char[] { ' ' })[0];
+
+            if (firstWord == "/clear")
+            {
+                var clientId = serverRpcParams.Receive.SenderClientId;
+
+                if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+                {
+                    ClientRpcParams clientRpcParams = new ClientRpcParams
+                    {
+                        Send = new ClientRpcSendParams
+                        {
+                            TargetClientIds = new ulong[] { clientId }
+                        }
+                    };
+
+                    ClearChatClientRpc(clientRpcParams);
+                }
+            }
+            if (firstWord == "/whisp")
+            {
+                string secondWord = msg.SomeText.Split(new char[] { ' ' })[1];
+            }
+
+            return;
+        }
+
+
+        PostChatMessageClientRpc(username, msg);
     }
 
     
@@ -310,16 +363,26 @@ public class UIManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void PostChatMessageClientRpc(StringContainer msg)
+    private void PostChatMessageClientRpc(StringContainer username, StringContainer msg)
     {
         GameObject message = Instantiate(messagePrefab);
 
-        message.GetComponent<Text>().text = msg.SomeText;
+        message.GetComponent<Text>().text = username.SomeText + ": " + msg.SomeText;
 
         message.GetComponent<RectTransform>().SetParent(textChatContent.GetComponent<RectTransform>());
         message.GetComponent<RectTransform>().SetAsLastSibling();
     }
 
+    [ClientRpc]
+    private void ClearChatClientRpc(ClientRpcParams clientRpcParams)
+    {
+        if (IsOwner) { return; }
+
+        foreach (Transform message in textChatContent.transform)
+        {
+            Destroy(message.gameObject);
+        }
+    }
     #endregion
 
     #region UI Related Methods
