@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour
 {
+    #region variables
+
     [SerializeField] UIManager uiManager;
     [SerializeField] LevelEditorManager levelEditorManager;
     [SerializeField] List<CharacterSheetInfo> characterSheets;
@@ -23,15 +25,40 @@ public class GameManager : NetworkBehaviour
     [SerializeField] List<GameObject> avatarList;
     public List<Sprite> avatarPortrait;
 
+    Dictionary<string, ulong> playerList;
+
     public List<GameObject> currentLevel;
     Dictionary<string, List<LevelItemInfo>> savedLevels;
+
+    #endregion
 
     private void Start()
     {
         characterSheets = new List<CharacterSheetInfo>();
+        playerList = new Dictionary<string, ulong>();
         currentLevel = new List<GameObject>();
         savedLevels = new Dictionary<string, List<LevelItemInfo>>();
     }
+
+    #region player management
+
+    public void AddPlayerToList(string playerName, ulong playerID)
+    {
+        if (playerList.ContainsKey(playerName)) { return; }
+
+        playerList.Add(playerName, playerID);
+    }
+
+    public ulong GetPlayerId(string playerName)
+    {
+        if (!playerList.ContainsKey(playerName)) { return 0; }
+
+        return playerList[playerName];
+    }
+
+    #endregion
+
+    #region dice rolls
 
     public void RollDice(diceType type, Vector3 position, string thrownBy, int modifier)
     {
@@ -149,6 +176,10 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    #endregion
+
+    #region tokens
+
     public void SpawnToken(ulong ownerID, string ownerName, int avatarID)
     {
         if (!IsServer) { return; }
@@ -158,6 +189,10 @@ public class GameManager : NetworkBehaviour
         token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
     }
 
+    #endregion
+
+    #region character sheets
+
     public CharacterSheetInfo GetSheetInfo(int index)
     {
         return characterSheets[index];
@@ -165,7 +200,6 @@ public class GameManager : NetworkBehaviour
 
     public void AddNewCharacterSheetInfo(CharacterSheetInfo charInfo)
     {
-        //characterSheets.Add(charInfo);
         UpdateSheetListClientRpc(charInfo);
         uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName, charInfo.avatarID);
     }
@@ -185,6 +219,10 @@ public class GameManager : NetworkBehaviour
     {
         return characterSheets.Count;
     }
+
+    #endregion
+
+    #region levels
 
     void SaveItemInfo(string levelName, int id, Vector3 position, Vector3 rotation, Vector3 scale)
     {
@@ -339,8 +377,16 @@ public class GameManager : NetworkBehaviour
 
         return newLevels;
     }
-    
+
+    #endregion
+
     #region ServerRpc
+
+    [ServerRpc(RequireOwnership = false)]
+    public void AddPlayerToListServerRpc(string playerName, ulong playerID)
+    {
+        AddPlayerToList(playerName, playerID);
+    }
 
     [ServerRpc (RequireOwnership = false)]
     public void AddSavedCharactersServerRpc(ulong clientID)
@@ -352,7 +398,6 @@ public class GameManager : NetworkBehaviour
             AddSavedCharactersClientRpc(clientID, charInfo);
         }
     }
-
 
     [ServerRpc (RequireOwnership = false)]
     void SaveCharacterSheetChangesServerRpc(CharacterSheetInfo charInfo)

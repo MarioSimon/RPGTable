@@ -134,13 +134,13 @@ public class UIManager : NetworkBehaviour
         diceRegistryCloseRegistry.onClick.AddListener(delegate { ToggleDiceRegistry(); ToggleMinimizedBar(); });
 
 
-        buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(diceType.d8, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD10.onClick.AddListener(() => RollDiceServerRpc(diceType.d10, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD12.onClick.AddListener(() => RollDiceServerRpc(diceType.d12, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(diceType.d20, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(diceType.pd, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
+        buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(diceType.d8, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD10.onClick.AddListener(() => RollDiceServerRpc(diceType.d10, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD12.onClick.AddListener(() => RollDiceServerRpc(diceType.d12, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(diceType.d20, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(diceType.pd, Camera.main.transform.position, localPlayer.playerName));
     }
 
     private void LateUpdate()
@@ -233,10 +233,8 @@ public class UIManager : NetworkBehaviour
 
     private void SendChatMessage()
     {
-        StringContainer username = new StringContainer();
-        username.SomeText = localPlayer.givenName.Value.ToString();
-        StringContainer msg = new StringContainer();
-        msg.SomeText = textChatInput.text;
+        StringContainer username = new StringContainer(localPlayer.playerName);
+        StringContainer msg = new StringContainer(textChatInput.text);
         textChatInput.text = "";
 
         textChatInput.Select();
@@ -256,13 +254,58 @@ public class UIManager : NetworkBehaviour
                     }
                     return;
                 }
-
-                if (firstWord == "/whisp")
+                else if (firstWord == "/whisp")
                 {
                     string secondWord = msg.SomeText.Split(new char[] { ' ' })[1];
-                }
 
-                return;
+                    ulong receiverId = gameManager.GetPlayerId(secondWord);
+                    ClientRpcParams clientRpcParams;
+
+                    if (receiverId == 0 && secondWord != localPlayer.playerName)
+                    {
+
+                        clientRpcParams = new ClientRpcParams
+                        {
+                            Send = new ClientRpcSendParams
+                            {
+                                TargetClientIds = new ulong[] { networkManager.LocalClientId }
+                            }
+                        };
+
+                        StringContainer systemName = new StringContainer("SYSTEM");
+                        StringContainer errorMessage = new StringContainer("ERROR: The player you tried to whisper to does not exist!");
+
+                        PostWhisperMessageClientRpc(systemName, errorMessage, true, clientRpcParams);
+                        return;
+                    }
+
+                    clientRpcParams = new ClientRpcParams
+                    {
+                        Send = new ClientRpcSendParams
+                        {
+                            TargetClientIds = new ulong[] { networkManager.LocalClientId, receiverId }
+                        }
+                    };
+
+                    PostWhisperMessageClientRpc(username, msg, false, clientRpcParams);
+                    return;
+                }
+                else
+                {
+                    ClientRpcParams clientRpcParams = new ClientRpcParams
+                    {
+                        Send = new ClientRpcSendParams
+                        {
+                            TargetClientIds = new ulong[] { networkManager.LocalClientId }
+                        }
+                    };
+
+                    StringContainer systemName = new StringContainer("SYSTEM");
+                    StringContainer errorMessage = new StringContainer("ERROR: The command you tried to use does not exist!");
+
+                    PostWhisperMessageClientRpc(systemName, errorMessage, true, clientRpcParams);
+                    return;
+                }
             }
 
 
@@ -309,16 +352,81 @@ public class UIManager : NetworkBehaviour
             if (firstWord == "/whisp")
             {
                 string secondWord = msg.SomeText.Split(new char[] { ' ' })[1];
+
+                ulong receiverId = gameManager.GetPlayerId(secondWord);
+
+                if (receiverId == 0 && secondWord != localPlayer.playerName)
+                {
+                    NotifyWhispError(serverRpcParams);
+                    return;
+                }
+
+                var clientId = serverRpcParams.Receive.SenderClientId;
+
+                if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+                {
+                    ClientRpcParams clientRpcParams = new ClientRpcParams
+                    {
+                        Send = new ClientRpcSendParams
+                        {
+                            TargetClientIds = new ulong[] { clientId, receiverId, 0 }
+                        }
+                    };
+
+                    PostWhisperMessageClientRpc(username, msg, false, clientRpcParams);
+                    return;
+                }
             }
 
+            NotifyCommandError(serverRpcParams);
             return;
         }
-
-
         PostChatMessageClientRpc(username, msg);
+
     }
 
-    
+    private void NotifyCommandError(ServerRpcParams serverRpcParams)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            StringContainer systemName = new StringContainer("SYSTEM");
+            StringContainer errorMessage = new StringContainer("ERROR: The command you tried to use does not exist!");
+
+            PostWhisperMessageClientRpc(systemName, errorMessage, true, clientRpcParams);
+        }
+    }
+
+    private void NotifyWhispError(ServerRpcParams serverRpcParams)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            StringContainer systemName = new StringContainer("SYSTEM");
+            StringContainer errorMessage = new StringContainer("ERROR: The player you tried to whisper to does not exist!");
+
+            PostWhisperMessageClientRpc(systemName, errorMessage, true, clientRpcParams);
+        }
+    }
+
     #endregion
 
     #region ClientRpc
@@ -382,6 +490,26 @@ public class UIManager : NetworkBehaviour
         {
             Destroy(message.gameObject);
         }
+    }
+
+    [ClientRpc]
+    private void PostWhisperMessageClientRpc(StringContainer username, StringContainer msg, bool error, ClientRpcParams clientRpcParams)
+    {
+        GameObject message = Instantiate(messagePrefab);
+
+        if (error)
+        {
+            message.GetComponent<Text>().color = Color.red;
+        }
+        else
+        {
+            message.GetComponent<Text>().color = Color.magenta;
+        }
+
+        message.GetComponent<Text>().text = username.SomeText + ": " + msg.SomeText;
+
+        message.GetComponent<RectTransform>().SetParent(textChatContent.GetComponent<RectTransform>());
+        message.GetComponent<RectTransform>().SetAsLastSibling();
     }
     #endregion
 
