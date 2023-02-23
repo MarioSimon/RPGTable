@@ -7,33 +7,34 @@ using UnityEngine;
 
 public class Player : NetworkBehaviour
 {
-    #region Variables
+    #region variables
 
-    public NetworkVariable<FixedString64Bytes> givenName;
+    public string playerName;
 
-    [SerializeField] private TokenController selectedToken;
+    private TokenController selectedToken;
+
     private UIManager UIManager;
     private GameManager gameManager;
 
     #endregion
 
-    #region Unity Event Functions
+    #region unity event functions
 
     private void Awake()
     {
         UIManager = FindObjectOfType<UIManager>();
         gameManager = FindObjectOfType<GameManager>();
         NetworkManager.OnClientConnectedCallback += ConfigurePlayer;
-
-        givenName = new NetworkVariable<FixedString64Bytes>("");
     }
 
     private void Start()
-    {       
+    {
+
         if (IsLocalPlayer)
         {
             UIManager.localPlayer = this;
             FindObjectOfType<CameraController>().enabled = true;
+            AddPlayerToList(UIManager.inputFieldName.text, NetworkManager.Singleton.LocalClientId);
         }
     }
 
@@ -57,8 +58,22 @@ public class Player : NetworkBehaviour
         if (IsLocalPlayer)
         {
             SetPlayerNameServerRpc(UIManager.inputFieldName.text);
-            gameManager.AddSavedCharactersServerRpc(NetworkManager.Singleton.LocalClientId);
+            gameManager.AddSavedCharactersServerRpc(obj);
+            //AddPlayerToList(playerName, obj);
         }
+    }
+
+    private void AddPlayerToList(string name, ulong id)
+    {
+        if (IsHost)
+        {
+            gameManager.AddPlayerToList(name, id);
+        }
+        else
+        {
+            gameManager.AddPlayerToListServerRpc(name, id);
+        }
+        
     }
 
     #endregion
@@ -101,7 +116,7 @@ public class Player : NetworkBehaviour
     private void InteractWithMovement()
     {       
         if (selectedToken == null) { return; }
-        if (givenName.Value != selectedToken.ownerName.Value && !IsHost) { return; }
+        if (playerName != selectedToken.ownerName.Value && !IsHost) { return; }
 
         RaycastHit hit;
         bool hasHit = Physics.Raycast(GetMouseRay(), out hit);
@@ -110,7 +125,7 @@ public class Player : NetworkBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (givenName.Value == selectedToken.ownerName.Value)
+                if (playerName == selectedToken.ownerName.Value)
                     //MoveTokenServerRpc(hit.point);
                     selectedToken.MoveToServerRpc(hit.point);
                 else if (IsHost)
@@ -130,13 +145,19 @@ public class Player : NetworkBehaviour
 
     #endregion
 
+
     #region ServerRpc
 
     [ServerRpc]
     public void SetPlayerNameServerRpc(string name)
     {
-        this.givenName.Value = new FixedString64Bytes(name);
+        SetPlayerNameClientRpc(name);
     }
-
     #endregion
+
+    [ClientRpc]
+    public void SetPlayerNameClientRpc(string name)
+    {
+        playerName = name;
+    }
 }

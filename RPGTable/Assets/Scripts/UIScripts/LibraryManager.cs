@@ -540,8 +540,7 @@ public class LibraryManager : NetworkBehaviour
 
             for (int i = 0; i < raceCount; i++)
             {
-                raceList[i] = new StringContainer();
-                raceList[i].SomeText = races[i].raceName;
+                raceList[i] = new StringContainer(races[i].raceName);
             }
 
             LoadRaceListClientRpc(raceList, clientRpcParams);
@@ -565,8 +564,7 @@ public class LibraryManager : NetworkBehaviour
                 }
             };
 
-            StringContainer newInfo = new StringContainer();
-            newInfo.SomeText = races[raceID - 1].raceName + "\n\n" + races[raceID - 1].raceDescription;
+            StringContainer newInfo = new StringContainer(races[raceID - 1].raceName + "\n\n" + races[raceID - 1].raceDescription);
 
             List<Subrace> subraces = races[raceID - 1].subraces.list;
             int subraceCount = subraces.Count;
@@ -574,8 +572,7 @@ public class LibraryManager : NetworkBehaviour
 
             for (int i = 0; i < subraceCount; i++)
             {
-                subraceList[i] = new StringContainer();
-                subraceList[i].SomeText = subraces[i].subraceName;
+                subraceList[i] = new StringContainer(subraces[i].subraceName);
             }
 
             ShowRaceDescriptionClientRpc(newInfo, subraceList, clientRpcParams);
@@ -599,7 +596,7 @@ public class LibraryManager : NetworkBehaviour
                 }
             };
 
-            StringContainer newInfo = new StringContainer();
+            StringContainer newInfo = new StringContainer("");
 
             if (subraceID == 0)
             {
@@ -641,8 +638,7 @@ public class LibraryManager : NetworkBehaviour
 
             for (int i = 0; i < classCount; i++)
             {
-                classList[i] = new StringContainer();
-                classList[i].SomeText = classes[i].className;
+                classList[i] = new StringContainer(classes[i].className);
             }
 
             LoadClassListClientRpc(classList, clientRpcParams);
@@ -666,8 +662,7 @@ public class LibraryManager : NetworkBehaviour
                 }
             };
 
-            StringContainer newInfo = new StringContainer();
-            newInfo.SomeText = classes[classID - 1].className + "\n\n" + classes[classID - 1].classDescription;
+            StringContainer newInfo = new StringContainer(classes[classID - 1].className + "\n\n" + classes[classID - 1].classDescription);
 
             List<Subclass> subclasses = classes[classID - 1].subclasses.list;
             int subclassCount = subclasses.Count;
@@ -675,8 +670,7 @@ public class LibraryManager : NetworkBehaviour
 
             for (int i = 0; i < subclassCount; i++)
             {
-                subclassList[i] = new StringContainer();
-                subclassList[i].SomeText = subclasses[i].subclassName;
+                subclassList[i] = new StringContainer(subclasses[i].subclassName);
             }
 
             ShowClassDescriptionClientRpc(newInfo, subclassList, clientRpcParams);
@@ -700,7 +694,7 @@ public class LibraryManager : NetworkBehaviour
                 }
             };
 
-            StringContainer newInfo = new StringContainer();
+            StringContainer newInfo = new StringContainer("");
 
             if (subclassID == 0)
             {
@@ -742,8 +736,7 @@ public class LibraryManager : NetworkBehaviour
 
             for (int i = 0; i < backgroundCount; i++)
             {
-                backgroundList[i] = new StringContainer();
-                backgroundList[i].SomeText = backgrounds[i].backgroundName;
+                backgroundList[i] = new StringContainer(backgrounds[i].backgroundName);
             }
 
             LoadBackgroundListClientRpc(backgroundList, clientRpcParams);
@@ -767,8 +760,7 @@ public class LibraryManager : NetworkBehaviour
                 }
             };
 
-            StringContainer newInfo = new StringContainer();
-            newInfo.SomeText = backgrounds[backgroundID - 1].backgroundName + "\n\n" + backgrounds[backgroundID - 1].backgroundDescription;
+            StringContainer newInfo = new StringContainer(backgrounds[backgroundID - 1].backgroundName + "\n\n" + backgrounds[backgroundID - 1].backgroundDescription);
 
             ShowBackgroundDescriptionClientRpc(newInfo, clientRpcParams);
         }
@@ -801,8 +793,7 @@ public class LibraryManager : NetworkBehaviour
 
             for (int i = 0; i < featCount; i++)
             {
-                featList[i] = new StringContainer();
-                featList[i].SomeText = feats[i].featName;
+                featList[i] = new StringContainer(feats[i].featName);
             }
 
             LoadFeatListClientRpc(featList, clientRpcParams);
@@ -826,8 +817,7 @@ public class LibraryManager : NetworkBehaviour
                 }
             };
 
-            StringContainer newInfo = new StringContainer();
-            newInfo.SomeText = feats[featID - 1].featName + "\n\n" + feats[featID - 1].featDescription;
+            StringContainer newInfo = new StringContainer(feats[featID - 1].featName + "\n\n" + feats[featID - 1].featDescription);
 
             ShowFeatDescriptionClientRpc(newInfo, clientRpcParams);
         }
@@ -861,8 +851,7 @@ public class LibraryManager : NetworkBehaviour
 
             for (int i = 0; i < spellCount; i++)
             {
-                spellNames[i] = new StringContainer();
-                spellNames[i].SomeText = spellList[i].spellName;
+                spellNames[i] = new StringContainer(spellList[i].spellName);
             }
 
             ShowSpellListClientRpc(spellNames, clientRpcParams);
@@ -886,8 +875,7 @@ public class LibraryManager : NetworkBehaviour
                 }
             };
 
-            StringContainer newInfo = new StringContainer();   
-            newInfo.SomeText = spells[spellLevel - 1][spellID - 1].spellName + "\n\n" + spells[spellLevel - 1][spellID - 1].spellDescription;  
+            StringContainer newInfo = new StringContainer(spells[spellLevel - 1][spellID - 1].spellName + "\n\n" + spells[spellLevel - 1][spellID - 1].spellDescription);   
 
             ShowSpellDescriptionClientRpc(newInfo, clientRpcParams);
         }

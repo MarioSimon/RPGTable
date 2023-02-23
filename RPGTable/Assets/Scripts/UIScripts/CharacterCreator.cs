@@ -758,7 +758,7 @@ public class CharacterCreator : NetworkBehaviour
         newCharacterSheet.ownerID = NetworkManager.Singleton.LocalClientId;
 
         newCharacterSheet.characterName = characterName.text;       
-        newCharacterSheet.playerName = uIManager.localPlayer.givenName.Value.ToString();
+        newCharacterSheet.playerName = uIManager.localPlayer.playerName;
         newCharacterSheet.sheetID = gameManager.GetNewSheetID();
         newCharacterSheet.avatarID = avatarID;
 
@@ -880,8 +880,7 @@ public class CharacterCreator : NetworkBehaviour
 
             for (int i = 0; i < raceCount; i++)
             {
-                raceList[i] = new StringContainer();
-                raceList[i].SomeText = races[i].raceName;
+                raceList[i] = new StringContainer(races[i].raceName);
             }
 
             LoadRaceListClientRpc(raceList, clientRpcParams);
@@ -912,8 +911,7 @@ public class CharacterCreator : NetworkBehaviour
 
             for (int i = 0; i < subraceCount; i++)
             {
-                subraceList[i] = new StringContainer();
-                subraceList[i].SomeText = subraces[i].subraceName;
+                subraceList[i] = new StringContainer(subraces[i].subraceName);
             }
 
             LoadSubraceListClientRpc(subraceList, clientRpcParams);
@@ -937,8 +935,7 @@ public class CharacterCreator : NetworkBehaviour
                 }
             };
 
-            StringContainer raceDescription = new StringContainer();
-            raceDescription.SomeText = libraryManager.races[raceID - 1].raceDescription;
+            StringContainer raceDescription = new StringContainer(libraryManager.races[raceID - 1].raceDescription);
 
             LoadRaceDescriptionClientRpc(raceDescription, clientRpcParams);
         }
@@ -962,8 +959,7 @@ public class CharacterCreator : NetworkBehaviour
                 }
             };
 
-            StringContainer raceName = new StringContainer();
-            raceName.SomeText = libraryManager.races[raceID - 1].raceName;
+            StringContainer raceName = new StringContainer(libraryManager.races[raceID - 1].raceName);
 
             int raceSpeed = libraryManager.races[raceID - 1].raceSpeed;
 
@@ -1014,8 +1010,7 @@ public class CharacterCreator : NetworkBehaviour
 
             for (int i = 0; i < raceCount; i++)
             {
-                classList[i] = new StringContainer();
-                classList[i].SomeText = classes[i].className;
+                classList[i] = new StringContainer(classes[i].className);
             }
 
             LoadClassListClientRpc(classList, clientRpcParams);
@@ -1054,8 +1049,7 @@ public class CharacterCreator : NetworkBehaviour
 
                 for (int i = 0; i < subclassCount; i++)
                 {
-                    subclassList[i] = new StringContainer();
-                    subclassList[i].SomeText = subclasses[i].subclassName;
+                    subclassList[i] = new StringContainer(subclasses[i].subclassName);
                 }
             }
 
@@ -1080,8 +1074,7 @@ public class CharacterCreator : NetworkBehaviour
                 }
             };
 
-            StringContainer classDescription = new StringContainer();
-            classDescription.SomeText = libraryManager.classes[classID - 1].classDescription;
+            StringContainer classDescription = new StringContainer(libraryManager.classes[classID - 1].classDescription);
 
             LoadClassDescriptionClientRpc(classDescription, clientRpcParams);
         }
@@ -1106,8 +1099,7 @@ public class CharacterCreator : NetworkBehaviour
             };
 
 
-            StringContainer className = new StringContainer();
-            className.SomeText = libraryManager.classes[classID - 1].className;
+            StringContainer className = new StringContainer(libraryManager.classes[classID - 1].className);
 
             int hitDice = libraryManager.classes[classID - 1].hitDice;
 
@@ -1117,7 +1109,7 @@ public class CharacterCreator : NetworkBehaviour
             List<string> subclassTraits = new List<string>();
             int subclassTraitCount = 0;
 
-            StringContainer subclassName = new StringContainer();
+            StringContainer subclassName = new StringContainer("");
 
             if (subclassID > 0)
             {
@@ -1130,7 +1122,7 @@ public class CharacterCreator : NetworkBehaviour
             {
                 subclassName.SomeText = "";
             }
-            StringContainer traits = new StringContainer();
+            StringContainer traits = new StringContainer("");
 
             for (int i = 0; i < classTraitCount; i++)
             {
@@ -1175,8 +1167,7 @@ public class CharacterCreator : NetworkBehaviour
 
             for (int i = 0; i < raceCount; i++)
             {
-                backgroundList[i] = new StringContainer();
-                backgroundList[i].SomeText = backgrounds[i].backgroundName;
+                backgroundList[i] = new StringContainer(backgrounds[i].backgroundName);
             }
 
             LoadBackgroundListClientRpc(backgroundList, clientRpcParams);
@@ -1200,8 +1191,7 @@ public class CharacterCreator : NetworkBehaviour
                 }
             };
 
-            StringContainer backgroundDescription = new StringContainer();
-            backgroundDescription.SomeText = libraryManager.backgrounds[backgroundID - 1].backgroundDescription;
+            StringContainer backgroundDescription = new StringContainer(libraryManager.backgrounds[backgroundID - 1].backgroundDescription);
 
             LoadBackgroundDescriptionClientRpc(backgroundDescription, clientRpcParams);
         }
@@ -1225,8 +1215,7 @@ public class CharacterCreator : NetworkBehaviour
                 }
             };
 
-            StringContainer backgroundName = new StringContainer();
-            backgroundName.SomeText = libraryManager.backgrounds[backgroundID - 1].backgroundName;
+            StringContainer backgroundName = new StringContainer(libraryManager.backgrounds[backgroundID - 1].backgroundName);
 
 
             WriteBackgroundTraitsClientRpc(backgroundName, clientRpcParams);

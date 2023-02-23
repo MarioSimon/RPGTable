@@ -45,7 +45,24 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button buttonThrowD100;
 
     [Header("Dice Registry/Chat")]
+    [SerializeField] GameObject minimizedBar;
+    [SerializeField] Button minimizedBarOpenChat;
+    [SerializeField] Button minimizedBarOpenRegistry;
+    [SerializeField] GameObject minimizedBarChatNotification;
+    [SerializeField] GameObject minimizedBarRegistryNotification;
+
+    [SerializeField] GameObject textChat;
+    [SerializeField] Button textChatOpenRegistry;
+    [SerializeField] Button textChatCloseChat;
+    [SerializeField] GameObject textChatRegistryNotification;
+    [SerializeField] GameObject textChatContent;
+    [SerializeField] InputField textChatInput;
+    [SerializeField] GameObject messagePrefab;
+
     [SerializeField] GameObject diceRegistry;
+    [SerializeField] Button diceRegistryOpenChat;
+    [SerializeField] Button diceRegistryCloseRegistry;
+    [SerializeField] GameObject diceRegistryChatNotification;
     [SerializeField] Text diceRegistryText;
 
     [Header("Characters")]
@@ -109,13 +126,29 @@ public class UIManager : NetworkBehaviour
         closeCharacterSelector.onClick.AddListener(() => ToggleCharacterSelector());
         toggleDiceBox.onClick.AddListener(() => ToggleDiceBox());
 
-        buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(diceType.d8, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD10.onClick.AddListener(() => RollDiceServerRpc(diceType.d10, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD12.onClick.AddListener(() => RollDiceServerRpc(diceType.d12, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(diceType.d20, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
-        buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(diceType.pd, Camera.main.transform.position, localPlayer.givenName.Value.ToString()));
+        minimizedBarOpenChat.onClick.AddListener(delegate { ToggleMinimizedBar(); ToggleTextChat(); });
+        minimizedBarOpenRegistry.onClick.AddListener(delegate { ToggleMinimizedBar(); ToggleDiceRegistry(); });
+        textChatOpenRegistry.onClick.AddListener(delegate { ToggleTextChat(); ToggleDiceRegistry(); });
+        textChatCloseChat.onClick.AddListener(delegate { ToggleTextChat(); ToggleMinimizedBar(); });
+        diceRegistryOpenChat.onClick.AddListener(delegate { ToggleDiceRegistry(); ToggleTextChat(); });
+        diceRegistryCloseRegistry.onClick.AddListener(delegate { ToggleDiceRegistry(); ToggleMinimizedBar(); });
+
+
+        buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(diceType.d8, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD10.onClick.AddListener(() => RollDiceServerRpc(diceType.d10, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD12.onClick.AddListener(() => RollDiceServerRpc(diceType.d12, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(diceType.d20, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(diceType.pd, Camera.main.transform.position, localPlayer.playerName));
+    }
+
+    private void LateUpdate()
+    {
+        if (textChatInput.text.Length > 0 && Input.GetKeyDown(KeyCode.Return))
+        {
+            SendChatMessage();
+        }
     }
 
     #endregion
@@ -145,7 +178,7 @@ public class UIManager : NetworkBehaviour
         characterList.Add(newCharacterButton);
     }
 
-    void SaveLevel()
+    private void SaveLevel()
     {
         if (levelName.text == null || levelName.text == "")
         {
@@ -165,13 +198,13 @@ public class UIManager : NetworkBehaviour
         ToggleSaveLevelPanel();
     }
 
-    void LoadLevel()
+    private void LoadLevel()
     {
         gameManager.LoadLevel(levelList.captionText.text);
         ToggleLoadLevelPanel();
     }
 
-    void DeleteLevel()
+    private void DeleteLevel()
     {
         bool deleted = gameManager.DeleteLevel(levelList.captionText.text);
 
@@ -181,12 +214,12 @@ public class UIManager : NetworkBehaviour
         }
     }
 
-    void SaveLevelsToFile()
+    private void SaveLevelsToFile()
     {
         gameManager.SaveLevelsToJSON();
     }
 
-    void LoadLevelsFromFile()
+    private void LoadLevelsFromFile()
     {
         if (!System.IO.File.Exists(Application.dataPath + "/StreamingAssets/levels.json")) { return; }
 
@@ -198,6 +231,102 @@ public class UIManager : NetworkBehaviour
         }
     }
 
+    private void SendChatMessage()
+    {
+        StringContainer username = new StringContainer(localPlayer.playerName);
+        StringContainer msg = new StringContainer(textChatInput.text);
+        textChatInput.text = "";
+
+        textChatInput.Select();
+        textChatInput.ActivateInputField();
+
+        if (IsHost)
+        {
+            if (msg.SomeText.StartsWith("/"))
+            {
+                string firstWord = msg.SomeText.Split(new char[] { ' ' })[0];
+
+                if (firstWord == "/clear")
+                {
+                    foreach (Transform message in textChatContent.transform)
+                    {
+                        Destroy(message.gameObject);
+                    }
+                    return;
+                }
+                else if (firstWord == "/whisp")
+                {
+                    string secondWord = msg.SomeText.Split(new char[] { ' ' })[1];
+
+                    ulong receiverId = gameManager.GetPlayerId(secondWord);
+                    ClientRpcParams clientRpcParams;
+
+                    if (receiverId == 0 && secondWord != localPlayer.playerName)
+                    {
+
+                        clientRpcParams = new ClientRpcParams
+                        {
+                            Send = new ClientRpcSendParams
+                            {
+                                TargetClientIds = new ulong[] { networkManager.LocalClientId }
+                            }
+                        };
+
+                        StringContainer systemName = new StringContainer("SYSTEM");
+                        StringContainer errorMessage = new StringContainer("ERROR: The player you tried to whisper to does not exist!");
+
+                        PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
+                        return;
+                    }
+
+                    clientRpcParams = new ClientRpcParams
+                    {
+                        Send = new ClientRpcSendParams
+                        {
+                            TargetClientIds = new ulong[] { networkManager.LocalClientId, receiverId }
+                        }
+                    };
+
+                    int wordIndex = msg.SomeText.IndexOf(" ") + 1;
+                    string message = msg.SomeText.Substring(wordIndex);
+
+                    wordIndex = message.IndexOf(" ") + 1;
+                    message = message.Substring(wordIndex);
+
+                    msg.SomeText = message;
+
+                    StringContainer receiverName = new StringContainer(secondWord);
+
+                    PostWhisperMessageClientRpc(username, receiverName, msg, false, clientRpcParams);
+                    return;
+                }
+                else
+                {
+                    ClientRpcParams clientRpcParams = new ClientRpcParams
+                    {
+                        Send = new ClientRpcSendParams
+                        {
+                            TargetClientIds = new ulong[] { networkManager.LocalClientId }
+                        }
+                    };
+
+                    StringContainer systemName = new StringContainer("SYSTEM");
+                    StringContainer errorMessage = new StringContainer("ERROR: The command you tried to use does not exist!");
+
+                    PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
+                    return;
+                }
+            }
+
+
+            PostChatMessageClientRpc(username, msg);
+        }
+        else
+        {
+            SendChatMessageServerRpc(username, msg);
+        }
+    }
+
     #region ServerRpc
 
     [ServerRpc(RequireOwnership = false)]
@@ -206,6 +335,118 @@ public class UIManager : NetworkBehaviour
         gameManager.RollDice(type, position, thrownBy, 0);
     }
     
+    [ServerRpc(RequireOwnership = false)]
+    private void SendChatMessageServerRpc(StringContainer username, StringContainer msg, ServerRpcParams serverRpcParams = default)
+    {
+        if (msg.SomeText.StartsWith("/"))
+        {
+            string firstWord = msg.SomeText.Split(new char[] { ' ' })[0];
+
+            if (firstWord == "/clear")
+            {
+                var clientId = serverRpcParams.Receive.SenderClientId;
+
+                if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+                {
+                    ClientRpcParams clientRpcParams = new ClientRpcParams
+                    {
+                        Send = new ClientRpcSendParams
+                        {
+                            TargetClientIds = new ulong[] { clientId }
+                        }
+                    };
+
+                    ClearChatClientRpc(clientRpcParams);
+                }
+            }
+            if (firstWord == "/whisp")
+            {
+                string secondWord = msg.SomeText.Split(new char[] { ' ' })[1];
+
+                ulong receiverId = gameManager.GetPlayerId(secondWord);
+
+                if (receiverId == 0 && secondWord != localPlayer.playerName)
+                {
+                    NotifyWhispError(serverRpcParams);
+                    return;
+                }
+
+                var clientId = serverRpcParams.Receive.SenderClientId;
+
+                if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+                {
+                    ClientRpcParams clientRpcParams = new ClientRpcParams
+                    {
+                        Send = new ClientRpcSendParams
+                        {
+                            TargetClientIds = new ulong[] { clientId, receiverId, 0 }
+                        }
+                    };
+
+                    int wordIndex = msg.SomeText.IndexOf(" ") + 1;
+                    string message = msg.SomeText.Substring(wordIndex);
+
+                    wordIndex = message.IndexOf(" ") + 1;
+                    message = message.Substring(wordIndex);
+
+                    msg.SomeText = message;
+
+                    StringContainer receiverName = new StringContainer(secondWord);
+
+                    PostWhisperMessageClientRpc(username, receiverName, msg, false, clientRpcParams);
+                    return;
+                }
+            }
+
+            NotifyCommandError(serverRpcParams);
+            return;
+        }
+        PostChatMessageClientRpc(username, msg);
+
+    }
+
+    private void NotifyCommandError(ServerRpcParams serverRpcParams)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            StringContainer systemName = new StringContainer("SYSTEM");
+            StringContainer errorMessage = new StringContainer("ERROR: The command you tried to use does not exist!");
+
+            PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
+        }
+    }
+
+    private void NotifyWhispError(ServerRpcParams serverRpcParams)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            StringContainer systemName = new StringContainer("SYSTEM");
+            StringContainer errorMessage = new StringContainer("ERROR: The player you tried to whisper to does not exist!");
+
+            PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
+        }
+    }
+
     #endregion
 
     #region ClientRpc
@@ -214,6 +455,12 @@ public class UIManager : NetworkBehaviour
     public void NotifyDiceScoreClientRpc(string scoreMessage)
     {
         diceRegistryText.text += "\n" + scoreMessage;
+
+        if (!diceRegistry.activeInHierarchy)
+        {
+            minimizedBarRegistryNotification.SetActive(true);
+            textChatRegistryNotification.SetActive(true);
+        }
     }
 
     [ClientRpc]
@@ -249,6 +496,63 @@ public class UIManager : NetworkBehaviour
         characterList[charID].GetComponent<CharacterSelector>().characterName.text = newName;
     }
 
+    [ClientRpc]
+    private void PostChatMessageClientRpc(StringContainer username, StringContainer msg)
+    {
+        GameObject message = Instantiate(messagePrefab);
+
+        message.GetComponent<Text>().text = username.SomeText + ": " + msg.SomeText;
+
+        message.GetComponent<RectTransform>().SetParent(textChatContent.GetComponent<RectTransform>());
+        message.GetComponent<RectTransform>().SetAsLastSibling();
+
+        if (!textChat.activeInHierarchy)
+        {
+            diceRegistryChatNotification.SetActive(true);
+            minimizedBarChatNotification.SetActive(true);
+        }
+    }
+
+    [ClientRpc]
+    private void ClearChatClientRpc(ClientRpcParams clientRpcParams)
+    {
+        if (IsOwner) { return; }
+
+        foreach (Transform message in textChatContent.transform)
+        {
+            Destroy(message.gameObject);
+        }
+    }
+
+    [ClientRpc]
+    private void PostWhisperMessageClientRpc(StringContainer sender, StringContainer receiver, StringContainer msg, bool error, ClientRpcParams clientRpcParams)
+    {
+        GameObject message = Instantiate(messagePrefab);
+
+        if (error)
+        {
+            message.GetComponent<Text>().color = Color.red;
+        }
+        else
+        {
+            message.GetComponent<Text>().color = Color.magenta;
+            if (IsHost)
+            {
+                sender.SomeText += " (to " + receiver.SomeText + ")";
+            }
+        }      
+
+        message.GetComponent<Text>().text = sender.SomeText + ": " + msg.SomeText;
+
+        message.GetComponent<RectTransform>().SetParent(textChatContent.GetComponent<RectTransform>());
+        message.GetComponent<RectTransform>().SetAsLastSibling();
+
+        if (!textChat.activeInHierarchy)
+        {
+            diceRegistryChatNotification.SetActive(true);
+            minimizedBarChatNotification.SetActive(true);
+        }
+    }
     #endregion
 
     #region UI Related Methods
@@ -283,6 +587,36 @@ public class UIManager : NetworkBehaviour
     {
         bool toggle = !diceBox.activeInHierarchy;
         diceBox.SetActive(toggle);
+    }
+
+    private void ToggleTextChat()
+    {
+        bool toggle = !textChat.activeInHierarchy;
+        textChat.SetActive(toggle);
+
+        if (textChat.activeInHierarchy)
+        {
+            minimizedBarChatNotification.SetActive(false);
+            diceRegistryChatNotification.SetActive(false);
+        }
+    }
+
+    private void ToggleDiceRegistry()
+    {
+        bool toggle = !diceRegistry.activeInHierarchy;
+        diceRegistry.SetActive(toggle);
+
+        if (diceRegistry.activeInHierarchy)
+        {
+            minimizedBarRegistryNotification.SetActive(false);
+            textChatRegistryNotification.SetActive(false);
+        }
+    }
+
+    private void ToggleMinimizedBar()
+    {
+        bool toggle = !minimizedBar.activeInHierarchy;
+        minimizedBar.SetActive(toggle);
     }
 
     private void ToggleDmInventory()
