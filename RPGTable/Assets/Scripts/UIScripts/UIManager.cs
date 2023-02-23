@@ -287,6 +287,14 @@ public class UIManager : NetworkBehaviour
                         }
                     };
 
+                    int wordIndex = msg.SomeText.IndexOf(" ") + 1;
+                    string message = msg.SomeText.Substring(wordIndex);
+
+                    wordIndex = message.IndexOf(" ") + 1;
+                    message = message.Substring(wordIndex);
+
+                    msg.SomeText = message;
+
                     PostWhisperMessageClientRpc(username, msg, false, clientRpcParams);
                     return;
                 }
@@ -372,6 +380,12 @@ public class UIManager : NetworkBehaviour
                             TargetClientIds = new ulong[] { clientId, receiverId, 0 }
                         }
                     };
+
+                    int wordIndex = msg.SomeText.IndexOf(" ") + 1;
+                    string message = msg.SomeText.Substring(wordIndex);
+
+                    wordIndex = message.IndexOf(" ") + 1;
+                    message = message.Substring(wordIndex);
 
                     PostWhisperMessageClientRpc(username, msg, false, clientRpcParams);
                     return;
