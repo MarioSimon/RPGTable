@@ -387,6 +387,8 @@ public class UIManager : NetworkBehaviour
                     wordIndex = message.IndexOf(" ") + 1;
                     message = message.Substring(wordIndex);
 
+                    msg.SomeText = message;
+
                     PostWhisperMessageClientRpc(username, msg, false, clientRpcParams);
                     return;
                 }
@@ -449,6 +451,12 @@ public class UIManager : NetworkBehaviour
     public void NotifyDiceScoreClientRpc(string scoreMessage)
     {
         diceRegistryText.text += "\n" + scoreMessage;
+
+        if (!diceRegistry.activeInHierarchy)
+        {
+            minimizedBarRegistryNotification.SetActive(true);
+            textChatRegistryNotification.SetActive(true);
+        }
     }
 
     [ClientRpc]
@@ -493,6 +501,12 @@ public class UIManager : NetworkBehaviour
 
         message.GetComponent<RectTransform>().SetParent(textChatContent.GetComponent<RectTransform>());
         message.GetComponent<RectTransform>().SetAsLastSibling();
+
+        if (!textChat.activeInHierarchy)
+        {
+            diceRegistryChatNotification.SetActive(true);
+            minimizedBarChatNotification.SetActive(true);
+        }
     }
 
     [ClientRpc]
@@ -565,12 +579,24 @@ public class UIManager : NetworkBehaviour
     {
         bool toggle = !textChat.activeInHierarchy;
         textChat.SetActive(toggle);
+
+        if (textChat.activeInHierarchy)
+        {
+            minimizedBarChatNotification.SetActive(false);
+            diceRegistryChatNotification.SetActive(false);
+        }
     }
 
     private void ToggleDiceRegistry()
     {
         bool toggle = !diceRegistry.activeInHierarchy;
         diceRegistry.SetActive(toggle);
+
+        if (diceRegistry.activeInHierarchy)
+        {
+            minimizedBarRegistryNotification.SetActive(false);
+            textChatRegistryNotification.SetActive(false);
+        }
     }
 
     private void ToggleMinimizedBar()
