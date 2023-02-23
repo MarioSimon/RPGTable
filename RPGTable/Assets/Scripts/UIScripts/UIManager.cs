@@ -275,7 +275,7 @@ public class UIManager : NetworkBehaviour
                         StringContainer systemName = new StringContainer("SYSTEM");
                         StringContainer errorMessage = new StringContainer("ERROR: The player you tried to whisper to does not exist!");
 
-                        PostWhisperMessageClientRpc(systemName, errorMessage, true, clientRpcParams);
+                        PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
                         return;
                     }
 
@@ -295,7 +295,9 @@ public class UIManager : NetworkBehaviour
 
                     msg.SomeText = message;
 
-                    PostWhisperMessageClientRpc(username, msg, false, clientRpcParams);
+                    StringContainer receiverName = new StringContainer(secondWord);
+
+                    PostWhisperMessageClientRpc(username, receiverName, msg, false, clientRpcParams);
                     return;
                 }
                 else
@@ -311,7 +313,7 @@ public class UIManager : NetworkBehaviour
                     StringContainer systemName = new StringContainer("SYSTEM");
                     StringContainer errorMessage = new StringContainer("ERROR: The command you tried to use does not exist!");
 
-                    PostWhisperMessageClientRpc(systemName, errorMessage, true, clientRpcParams);
+                    PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
                     return;
                 }
             }
@@ -389,7 +391,9 @@ public class UIManager : NetworkBehaviour
 
                     msg.SomeText = message;
 
-                    PostWhisperMessageClientRpc(username, msg, false, clientRpcParams);
+                    StringContainer receiverName = new StringContainer(secondWord);
+
+                    PostWhisperMessageClientRpc(username, receiverName, msg, false, clientRpcParams);
                     return;
                 }
             }
@@ -418,7 +422,7 @@ public class UIManager : NetworkBehaviour
             StringContainer systemName = new StringContainer("SYSTEM");
             StringContainer errorMessage = new StringContainer("ERROR: The command you tried to use does not exist!");
 
-            PostWhisperMessageClientRpc(systemName, errorMessage, true, clientRpcParams);
+            PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
         }
     }
 
@@ -439,7 +443,7 @@ public class UIManager : NetworkBehaviour
             StringContainer systemName = new StringContainer("SYSTEM");
             StringContainer errorMessage = new StringContainer("ERROR: The player you tried to whisper to does not exist!");
 
-            PostWhisperMessageClientRpc(systemName, errorMessage, true, clientRpcParams);
+            PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
         }
     }
 
@@ -521,7 +525,7 @@ public class UIManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void PostWhisperMessageClientRpc(StringContainer username, StringContainer msg, bool error, ClientRpcParams clientRpcParams)
+    private void PostWhisperMessageClientRpc(StringContainer sender, StringContainer receiver, StringContainer msg, bool error, ClientRpcParams clientRpcParams)
     {
         GameObject message = Instantiate(messagePrefab);
 
@@ -532,12 +536,22 @@ public class UIManager : NetworkBehaviour
         else
         {
             message.GetComponent<Text>().color = Color.magenta;
-        }
+            if (IsHost)
+            {
+                sender.SomeText += " (to " + receiver.SomeText + ")";
+            }
+        }      
 
-        message.GetComponent<Text>().text = username.SomeText + ": " + msg.SomeText;
+        message.GetComponent<Text>().text = sender.SomeText + ": " + msg.SomeText;
 
         message.GetComponent<RectTransform>().SetParent(textChatContent.GetComponent<RectTransform>());
         message.GetComponent<RectTransform>().SetAsLastSibling();
+
+        if (!textChat.activeInHierarchy)
+        {
+            diceRegistryChatNotification.SetActive(true);
+            minimizedBarChatNotification.SetActive(true);
+        }
     }
     #endregion
 
