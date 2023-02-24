@@ -58,7 +58,7 @@ public class Player : NetworkBehaviour
         if (IsLocalPlayer)
         {
             SetPlayerNameServerRpc(UIManager.inputFieldName.text);
-            gameManager.AddSavedCharactersServerRpc(obj);
+            gameManager.AddSavedCharactersServerRpc();
             //AddPlayerToList(playerName, obj);
         }
     }

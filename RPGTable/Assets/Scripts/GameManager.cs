@@ -389,14 +389,27 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc (RequireOwnership = false)]
-    public void AddSavedCharactersServerRpc(ulong clientID)
+    public void AddSavedCharactersServerRpc(ServerRpcParams serverRpcParams = default)
     {
-        List<CharacterSheetInfo> charSheets = characterSheets;
+        var clientId = serverRpcParams.Receive.SenderClientId;
 
-        foreach (CharacterSheetInfo charInfo in charSheets)
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
         {
-            AddSavedCharactersClientRpc(clientID, charInfo);
-        }
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            List<CharacterSheetInfo> charSheets = characterSheets;
+
+            foreach (CharacterSheetInfo charInfo in charSheets)
+            {
+                AddSavedCharactersClientRpc(charInfo, clientRpcParams);
+            }
+        }        
     }
 
     [ServerRpc (RequireOwnership = false)]
@@ -410,9 +423,9 @@ public class GameManager : NetworkBehaviour
     #region ClientRpc
 
     [ClientRpc]
-    public void AddSavedCharactersClientRpc(ulong clientID, CharacterSheetInfo charInfo)
+    public void AddSavedCharactersClientRpc(CharacterSheetInfo charInfo, ClientRpcParams clientRpcParams)
     {
-        if (NetworkManager.Singleton.LocalClientId != clientID || IsServer) { return; }
+        if (IsHost) { return; }
        
         characterSheets.Add(charInfo);
         uiManager.AddCharacterButton(charInfo.sheetID, charInfo.characterName, charInfo.avatarID);     
@@ -421,7 +434,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     void UpdateSheetListClientRpc(CharacterSheetInfo charInfo)
     {
-        //if (!IsServer)
+        //if (!IsHost)
             characterSheets.Add(charInfo);
     }
 
