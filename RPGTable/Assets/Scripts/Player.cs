@@ -116,7 +116,7 @@ public class Player : NetworkBehaviour
     private void InteractWithMovement()
     {       
         if (selectedToken == null) { return; }
-        if (playerName != selectedToken.ownerName.Value && !IsHost) { return; }
+        if (!IsOwner && !IsHost) { return; }
 
         RaycastHit hit;
         bool hasHit = Physics.Raycast(GetMouseRay(), out hit);

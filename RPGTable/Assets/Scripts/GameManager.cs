@@ -180,9 +180,10 @@ public class GameManager : NetworkBehaviour
 
     #region tokens
 
-    public void SpawnToken(ulong ownerID, string ownerName, int avatarID)
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnTokenServerRpc(ulong ownerID, string ownerName, int avatarID)
     {
-        if (!IsServer) { return; }
+        if (!IsHost) { return; }
 
         GameObject token = Instantiate(avatarList[avatarID], Vector3.zero, Quaternion.identity);
         token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);

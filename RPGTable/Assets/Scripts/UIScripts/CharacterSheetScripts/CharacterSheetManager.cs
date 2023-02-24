@@ -253,7 +253,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         // navigation related events
         buttonClose.onClick.AddListener(() => CloseSheet());
-        buttonSpawnToken.onClick.AddListener(() => SpawnTokenServerRpc(NetworkManager.Singleton.LocalClientId, playerName.text, CSInfo.avatarID));
+        buttonSpawnToken.onClick.AddListener(() => SpawnToken(NetworkManager.Singleton.LocalClientId, playerName.text, CSInfo.avatarID));
         buttonPublicInfo.onClick.AddListener(() => OpenPublicInfoPage());
         buttonBasicInfo.onClick.AddListener(() => OpenBasicInfoPage());
         buttonSkills.onClick.AddListener(() => OpenSkillsPage());
@@ -1485,10 +1485,9 @@ public class CharacterSheetManager : MonoBehaviour
 
     #region ServerRpc
 
-    [ServerRpc]
-    void SpawnTokenServerRpc(ulong ownerID, string ownerName, int avatarID)
+    void SpawnToken(ulong ownerID, string ownerName, int avatarID)
     {
-        gameManager.SpawnToken(ownerID, ownerName, avatarID);
+        gameManager.SpawnTokenServerRpc(ownerID, ownerName, avatarID);
     }
 
     // ability checks
