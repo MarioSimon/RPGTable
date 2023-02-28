@@ -185,7 +185,7 @@ public class GameManager : NetworkBehaviour
         if (IsHost)
         {
             GameObject token = Instantiate(avatarList[avatarID], Vector3.zero, Quaternion.identity);
-            token.transform.position += Vector3.down * 1.5f; //prevents spawning in the air
+            //token.transform.position += Vector3.down * 1.5f; //prevents spawning in the air
 
             TokenController tokenController = token.GetComponent<TokenController>();
             tokenController.ownerName.Value = new FixedString64Bytes(ownerName);

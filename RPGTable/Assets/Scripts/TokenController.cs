@@ -16,7 +16,6 @@ public class TokenController : NetworkBehaviour
 
     GameManager gameManager;
     Canvas canvas;
-    NavMeshAgent navMeshAgent;
 
     public CharacterSheetInfo characterSheetInfo;
 
@@ -34,7 +33,6 @@ public class TokenController : NetworkBehaviour
 
     private void Awake()
     {
-        navMeshAgent = GetComponent<NavMeshAgent>();
         gameManager = FindObjectOfType<GameManager>();
         canvas = FindObjectOfType<Canvas>();
     }
