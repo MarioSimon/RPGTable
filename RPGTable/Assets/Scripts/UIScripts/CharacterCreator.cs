@@ -762,27 +762,27 @@ public class CharacterCreator : NetworkBehaviour
         newCharacterSheet.sheetID = gameManager.GetNewSheetID();
         newCharacterSheet.avatarID = avatarID;
 
-        newCharacterSheet.initiativeBonus = CalculateAbilityModifier(pointBuyDexterity).ToString();
-        newCharacterSheet.armorClass = (10 + CalculateAbilityModifier(pointBuyDexterity)).ToString();
+        newCharacterSheet.initiativeBonus = CalculateAbilityModifier(passingDexterity).ToString();
+        newCharacterSheet.armorClass = (10 + CalculateAbilityModifier(passingDexterity)).ToString();
         
 
         switch (newCharacterSheet.hitDiceType)
         {
             case 0:
-                newCharacterSheet.maxHealthPoints = (6 + CalculateAbilityModifier(pointBuyConstitution)).ToString();
-                newCharacterSheet.currHealthPoints = (6 + CalculateAbilityModifier(pointBuyConstitution)).ToString();
+                newCharacterSheet.maxHealthPoints = (6 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.currHealthPoints = (6 + CalculateAbilityModifier(passingConstitution)).ToString();
                 break;
             case 1:
-                newCharacterSheet.maxHealthPoints = (8 + CalculateAbilityModifier(pointBuyConstitution)).ToString();
-                newCharacterSheet.currHealthPoints = (8 + CalculateAbilityModifier(pointBuyConstitution)).ToString();
+                newCharacterSheet.maxHealthPoints = (8 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.currHealthPoints = (8 + CalculateAbilityModifier(passingConstitution)).ToString();
                 break;
             case 2:
-                newCharacterSheet.maxHealthPoints = (10 + CalculateAbilityModifier(pointBuyConstitution)).ToString();
-                newCharacterSheet.currHealthPoints = (10 + CalculateAbilityModifier(pointBuyConstitution)).ToString();
+                newCharacterSheet.maxHealthPoints = (10 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.currHealthPoints = (10 + CalculateAbilityModifier(passingConstitution)).ToString();
                 break;
             case 3:
-                newCharacterSheet.maxHealthPoints = (12 + CalculateAbilityModifier(pointBuyConstitution)).ToString();
-                newCharacterSheet.currHealthPoints = (12 + CalculateAbilityModifier(pointBuyConstitution)).ToString();
+                newCharacterSheet.maxHealthPoints = (12 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.currHealthPoints = (12 + CalculateAbilityModifier(passingConstitution)).ToString();
                 break;
         }
     }

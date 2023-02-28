@@ -180,15 +180,32 @@ public class GameManager : NetworkBehaviour
 
     #region tokens
 
+    public void SpawnToken(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
+    {
+        if (IsHost)
+        {
+            GameObject token = Instantiate(avatarList[avatarID], Vector3.zero, Quaternion.identity);
+            token.transform.position += Vector3.down * 1.5f; //prevents spawning in the air
+
+            TokenController tokenController = token.GetComponent<TokenController>();
+            tokenController.ownerName.Value = new FixedString64Bytes(ownerName);
+            tokenController.characterSheetInfo = characterSheetInfo;
+            token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
+        }
+        else
+        {
+            SpawnTokenServerRpc(ownerID, ownerName, avatarID, characterSheetInfo);
+        }
+    }
+
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnTokenServerRpc(ulong ownerID, string ownerName, int avatarID)
+    public void SpawnTokenServerRpc(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
     {
         if (!IsHost) { return; }
 
-        GameObject token = Instantiate(avatarList[avatarID], Vector3.zero, Quaternion.identity);
-        token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
-        token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
+        SpawnToken(ownerID, ownerName, avatarID, characterSheetInfo);
     }
+
 
     #endregion
 
@@ -435,8 +452,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     void UpdateSheetListClientRpc(CharacterSheetInfo charInfo)
     {
-        //if (!IsHost)
-            characterSheets.Add(charInfo);
+        characterSheets.Add(charInfo);
     }
 
     [ClientRpc]

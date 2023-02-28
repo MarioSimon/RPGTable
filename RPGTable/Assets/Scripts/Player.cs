@@ -104,7 +104,7 @@ public class Player : NetworkBehaviour
         foreach (RaycastHit hit in hits)
         {
             TokenController target = hit.transform.GetComponent<TokenController>();
-            if (target == null) continue;
+            if (target == null) { continue; }
 
             if (Input.GetMouseButtonDown(0))
             {
@@ -123,10 +123,13 @@ public class Player : NetworkBehaviour
 
         if (hasHit)
         {
+            WalkableZone terrain = hit.transform.GetComponent<WalkableZone>();
+
+            if (terrain == null) { return; }
+
             if (Input.GetMouseButtonDown(0))
             {
                 if (playerName == selectedToken.ownerName.Value)
-                    //MoveTokenServerRpc(hit.point);
                     selectedToken.MoveToServerRpc(hit.point);
                 else if (IsHost)
                     selectedToken.MoveTo(hit.point);

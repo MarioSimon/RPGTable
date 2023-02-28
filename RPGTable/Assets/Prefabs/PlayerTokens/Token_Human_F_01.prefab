@@ -281,6 +281,213 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tokenModel: {fileID: 426626478177194109}
+  tokenMenu: {fileID: 1878711165183701654, guid: a1b6cdbc4e4903442ab302e135a69a05, type: 3}
+  characterSheetPrefab: {fileID: 6933813031592149426, guid: f55a0cf4e36b9984f8a744c78cc547fa, type: 3}
+  characterSheetInfo:
+    ownerID: 0
+    sheetID: -1
+    characterName: 
+    playerName: 
+    appearance: 
+    avatarID: 0
+    publicBasicInfo: 1
+    publicSkills: 1
+    publicFeatures: 1
+    publicInventory: 1
+    publicSpells: 1
+    publicActions: 1
+    publicPersonality: 1
+    clasAndLevel: 
+    subclass: 
+    race: 
+    background: 
+    alignement: 
+    experience: 
+    strScore: 10
+    dexScore: 10
+    conScore: 10
+    intScore: 10
+    wisScore: 10
+    chaScore: 10
+    maxHealthPoints: 0
+    currHealthPoints: 0
+    tempHealthPoints: 0
+    initiativeBonus: 0
+    armorClass: 0
+    speed: 0
+    hitDiceType: 0
+    deathSaveSuccesses: 0
+    deathSaveFails: 0
+    proficencyBonus: 2
+    strProf: 0
+    dexProf: 0
+    conProf: 0
+    intProf: 0
+    wisProf: 0
+    chaProf: 0
+    skillProf: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    skillCharacteristic: 010000000400000003000000000000000500000003000000040000000500000003000000040000000300000004000000050000000500000003000000010000000100000004000000
+    skillBonus:
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    skillTotal:
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    featuresAndTraits: 
+    proficencies: 
+    itemCount: 0
+    itemNames: []
+    itemAmounts: []
+    itemWeights: []
+    totalWeight: 0
+    maxWeight: 0
+    copperPieces: 0
+    silverPieces: 0
+    electrumPieces: 0
+    goldPieces: 0
+    platinumPieces: 0
+    spellCastingAbility: 0
+    spellSaveDC: 10
+    spellAttackMod: 2
+    level0SpellCount: 0
+    level0SpellNames: []
+    level0PreparedSpells: 
+    level0SpellLevel: 
+    level0SpellSchool: 
+    level0SpellCastingTime: []
+    level0SpellRange: []
+    level0SpellComponents: []
+    level0SpellDuration: []
+    level0SpellDescription: []
+    level1SpellCount: 0
+    level1SpellNames: []
+    level1PreparedSpells: 
+    level1SpellLevel: 
+    level1SpellSchool: 
+    level1SpellCastingTime: []
+    level1SpellRange: []
+    level1SpellComponents: []
+    level1SpellDuration: []
+    level1SpellDescription: []
+    level2SpellCount: 0
+    level2SpellNames: []
+    level2PreparedSpells: 
+    level2SpellLevel: 
+    level2SpellSchool: 
+    level2SpellCastingTime: []
+    level2SpellRange: []
+    level2SpellComponents: []
+    level2SpellDuration: []
+    level2SpellDescription: []
+    level3SpellCount: 0
+    level3SpellNames: []
+    level3PreparedSpells: 
+    level3SpellLevel: 
+    level3SpellSchool: 
+    level3SpellCastingTime: []
+    level3SpellRange: []
+    level3SpellComponents: []
+    level3SpellDuration: []
+    level3SpellDescription: []
+    level4SpellCount: 0
+    level4SpellNames: []
+    level4PreparedSpells: 
+    level4SpellLevel: 
+    level4SpellSchool: 
+    level4SpellCastingTime: []
+    level4SpellRange: []
+    level4SpellComponents: []
+    level4SpellDuration: []
+    level4SpellDescription: []
+    level5SpellCount: 0
+    level5SpellNames: []
+    level5PreparedSpells: 
+    level5SpellLevel: 
+    level5SpellSchool: 
+    level5SpellCastingTime: []
+    level5SpellRange: []
+    level5SpellComponents: []
+    level5SpellDuration: []
+    level5SpellDescription: []
+    level6SpellCount: 0
+    level6SpellNames: []
+    level6PreparedSpells: 
+    level6SpellLevel: 
+    level6SpellSchool: 
+    level6SpellCastingTime: []
+    level6SpellRange: []
+    level6SpellComponents: []
+    level6SpellDuration: []
+    level6SpellDescription: []
+    level7SpellCount: 0
+    level7SpellNames: []
+    level7PreparedSpells: 
+    level7SpellLevel: 
+    level7SpellSchool: 
+    level7SpellCastingTime: []
+    level7SpellRange: []
+    level7SpellComponents: []
+    level7SpellDuration: []
+    level7SpellDescription: []
+    level8SpellCount: 0
+    level8SpellNames: []
+    level8PreparedSpells: 
+    level8SpellLevel: 
+    level8SpellSchool: 
+    level8SpellCastingTime: []
+    level8SpellRange: []
+    level8SpellComponents: []
+    level8SpellDuration: []
+    level8SpellDescription: []
+    level9SpellCount: 0
+    level9SpellNames: []
+    level9PreparedSpells: 
+    level9SpellLevel: 
+    level9SpellSchool: 
+    level9SpellCastingTime: []
+    level9SpellRange: []
+    level9SpellComponents: []
+    level9SpellDuration: []
+    level9SpellDescription: []
+    actions: 
+    bonusActions: 
+    reactions: 
+    traits: 
+    ideals: 
+    bonds: 
+    flaws: 
   tokenName:
     m_InternalValue:
       utf8LengthInBytes: 0
