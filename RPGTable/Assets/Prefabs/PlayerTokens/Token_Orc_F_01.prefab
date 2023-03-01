@@ -142,10 +142,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
+  m_Radius: 0.4
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &6908615707928747111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,6 +177,7 @@ MonoBehaviour:
   tokenModel: {fileID: 426626478177194109}
   tokenMenu: {fileID: 1878711165183701654, guid: a1b6cdbc4e4903442ab302e135a69a05, type: 3}
   characterSheetPrefab: {fileID: 6933813031592149426, guid: f55a0cf4e36b9984f8a744c78cc547fa, type: 3}
+  animator: {fileID: 1994606481136179172}
   characterSheetInfo:
     ownerID: 0
     sheetID: -1

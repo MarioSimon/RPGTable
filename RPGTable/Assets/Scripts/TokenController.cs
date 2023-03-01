@@ -14,6 +14,7 @@ public class TokenController : NetworkBehaviour
     [SerializeField] GameObject tokenMenu;
     [SerializeField] GameObject characterSheetPrefab;
 
+    [SerializeField] Animator animator;
     GameManager gameManager;
     Canvas canvas;
 
@@ -146,7 +147,6 @@ public class TokenController : NetworkBehaviour
 
     public void MoveTo(Vector3 destination)
     {
-        //navMeshAgent.Warp(destination);
         transform.position = destination;
     }
 
@@ -180,7 +180,6 @@ public class TokenController : NetworkBehaviour
         }
     }
 
-
     public void OpenTokenMenu()
     {
         if (tokenMenuInstance != null)
@@ -198,7 +197,9 @@ public class TokenController : NetworkBehaviour
         contextMenuHandler.buttonList[3].onClick.AddListener(() => DestroyToken());
         contextMenuHandler.buttonList[4].onClick.AddListener(() => MoveUp());
         contextMenuHandler.buttonList[5].onClick.AddListener(() => MoveDown());
-
+        
+        contextMenuHandler.buttonList[8].onClick.AddListener(() => FallProne());
+        contextMenuHandler.buttonList[9].onClick.AddListener(() => GetUp());
 
         tokenMenuInstance = contextMenu;
     }
@@ -232,11 +233,10 @@ public class TokenController : NetworkBehaviour
     {
         MoveUpServerRpc();
     }
-    
 
     private void MoveDown()
     {
-        transform.position += Vector3.down * 1.5f;
+        MoveDownServerRpc();
     }
 
     private void SizeUp()
@@ -249,14 +249,22 @@ public class TokenController : NetworkBehaviour
 
     }
 
+    private void FallProne()
+    {
+        FallProneServerRpc();
+    }
+
+    private void GetUp()
+    {
+        GetUpServerRpc();
+    }
+
     private void DestroyToken()
     {
         Destroy(tokenMenuInstance);
 
         DestroyTokenServerRpc();
     }
-
-
     #endregion
 
     #region ServerRpc
@@ -292,7 +300,25 @@ public class TokenController : NetworkBehaviour
     [ServerRpc]
     private void MoveUpServerRpc()
     {
-        MoveUpClientRpc();
+        transform.position += Vector3.up * 1.5f;
+    }
+
+    [ServerRpc]
+    private void MoveDownServerRpc()
+    {
+        transform.position += Vector3.down * 1.5f;
+    }
+
+    [ServerRpc]
+    private void FallProneServerRpc()
+    {
+        FallProneClientRpc();
+    }
+
+    [ServerRpc]
+    private void GetUpServerRpc()
+    {
+        GetUpClientRpc();
     }
 
     #endregion
@@ -318,9 +344,16 @@ public class TokenController : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void MoveUpClientRpc()
+    private void FallProneClientRpc()
     {
-        transform.position += Vector3.up * 1.5f;
+        animator.SetTrigger("prone");
     }
+
+    [ClientRpc]
+    private void GetUpClientRpc()
+    {
+        animator.SetTrigger("getUp");
+    }
+
     #endregion
 }
