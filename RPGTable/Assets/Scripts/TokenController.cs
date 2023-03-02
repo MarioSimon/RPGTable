@@ -4,13 +4,13 @@ using UnityEngine;
 using Unity.Netcode;
 using Unity.Collections;
 using UnityEngine.AI;
-using System;
 
 public class TokenController : NetworkBehaviour
 {
     #region variables
 
     [SerializeField] GameObject tokenModel;
+    [SerializeField] GameObject tokenBase;
     [SerializeField] GameObject tokenMenu;
     [SerializeField] GameObject characterSheetPrefab;
 
@@ -40,19 +40,19 @@ public class TokenController : NetworkBehaviour
 
     private void Start()
     {
-        tokenModel.GetComponent<Renderer>().material.color = standardColor;
+        tokenBase.GetComponent<Renderer>().material.color = standardColor;
     }
 
     private void Update()
     {
         if (!IsOwner && !IsHost) { return; }
-        //TestDamage();
+
+        TestDamage();
+        
         if (Input.GetMouseButtonDown(1))
         {
             InteractWithTokenMenu();
-        }
-
-        
+        }        
     }
 
     #endregion
@@ -100,6 +100,7 @@ public class TokenController : NetworkBehaviour
         if (damage > 0)
         {
             currentHP -= damage;
+            TriggerDamagedAnimation();
         }
 
         if (temporaryHP < 0)
@@ -118,7 +119,57 @@ public class TokenController : NetworkBehaviour
         PropagateHealthPointChangesClientRpc(characterSheetInfo.sheetID, temporaryHP.ToString(), currentHP.ToString());
         FindObjectOfType<GameManager>().SaveCharacterSheetChanges(characterSheetInfo);
     }
-  
+
+    private void TriggerDamagedAnimation()
+    {
+        if (IsHost)
+        {
+            int animation = Random.Range(0, 3);
+
+            switch (animation)
+            {
+                case 0:
+                    animator.SetTrigger("bodyHit");
+                    break;
+                case 1:
+                    animator.SetTrigger("headHit");
+                    break;
+                case 2:
+                    animator.SetTrigger("ribHit");
+                    break;
+            }
+
+            TriggerDamagedAnimationClientRpc(animation);
+        }
+        else
+        {
+            TriggerDamagedAnimationServerRpc();
+        }
+    }
+
+    [ServerRpc]
+    private void TriggerDamagedAnimationServerRpc()
+    {
+        TriggerDamagedAnimation();
+    }
+
+    [ClientRpc]
+    private void TriggerDamagedAnimationClientRpc(int animation)
+    {
+        switch (animation)
+        {
+            case 0:
+                animator.SetTrigger("bodyHit");
+                break;
+            case 1:
+                animator.SetTrigger("headHit");
+                break;
+            case 2:
+                animator.SetTrigger("ribHit");
+                break;
+        }
+    }
+
     #endregion
 
     #region Selection
@@ -133,11 +184,11 @@ public class TokenController : NetworkBehaviour
     {
         if (selected)
         {
-            tokenModel.GetComponent<Renderer>().material.color = selectedColor;
+            tokenBase.GetComponent<Renderer>().material.color = selectedColor;
         }
         else
         {
-            tokenModel.GetComponent<Renderer>().material.color = standardColor;
+            tokenBase.GetComponent<Renderer>().material.color = standardColor;
         }
     }
 
@@ -265,6 +316,7 @@ public class TokenController : NetworkBehaviour
 
         DestroyTokenServerRpc();
     }
+    
     #endregion
 
     #region ServerRpc
@@ -351,7 +403,7 @@ public class TokenController : NetworkBehaviour
 
     [ClientRpc]
     private void GetUpClientRpc()
-    {
+    {       
         animator.SetTrigger("getUp");
     }
 
