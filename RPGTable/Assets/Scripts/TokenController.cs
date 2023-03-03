@@ -47,7 +47,7 @@ public class TokenController : NetworkBehaviour
     {
         if (!IsOwner && !IsHost) { return; }
 
-        //TestDamage();
+        TestDamageAndHeal();
         
         if (Input.GetMouseButtonDown(1))
         {
@@ -56,7 +56,7 @@ public class TokenController : NetworkBehaviour
     }
 
     #endregion
-    private void TestDamage()
+    private void TestDamageAndHeal()
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -69,7 +69,20 @@ public class TokenController : NetworkBehaviour
                 TakeDamageServerRpc(5);
             }
             Debug.Log(characterSheetInfo.currHealthPoints);
-        }   
+        }
+
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            if (IsHost)
+            {
+                Heal(5, 0);
+            }
+            else
+            {
+                HealServerRpc(5, 0);
+            }
+            Debug.Log(characterSheetInfo.currHealthPoints);
+        }
     }
 
     #region character sheet
@@ -116,6 +129,28 @@ public class TokenController : NetworkBehaviour
         characterSheetInfo.tempHealthPoints = temporaryHP.ToString();
         characterSheetInfo.currHealthPoints = currentHP.ToString();
         
+        PropagateHealthPointChangesClientRpc(characterSheetInfo.sheetID, temporaryHP.ToString(), currentHP.ToString());
+        FindObjectOfType<GameManager>().SaveCharacterSheetChanges(characterSheetInfo);
+    }
+
+    public void Heal(int restoredHP, int newTemporaryHP)
+    {
+        if (!IsHost) { return; }
+
+        int maxHP = ToInt(characterSheetInfo.maxHealthPoints);
+        int temporaryHP = ToInt(characterSheetInfo.tempHealthPoints);
+        int currentHP = ToInt(characterSheetInfo.currHealthPoints);
+
+        temporaryHP = newTemporaryHP;
+        currentHP += restoredHP;
+        if (currentHP > maxHP)
+        {
+            currentHP = maxHP;
+        }
+
+        characterSheetInfo.tempHealthPoints = temporaryHP.ToString();
+        characterSheetInfo.currHealthPoints = currentHP.ToString();
+
         PropagateHealthPointChangesClientRpc(characterSheetInfo.sheetID, temporaryHP.ToString(), currentHP.ToString());
         FindObjectOfType<GameManager>().SaveCharacterSheetChanges(characterSheetInfo);
     }
@@ -362,6 +397,12 @@ public class TokenController : NetworkBehaviour
     public void TakeDamageServerRpc(int damage)
     {
         TakeDamage(damage);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void HealServerRpc(int restoredHP, int newTemporaryHP)
+    {
+        Heal(restoredHP, newTemporaryHP);
     }
 
     [ServerRpc(RequireOwnership = false)]
