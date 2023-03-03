@@ -294,12 +294,12 @@ GameObject:
   - component: {fileID: 8524395322310913378}
   - component: {fileID: 6976429316950760237}
   m_Layer: 5
-  m_Name: FlyBtn
+  m_Name: TauntBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6123722054247415247
 RectTransform:
   m_ObjectHideFlags: 0
@@ -743,6 +743,10 @@ MonoBehaviour:
   - {fileID: 4247042452652820813}
   - {fileID: 1428895409195594514}
   - {fileID: 236224252966989122}
+  - {fileID: 6976429316950760237}
+  - {fileID: 5357531171576920507}
+  - {fileID: 855147835690688748}
+  - {fileID: 151919647817715398}
   secondaryPannels:
   - {fileID: 3429629354269067944}
   - {fileID: 6432636864588758167}
@@ -1103,7 +1107,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Size down
+  m_Text: Shrug
 --- !u!1 &2979731026216621326
 GameObject:
   m_ObjectHideFlags: 0
@@ -1363,7 +1367,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4007926706351445791
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1505,7 +1509,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Move down
+  m_Text: Laugh
 --- !u!1 &3762123301262912417
 GameObject:
   m_ObjectHideFlags: 0
@@ -2105,7 +2109,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Size up
+  m_Text: Battlecry
 --- !u!1 &5041274218089858376
 GameObject:
   m_ObjectHideFlags: 0
@@ -2598,12 +2602,12 @@ GameObject:
   - component: {fileID: 7298296480814543981}
   - component: {fileID: 5357531171576920507}
   m_Layer: 5
-  m_Name: LandBtn
+  m_Name: LaughBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2459123374183092144
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2719,12 +2723,12 @@ GameObject:
   - component: {fileID: 664585984612065174}
   - component: {fileID: 151919647817715398}
   m_Layer: 5
-  m_Name: SizeDownBtn
+  m_Name: ShrugBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6872044959425570218
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3026,7 +3030,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Move up
+  m_Text: Taunt
 --- !u!1 &6345859889203643290
 GameObject:
   m_ObjectHideFlags: 0
@@ -3040,12 +3044,12 @@ GameObject:
   - component: {fileID: 3368034655761328822}
   - component: {fileID: 855147835690688748}
   m_Layer: 5
-  m_Name: SizeUpBtn
+  m_Name: BattlecryBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &766649817437589884
 RectTransform:
   m_ObjectHideFlags: 0

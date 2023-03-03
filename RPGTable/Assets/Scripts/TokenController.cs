@@ -47,7 +47,7 @@ public class TokenController : NetworkBehaviour
     {
         if (!IsOwner && !IsHost) { return; }
 
-        TestDamage();
+        //TestDamage();
         
         if (Input.GetMouseButtonDown(1))
         {
@@ -68,8 +68,8 @@ public class TokenController : NetworkBehaviour
             {
                 TakeDamageServerRpc(5);
             }
-        }
-        Debug.Log(characterSheetInfo.currHealthPoints);
+            Debug.Log(characterSheetInfo.currHealthPoints);
+        }   
     }
 
     #region character sheet
@@ -144,29 +144,6 @@ public class TokenController : NetworkBehaviour
         else
         {
             TriggerDamagedAnimationServerRpc();
-        }
-    }
-
-    [ServerRpc]
-    private void TriggerDamagedAnimationServerRpc()
-    {
-        TriggerDamagedAnimation();
-    }
-
-    [ClientRpc]
-    private void TriggerDamagedAnimationClientRpc(int animation)
-    {
-        switch (animation)
-        {
-            case 0:
-                animator.SetTrigger("bodyHit");
-                break;
-            case 1:
-                animator.SetTrigger("headHit");
-                break;
-            case 2:
-                animator.SetTrigger("ribHit");
-                break;
         }
     }
 
@@ -248,9 +225,15 @@ public class TokenController : NetworkBehaviour
         contextMenuHandler.buttonList[3].onClick.AddListener(() => DestroyToken());
         contextMenuHandler.buttonList[4].onClick.AddListener(() => MoveUp());
         contextMenuHandler.buttonList[5].onClick.AddListener(() => MoveDown());
-        
+        //contextMenuHandler.buttonList[6].onClick.AddListener(() => );
+        //contextMenuHandler.buttonList[7].onClick.AddListener(() => );
         contextMenuHandler.buttonList[8].onClick.AddListener(() => FallProne());
         contextMenuHandler.buttonList[9].onClick.AddListener(() => GetUp());
+        contextMenuHandler.buttonList[10].onClick.AddListener(() => TauntGesture());
+        contextMenuHandler.buttonList[11].onClick.AddListener(() => LaughGesture());
+        contextMenuHandler.buttonList[12].onClick.AddListener(() => BattlecryGesture());
+        contextMenuHandler.buttonList[13].onClick.AddListener(() => ShrugGesture());
+
 
         tokenMenuInstance = contextMenu;
     }
@@ -310,13 +293,61 @@ public class TokenController : NetworkBehaviour
         GetUpServerRpc();
     }
 
+    private void LaughGesture()
+    {
+        if (IsHost)
+        {
+            LaughGestureClientRpc();
+        }
+        else
+        {
+            LaughGestureServerRpc();
+        }        
+    }
+
+    private void ShrugGesture()
+    {
+        if (IsHost)
+        {
+            ShrugGestureClientRpc();
+        }
+        else
+        {
+            ShrugGestureServerRpc();
+        }
+    }
+
+    private void BattlecryGesture()
+    {
+        if (IsHost)
+        {
+            BattlecryGestureClientRpc();
+        }
+        else
+        {
+            BattlecryGestureServerRpc();
+        }
+    }
+
     private void DestroyToken()
     {
         Destroy(tokenMenuInstance);
 
         DestroyTokenServerRpc();
     }
-    
+
+    private void TauntGesture()
+    {
+        if (IsHost)
+        {
+            TauntGestureClientRpc();
+        }
+        else
+        {
+            TauntGestureServerRpc();
+        }
+    }
+
     #endregion
 
     #region ServerRpc
@@ -341,6 +372,12 @@ public class TokenController : NetworkBehaviour
         GameObject charSheet = Instantiate(characterSheetPrefab);
         charSheet.GetComponent<CharacterSheetManager>().CSInfo = characterSheetInfo;
         charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
+    }
+
+    [ServerRpc]
+    private void TriggerDamagedAnimationServerRpc()
+    {
+        TriggerDamagedAnimation();
     }
 
     [ServerRpc]
@@ -373,6 +410,30 @@ public class TokenController : NetworkBehaviour
         GetUpClientRpc();
     }
 
+    [ServerRpc]
+    private void LaughGestureServerRpc()
+    {
+        LaughGestureClientRpc();
+    }
+
+    [ServerRpc]
+    private void ShrugGestureServerRpc()
+    {
+        ShrugGestureClientRpc();
+    }
+
+    [ServerRpc]
+    private void BattlecryGestureServerRpc()
+    {
+        BattlecryGestureClientRpc();
+    }
+
+    [ServerRpc]
+    private void TauntGestureServerRpc()
+    {
+        TauntGestureClientRpc();
+    }
+
     #endregion
 
     #region clientRpc
@@ -396,6 +457,23 @@ public class TokenController : NetworkBehaviour
     }
 
     [ClientRpc]
+    private void TriggerDamagedAnimationClientRpc(int animation)
+    {
+        switch (animation)
+        {
+            case 0:
+                animator.SetTrigger("bodyHit");
+                break;
+            case 1:
+                animator.SetTrigger("headHit");
+                break;
+            case 2:
+                animator.SetTrigger("ribHit");
+                break;
+        }
+    }
+
+    [ClientRpc]
     private void FallProneClientRpc()
     {
         animator.SetTrigger("prone");
@@ -405,6 +483,30 @@ public class TokenController : NetworkBehaviour
     private void GetUpClientRpc()
     {       
         animator.SetTrigger("getUp");
+    }
+
+    [ClientRpc]
+    private void LaughGestureClientRpc()
+    {
+        animator.SetTrigger("laugh");
+    }
+
+    [ClientRpc]
+    private void ShrugGestureClientRpc()
+    {
+        animator.SetTrigger("shrug");
+    }
+
+    [ClientRpc]
+    private void BattlecryGestureClientRpc()
+    {
+        animator.SetTrigger("battlecry");
+    }
+
+    [ClientRpc]
+    private void TauntGestureClientRpc()
+    {
+        animator.SetTrigger("taunt");
     }
 
     #endregion
