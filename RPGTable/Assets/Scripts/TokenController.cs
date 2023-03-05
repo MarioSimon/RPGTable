@@ -47,7 +47,7 @@ public class TokenController : NetworkBehaviour
     {
         if (!IsOwner && !IsHost) { return; }
 
-        TestDamageAndHeal();
+        Test();
         
         if (Input.GetMouseButtonDown(1))
         {
@@ -56,9 +56,10 @@ public class TokenController : NetworkBehaviour
     }
 
     #endregion
-    private void TestDamageAndHeal()
+    private void Test()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        //test damage
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             if (IsHost)
             {
@@ -70,8 +71,8 @@ public class TokenController : NetworkBehaviour
             }
             Debug.Log(characterSheetInfo.currHealthPoints);
         }
-
-        if (Input.GetKeyDown(KeyCode.O))
+        //test heal
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             if (IsHost)
             {
@@ -82,6 +83,16 @@ public class TokenController : NetworkBehaviour
                 HealServerRpc(5, 0);
             }
             Debug.Log(characterSheetInfo.currHealthPoints);
+        }
+        //test magic
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            TriggerMagicAnimation();
+        }
+        //test CaC
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            TriggerCaCAnimation();
         }
     }
 
@@ -110,11 +121,7 @@ public class TokenController : NetworkBehaviour
             temporaryHP -= aux;
         }
 
-        if (damage > 0)
-        {
-            currentHP -= damage;
-            TriggerDamagedAnimation();
-        }
+        currentHP -= damage;
 
         if (temporaryHP < 0)
         {
@@ -124,6 +131,15 @@ public class TokenController : NetworkBehaviour
         if (currentHP < 0)
         {
             currentHP = 0;
+        }
+
+        if (currentHP == 0)
+        {
+            FallProne();
+        }
+        else
+        {
+            TriggerDamagedAnimation();
         }
 
         characterSheetInfo.tempHealthPoints = temporaryHP.ToString();
@@ -138,10 +154,9 @@ public class TokenController : NetworkBehaviour
         if (!IsHost) { return; }
 
         int maxHP = ToInt(characterSheetInfo.maxHealthPoints);
-        int temporaryHP = ToInt(characterSheetInfo.tempHealthPoints);
+        int temporaryHP = newTemporaryHP;
         int currentHP = ToInt(characterSheetInfo.currHealthPoints);
 
-        temporaryHP = newTemporaryHP;
         currentHP += restoredHP;
         if (currentHP > maxHP)
         {
@@ -153,6 +168,39 @@ public class TokenController : NetworkBehaviour
 
         PropagateHealthPointChangesClientRpc(characterSheetInfo.sheetID, temporaryHP.ToString(), currentHP.ToString());
         FindObjectOfType<GameManager>().SaveCharacterSheetChanges(characterSheetInfo);
+    }
+
+    private void TriggerMagicAnimation()
+    {
+        if (IsHost)
+        {
+            int animation = Random.Range(0, 5);
+
+            switch (animation)
+            {
+                case 0:
+                    animator.SetTrigger("magic1H");
+                    break;
+                case 1:
+                    animator.SetTrigger("magic2H0");
+                    break;
+                case 2:
+                    animator.SetTrigger("magic2H1");
+                    break;
+                case 3:
+                    animator.SetTrigger("magic2H2");
+                    break;
+                case 4:
+                    animator.SetTrigger("magic2H3");
+                    break;
+            }
+
+            TriggerMagicAnimationClientRpc(animation);
+        }
+        else
+        {
+            TriggerMagicAnimationServerRpc();
+        }
     }
 
     private void TriggerDamagedAnimation()
@@ -179,6 +227,18 @@ public class TokenController : NetworkBehaviour
         else
         {
             TriggerDamagedAnimationServerRpc();
+        }
+    }
+
+    private void TriggerCaCAnimation()
+    {
+        if (IsHost)
+        {
+            TriggerCaCAnimationClientRpc();
+        }
+        else
+        {
+            TriggerCaCAnimationServerRpc();
         }
     }
 
@@ -422,6 +482,18 @@ public class TokenController : NetworkBehaviour
     }
 
     [ServerRpc]
+    private void TriggerMagicAnimationServerRpc()
+    {
+        TriggerMagicAnimation();
+    }
+
+    [ServerRpc]
+    private void TriggerCaCAnimationServerRpc()
+    {
+        TriggerCaCAnimationClientRpc();
+    }
+
+    [ServerRpc]
     private void DestroyTokenServerRpc()
     {
         this.gameObject.GetComponent<NetworkObject>().Despawn();
@@ -512,6 +584,35 @@ public class TokenController : NetworkBehaviour
                 animator.SetTrigger("ribHit");
                 break;
         }
+    }
+
+    [ClientRpc]
+    private void TriggerMagicAnimationClientRpc(int animation)
+    {
+        switch (animation)
+        {
+            case 0:
+                animator.SetTrigger("magic1H");
+                break;
+            case 1:
+                animator.SetTrigger("magic2H0");
+                break;
+            case 2:
+                animator.SetTrigger("magic2H1");
+                break;
+            case 3:
+                animator.SetTrigger("magic2H2");
+                break;
+            case 4:
+                animator.SetTrigger("magic2H3");
+                break;
+        }
+    }
+
+    [ClientRpc]
+    private void TriggerCaCAnimationClientRpc()
+    {
+        animator.SetTrigger("cac");
     }
 
     [ClientRpc]
