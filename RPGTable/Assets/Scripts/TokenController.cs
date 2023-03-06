@@ -28,6 +28,8 @@ public class TokenController : NetworkBehaviour
 
     bool selected = false;
     GameObject tokenMenuInstance;
+
+    bool prone = false;
     #endregion
 
     #region unity event functions
@@ -93,6 +95,11 @@ public class TokenController : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             TriggerCaCAnimation();
+        }
+        //test attack
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            TriggerAttackAnimation();
         }
     }
 
@@ -227,6 +234,33 @@ public class TokenController : NetworkBehaviour
         else
         {
             TriggerDamagedAnimationServerRpc();
+        }
+    }
+
+    private void TriggerAttackAnimation()
+    {
+        if (IsHost)
+        {
+            int animation = Random.Range(0, 3);
+
+            switch (animation)
+            {
+                case 0:
+                    animator.SetTrigger("attack0");
+                    break;
+                case 1:
+                    animator.SetTrigger("attack1");
+                    break;
+                case 2:
+                    animator.SetTrigger("attack2");
+                    break;
+            }
+
+            TriggerAttackAnimationClientRpc(animation);
+        }
+        else
+        {
+            TriggerAttackAnimationServerRpc();
         }
     }
 
@@ -482,6 +516,12 @@ public class TokenController : NetworkBehaviour
     }
 
     [ServerRpc]
+    private void TriggerAttackAnimationServerRpc()
+    {
+        TriggerAttackAnimation();
+    }
+
+    [ServerRpc]
     private void TriggerMagicAnimationServerRpc()
     {
         TriggerMagicAnimation();
@@ -587,6 +627,23 @@ public class TokenController : NetworkBehaviour
     }
 
     [ClientRpc]
+    private void TriggerAttackAnimationClientRpc(int animation)
+    {
+        switch (animation)
+        {
+            case 0:
+                animator.SetTrigger("attack0");
+                break;
+            case 1:
+                animator.SetTrigger("attack1");
+                break;
+            case 2:
+                animator.SetTrigger("attack2");
+                break;
+        }
+    }
+
+    [ClientRpc]
     private void TriggerMagicAnimationClientRpc(int animation)
     {
         switch (animation)
@@ -618,12 +675,15 @@ public class TokenController : NetworkBehaviour
     [ClientRpc]
     private void FallProneClientRpc()
     {
+        if (prone) { return; }
+        prone = true;
         animator.SetTrigger("prone");
     }
 
     [ClientRpc]
     private void GetUpClientRpc()
-    {       
+    {
+        prone = false;
         animator.SetTrigger("getUp");
     }
 
