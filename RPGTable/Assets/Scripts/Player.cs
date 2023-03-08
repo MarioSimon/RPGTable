@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Player : NetworkBehaviour
 {
@@ -114,7 +115,8 @@ public class Player : NetworkBehaviour
     }
 
     private void InteractWithMovement()
-    {       
+    {
+        if (EventSystem.current.IsPointerOverGameObject()) { return; }
         if (selectedToken == null) { return; }
         if (!IsOwner && !IsHost) { return; }
 

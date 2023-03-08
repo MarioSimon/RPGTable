@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 using Unity.Collections;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class TokenController : NetworkBehaviour
 {
@@ -12,7 +13,7 @@ public class TokenController : NetworkBehaviour
     [SerializeField] GameObject tokenModel;
     [SerializeField] GameObject tokenBase;
     [SerializeField] GameObject tokenMenu;
-    [SerializeField] GameObject characterSheetPrefab;
+    [SerializeField] GameObject characterSheetPrefab;   
 
     [SerializeField] Animator animator;
     GameManager gameManager;
@@ -28,6 +29,7 @@ public class TokenController : NetworkBehaviour
 
     bool selected = false;
     GameObject tokenMenuInstance;
+    InputField tokenHP;
 
     bool prone = false;
     #endregion
@@ -50,11 +52,16 @@ public class TokenController : NetworkBehaviour
         if (!IsOwner && !IsHost) { return; }
 
         Test();
-        
+
         if (Input.GetMouseButtonDown(1))
         {
             InteractWithTokenMenu();
-        }        
+        }
+
+        //if (tokenHP != null && Input.GetKeyDown(KeyCode.Return))
+        //{
+        //    UpdateTokenHP();
+        //}
     }
 
     #endregion
@@ -151,7 +158,12 @@ public class TokenController : NetworkBehaviour
 
         characterSheetInfo.tempHealthPoints = temporaryHP.ToString();
         characterSheetInfo.currHealthPoints = currentHP.ToString();
-        
+
+        if (tokenHP != null)
+        {
+            tokenHP.text = currentHP.ToString();
+        }
+
         PropagateHealthPointChangesClientRpc(characterSheetInfo.sheetID, temporaryHP.ToString(), currentHP.ToString());
         FindObjectOfType<GameManager>().SaveCharacterSheetChanges(characterSheetInfo);
     }
@@ -172,6 +184,11 @@ public class TokenController : NetworkBehaviour
 
         characterSheetInfo.tempHealthPoints = temporaryHP.ToString();
         characterSheetInfo.currHealthPoints = currentHP.ToString();
+
+        if (tokenHP != null)
+        {
+            tokenHP.text = currentHP.ToString();
+        }
 
         PropagateHealthPointChangesClientRpc(characterSheetInfo.sheetID, temporaryHP.ToString(), currentHP.ToString());
         FindObjectOfType<GameManager>().SaveCharacterSheetChanges(characterSheetInfo);
@@ -326,6 +343,7 @@ public class TokenController : NetworkBehaviour
             {
                 if (tokenMenuInstance != null)
                 {
+                    tokenHP = null;
                     Destroy(tokenMenuInstance);
                 }
 
@@ -363,7 +381,9 @@ public class TokenController : NetworkBehaviour
         contextMenuHandler.buttonList[12].onClick.AddListener(() => BattlecryGesture());
         contextMenuHandler.buttonList[13].onClick.AddListener(() => ShrugGesture());
 
-
+        tokenHP = tokenMenu.GetComponentInChildren<InputField>();
+        tokenHP = tokenMenu.transform.GetChild(0).GetComponent<InputField>(); ;
+        tokenHP.text = characterSheetInfo.currHealthPoints;
         tokenMenuInstance = contextMenu;
     }
 
@@ -460,6 +480,7 @@ public class TokenController : NetworkBehaviour
 
     private void DestroyToken()
     {
+        tokenHP = null;
         Destroy(tokenMenuInstance);
 
         DestroyTokenServerRpc();
@@ -474,6 +495,52 @@ public class TokenController : NetworkBehaviour
         else
         {
             TauntGestureServerRpc();
+        }
+    }
+
+    private void UpdateTokenHP()
+    {
+        string HPtext = tokenHP.text;
+
+        if (HPtext.StartsWith("+"))
+        {
+            HPtext = HPtext.Substring(1);
+
+            int healValue;
+
+            if (!int.TryParse(HPtext, out healValue)) 
+            {
+                tokenHP.text = characterSheetInfo.currHealthPoints;
+                return;
+            }
+            Heal(healValue, 0);
+        }
+        else if (HPtext.StartsWith("-"))
+        {
+            HPtext = HPtext.Substring(1);
+
+            int damageValue;
+
+            if (!int.TryParse(HPtext, out damageValue))
+            {
+                tokenHP.text = characterSheetInfo.currHealthPoints;
+                return;
+            }
+            TakeDamage(damageValue);
+        }
+        else
+        {
+            int HPValue;
+            if (!int.TryParse(HPtext, out HPValue))
+            {
+                tokenHP.text = characterSheetInfo.currHealthPoints;
+                return;
+            }
+
+            characterSheetInfo.currHealthPoints = HPValue.ToString();
+
+            PropagateHealthPointChangesClientRpc(characterSheetInfo.sheetID, characterSheetInfo.tempHealthPoints, HPValue.ToString());
+            FindObjectOfType<GameManager>().SaveCharacterSheetChanges(characterSheetInfo);
         }
     }
 
