@@ -180,14 +180,32 @@ public class GameManager : NetworkBehaviour
 
     #region tokens
 
-    public void SpawnToken(ulong ownerID, string ownerName, int avatarID)
+    public void SpawnToken(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
     {
-        if (!IsServer) { return; }
+        if (IsHost)
+        {
+            GameObject token = Instantiate(avatarList[avatarID], Vector3.zero, Quaternion.identity);
+            //token.transform.position += Vector3.down * 1.5f; //prevents spawning in the air
 
-        GameObject token = Instantiate(avatarList[avatarID], Vector3.zero, Quaternion.identity);
-        token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
-        token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
+            TokenController tokenController = token.GetComponent<TokenController>();
+            tokenController.ownerName.Value = new FixedString64Bytes(ownerName);
+            tokenController.characterSheetInfo = characterSheetInfo;
+            token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
+        }
+        else
+        {
+            SpawnTokenServerRpc(ownerID, ownerName, avatarID, characterSheetInfo);
+        }
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnTokenServerRpc(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
+    {
+        if (!IsHost) { return; }
+
+        SpawnToken(ownerID, ownerName, avatarID, characterSheetInfo);
+    }
+
 
     #endregion
 
@@ -389,14 +407,27 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc (RequireOwnership = false)]
-    public void AddSavedCharactersServerRpc(ulong clientID)
+    public void AddSavedCharactersServerRpc(ServerRpcParams serverRpcParams = default)
     {
-        List<CharacterSheetInfo> charSheets = characterSheets;
+        var clientId = serverRpcParams.Receive.SenderClientId;
 
-        foreach (CharacterSheetInfo charInfo in charSheets)
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
         {
-            AddSavedCharactersClientRpc(clientID, charInfo);
-        }
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            List<CharacterSheetInfo> charSheets = characterSheets;
+
+            foreach (CharacterSheetInfo charInfo in charSheets)
+            {
+                AddSavedCharactersClientRpc(charInfo, clientRpcParams);
+            }
+        }        
     }
 
     [ServerRpc (RequireOwnership = false)]
@@ -410,9 +441,9 @@ public class GameManager : NetworkBehaviour
     #region ClientRpc
 
     [ClientRpc]
-    public void AddSavedCharactersClientRpc(ulong clientID, CharacterSheetInfo charInfo)
+    public void AddSavedCharactersClientRpc(CharacterSheetInfo charInfo, ClientRpcParams clientRpcParams)
     {
-        if (NetworkManager.Singleton.LocalClientId != clientID || IsServer) { return; }
+        if (IsHost) { return; }
        
         characterSheets.Add(charInfo);
         uiManager.AddCharacterButton(charInfo.sheetID, charInfo.characterName, charInfo.avatarID);     
@@ -421,8 +452,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     void UpdateSheetListClientRpc(CharacterSheetInfo charInfo)
     {
-        //if (!IsServer)
-            characterSheets.Add(charInfo);
+        characterSheets.Add(charInfo);
     }
 
     [ClientRpc]

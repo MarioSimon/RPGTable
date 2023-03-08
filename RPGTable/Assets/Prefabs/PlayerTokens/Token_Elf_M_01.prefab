@@ -27,11 +27,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 426626478177194109}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalPosition: {x: 0, y: 0.05, z: 0}
   m_LocalScale: {x: 1, y: 0.05, z: 1}
   m_Children: []
   m_Father: {fileID: 6908615707928747108}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3071436823539488338
 MeshFilter:
@@ -96,88 +96,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!1 &5356186902095452147
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 583376729120875713}
-  - component: {fileID: 1607392397335767192}
-  - component: {fileID: 2011242539363373645}
-  m_Layer: 0
-  m_Name: Model
-  m_TagString: Player
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &583376729120875713
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5356186902095452147}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1048110144233499435}
-  m_Father: {fileID: 6908615707928747108}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1607392397335767192
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5356186902095452147}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &2011242539363373645
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5356186902095452147}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 3992f6b65e5b92344bead0d8f955752a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6908615707928747110
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,7 +106,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6908615707928747108}
   - component: {fileID: 6908615707928747104}
-  - component: {fileID: 6908615707928747107}
   - component: {fileID: 6908615707928747111}
   - component: {fileID: 6908615707928747106}
   - component: {fileID: 6908615707928747109}
@@ -210,7 +127,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 583376729120875713}
   - {fileID: 5955999980011972828}
   - {fileID: 4226581890970600629}
   m_Father: {fileID: 0}
@@ -226,32 +142,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 0.4
+  m_Height: 1.8
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!195 &6908615707928747107
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6908615707928747110}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 1
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &6908615707928747111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,6 +175,214 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tokenModel: {fileID: 426626478177194109}
+  tokenMenu: {fileID: 1878711165183701654, guid: a1b6cdbc4e4903442ab302e135a69a05, type: 3}
+  characterSheetPrefab: {fileID: 6933813031592149426, guid: f55a0cf4e36b9984f8a744c78cc547fa, type: 3}
+  animator: {fileID: 7802478669181165263}
+  characterSheetInfo:
+    ownerID: 0
+    sheetID: -1
+    characterName: 
+    playerName: 
+    appearance: 
+    avatarID: 0
+    publicBasicInfo: 1
+    publicSkills: 1
+    publicFeatures: 1
+    publicInventory: 1
+    publicSpells: 1
+    publicActions: 1
+    publicPersonality: 1
+    clasAndLevel: 
+    subclass: 
+    race: 
+    background: 
+    alignement: 
+    experience: 
+    strScore: 10
+    dexScore: 10
+    conScore: 10
+    intScore: 10
+    wisScore: 10
+    chaScore: 10
+    maxHealthPoints: 0
+    currHealthPoints: 0
+    tempHealthPoints: 0
+    initiativeBonus: 0
+    armorClass: 0
+    speed: 0
+    hitDiceType: 0
+    deathSaveSuccesses: 0
+    deathSaveFails: 0
+    proficencyBonus: 2
+    strProf: 0
+    dexProf: 0
+    conProf: 0
+    intProf: 0
+    wisProf: 0
+    chaProf: 0
+    skillProf: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    skillCharacteristic: 010000000400000003000000000000000500000003000000040000000500000003000000040000000300000004000000050000000500000003000000010000000100000004000000
+    skillBonus:
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    skillTotal:
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    featuresAndTraits: 
+    proficencies: 
+    itemCount: 0
+    itemNames: []
+    itemAmounts: []
+    itemWeights: []
+    totalWeight: 0
+    maxWeight: 0
+    copperPieces: 0
+    silverPieces: 0
+    electrumPieces: 0
+    goldPieces: 0
+    platinumPieces: 0
+    spellCastingAbility: 0
+    spellSaveDC: 10
+    spellAttackMod: 2
+    level0SpellCount: 0
+    level0SpellNames: []
+    level0PreparedSpells: 
+    level0SpellLevel: 
+    level0SpellSchool: 
+    level0SpellCastingTime: []
+    level0SpellRange: []
+    level0SpellComponents: []
+    level0SpellDuration: []
+    level0SpellDescription: []
+    level1SpellCount: 0
+    level1SpellNames: []
+    level1PreparedSpells: 
+    level1SpellLevel: 
+    level1SpellSchool: 
+    level1SpellCastingTime: []
+    level1SpellRange: []
+    level1SpellComponents: []
+    level1SpellDuration: []
+    level1SpellDescription: []
+    level2SpellCount: 0
+    level2SpellNames: []
+    level2PreparedSpells: 
+    level2SpellLevel: 
+    level2SpellSchool: 
+    level2SpellCastingTime: []
+    level2SpellRange: []
+    level2SpellComponents: []
+    level2SpellDuration: []
+    level2SpellDescription: []
+    level3SpellCount: 0
+    level3SpellNames: []
+    level3PreparedSpells: 
+    level3SpellLevel: 
+    level3SpellSchool: 
+    level3SpellCastingTime: []
+    level3SpellRange: []
+    level3SpellComponents: []
+    level3SpellDuration: []
+    level3SpellDescription: []
+    level4SpellCount: 0
+    level4SpellNames: []
+    level4PreparedSpells: 
+    level4SpellLevel: 
+    level4SpellSchool: 
+    level4SpellCastingTime: []
+    level4SpellRange: []
+    level4SpellComponents: []
+    level4SpellDuration: []
+    level4SpellDescription: []
+    level5SpellCount: 0
+    level5SpellNames: []
+    level5PreparedSpells: 
+    level5SpellLevel: 
+    level5SpellSchool: 
+    level5SpellCastingTime: []
+    level5SpellRange: []
+    level5SpellComponents: []
+    level5SpellDuration: []
+    level5SpellDescription: []
+    level6SpellCount: 0
+    level6SpellNames: []
+    level6PreparedSpells: 
+    level6SpellLevel: 
+    level6SpellSchool: 
+    level6SpellCastingTime: []
+    level6SpellRange: []
+    level6SpellComponents: []
+    level6SpellDuration: []
+    level6SpellDescription: []
+    level7SpellCount: 0
+    level7SpellNames: []
+    level7PreparedSpells: 
+    level7SpellLevel: 
+    level7SpellSchool: 
+    level7SpellCastingTime: []
+    level7SpellRange: []
+    level7SpellComponents: []
+    level7SpellDuration: []
+    level7SpellDescription: []
+    level8SpellCount: 0
+    level8SpellNames: []
+    level8PreparedSpells: 
+    level8SpellLevel: 
+    level8SpellSchool: 
+    level8SpellCastingTime: []
+    level8SpellRange: []
+    level8SpellComponents: []
+    level8SpellDuration: []
+    level8SpellDescription: []
+    level9SpellCount: 0
+    level9SpellNames: []
+    level9PreparedSpells: 
+    level9SpellLevel: 
+    level9SpellSchool: 
+    level9SpellCastingTime: []
+    level9SpellRange: []
+    level9SpellComponents: []
+    level9SpellDuration: []
+    level9SpellDescription: []
+    actions: 
+    bonusActions: 
+    reactions: 
+    traits: 
+    ideals: 
+    bonds: 
+    flaws: 
   tokenName:
     m_InternalValue:
       utf8LengthInBytes: 0
@@ -446,101 +548,6 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
---- !u!1 &7413500625292462896
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1048110144233499435}
-  - component: {fileID: 6394027242415317753}
-  - component: {fileID: 1866901175463465900}
-  - component: {fileID: 4979120934159727448}
-  m_Layer: 0
-  m_Name: Visor
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1048110144233499435
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7413500625292462896}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.46, z: -0.326}
-  m_LocalScale: {x: 0.6235, y: 0.26201, z: 0.48699}
-  m_Children: []
-  m_Father: {fileID: 583376729120875713}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &6394027242415317753
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7413500625292462896}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1866901175463465900
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7413500625292462896}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 3992f6b65e5b92344bead0d8f955752a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4979120934159727448
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7413500625292462896}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &4408299093569020766
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -550,7 +557,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: d9e9c7b85e3344a42a410e0e18ba1bea, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d9e9c7b85e3344a42a410e0e18ba1bea, type: 3}
       propertyPath: m_LocalPosition.x
@@ -558,7 +565,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d9e9c7b85e3344a42a410e0e18ba1bea, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.95
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d9e9c7b85e3344a42a410e0e18ba1bea, type: 3}
       propertyPath: m_LocalPosition.z
@@ -600,10 +607,19 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 1c5da0b04451fe0488631542b2158e33, type: 2}
+    - target: {fileID: 5866666021909216657, guid: d9e9c7b85e3344a42a410e0e18ba1bea, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9e9c7b85e3344a42a410e0e18ba1bea, type: 3}
 --- !u!4 &4226581890970600629 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d9e9c7b85e3344a42a410e0e18ba1bea, type: 3}
+  m_PrefabInstance: {fileID: 4408299093569020766}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &7802478669181165263 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: d9e9c7b85e3344a42a410e0e18ba1bea, type: 3}
   m_PrefabInstance: {fileID: 4408299093569020766}
   m_PrefabAsset: {fileID: 0}

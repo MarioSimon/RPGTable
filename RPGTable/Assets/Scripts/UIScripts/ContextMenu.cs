@@ -5,5 +5,6 @@ using UnityEngine.UI;
 
 public class ContextMenu : MonoBehaviour
 {
-    public List<Button> buttonList; // a dictionary would be better but those can't be assigned in the editor
+    public List<Button> buttonList;
+    public List<GameObject> secondaryPannels;
 }

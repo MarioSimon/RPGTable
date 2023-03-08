@@ -79,9 +79,9 @@ public class CharacterSheetManager : MonoBehaviour
     [SerializeField] Button chaCheck;
     [SerializeField] Button chaSave;
     // Stats
-    [SerializeField] InputField maxHealthPoints;
-    [SerializeField] InputField currHealthPoints;
-    [SerializeField] InputField tempHealthPoints;
+    [SerializeField] public InputField maxHealthPoints;
+    [SerializeField] public InputField currHealthPoints;
+    [SerializeField] public InputField tempHealthPoints;
     [SerializeField] InputField initiativeBonus;
     [SerializeField] Button rollInitiative;
     [SerializeField] Dropdown hitDice;
@@ -253,7 +253,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         // navigation related events
         buttonClose.onClick.AddListener(() => CloseSheet());
-        buttonSpawnToken.onClick.AddListener(() => SpawnTokenServerRpc(NetworkManager.Singleton.LocalClientId, playerName.text, CSInfo.avatarID));
+        buttonSpawnToken.onClick.AddListener(() => SpawnToken(NetworkManager.Singleton.LocalClientId, playerName.text, CSInfo.avatarID, CSInfo));
         buttonPublicInfo.onClick.AddListener(() => OpenPublicInfoPage());
         buttonBasicInfo.onClick.AddListener(() => OpenBasicInfoPage());
         buttonSkills.onClick.AddListener(() => OpenSkillsPage());
@@ -301,8 +301,8 @@ public class CharacterSheetManager : MonoBehaviour
 
         // character stats related events
         maxHealthPoints.onValueChanged.AddListener(delegate { CheckInt(maxHealthPoints); });
-        currHealthPoints.onValueChanged.AddListener(delegate { CheckInt(currHealthPoints); });
-        tempHealthPoints.onValueChanged.AddListener(delegate { CheckInt(tempHealthPoints); });
+        currHealthPoints.onValueChanged.AddListener(delegate { CheckInt(currHealthPoints); UpdateTokenHealthPoints(tempHealthPoints.text, currHealthPoints.text); });
+        tempHealthPoints.onValueChanged.AddListener(delegate { CheckInt(tempHealthPoints); UpdateTokenHealthPoints(tempHealthPoints.text, currHealthPoints.text); });
 
         armorClass.onValueChanged.AddListener(delegate { CheckInt(armorClass); });
         initiativeBonus.onValueChanged.AddListener(delegate { CheckInt(initiativeBonus); });
@@ -1346,7 +1346,28 @@ public class CharacterSheetManager : MonoBehaviour
         spellList.Add(spell);
     }
 
-    // Auxiliary methods
+    // token related methods
+
+    void SpawnToken(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
+    {
+        gameManager.SpawnToken(ownerID, ownerName, avatarID, characterSheetInfo);
+    }
+
+    public void UpdateTokenHealthPoints(string tempHP, string currHP)
+    {
+        TokenController[] tokens = FindObjectsOfType<TokenController>();
+
+        foreach (TokenController token in tokens)
+        {
+            if (token.characterSheetInfo.sheetID == CSInfo.sheetID)
+            {
+                token.characterSheetInfo.tempHealthPoints = tempHP;
+                token.characterSheetInfo.currHealthPoints = currHP;
+            }
+        }
+    }
+
+    // auxiliary methods
 
     private void CheckPermisson()
     {
@@ -1484,12 +1505,6 @@ public class CharacterSheetManager : MonoBehaviour
     #endregion
 
     #region ServerRpc
-
-    [ServerRpc]
-    void SpawnTokenServerRpc(ulong ownerID, string ownerName, int avatarID)
-    {
-        gameManager.SpawnToken(ownerID, ownerName, avatarID);
-    }
 
     // ability checks
     [ServerRpc]

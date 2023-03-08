@@ -327,6 +327,48 @@ public class UIManager : NetworkBehaviour
         }
     }
 
+    private void NotifyCommandError(ServerRpcParams serverRpcParams)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            StringContainer systemName = new StringContainer("SYSTEM");
+            StringContainer errorMessage = new StringContainer("ERROR: The command you tried to use does not exist!");
+
+            PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
+        }
+    }
+
+    private void NotifyWhispError(ServerRpcParams serverRpcParams)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            StringContainer systemName = new StringContainer("SYSTEM");
+            StringContainer errorMessage = new StringContainer("ERROR: The player you tried to whisper to does not exist!");
+
+            PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
+        }
+    }
+
     #region ServerRpc
 
     [ServerRpc(RequireOwnership = false)]
@@ -403,48 +445,6 @@ public class UIManager : NetworkBehaviour
         }
         PostChatMessageClientRpc(username, msg);
 
-    }
-
-    private void NotifyCommandError(ServerRpcParams serverRpcParams)
-    {
-        var clientId = serverRpcParams.Receive.SenderClientId;
-
-        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
-        {
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new ulong[] { clientId }
-                }
-            };
-
-            StringContainer systemName = new StringContainer("SYSTEM");
-            StringContainer errorMessage = new StringContainer("ERROR: The command you tried to use does not exist!");
-
-            PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
-        }
-    }
-
-    private void NotifyWhispError(ServerRpcParams serverRpcParams)
-    {
-        var clientId = serverRpcParams.Receive.SenderClientId;
-
-        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
-        {
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new ulong[] { clientId }
-                }
-            };
-
-            StringContainer systemName = new StringContainer("SYSTEM");
-            StringContainer errorMessage = new StringContainer("ERROR: The player you tried to whisper to does not exist!");
-
-            PostWhisperMessageClientRpc(systemName, new StringContainer(), errorMessage, true, clientRpcParams);
-        }
     }
 
     #endregion

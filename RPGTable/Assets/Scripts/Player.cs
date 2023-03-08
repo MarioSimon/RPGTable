@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Player : NetworkBehaviour
 {
@@ -58,7 +59,7 @@ public class Player : NetworkBehaviour
         if (IsLocalPlayer)
         {
             SetPlayerNameServerRpc(UIManager.inputFieldName.text);
-            gameManager.AddSavedCharactersServerRpc(obj);
+            gameManager.AddSavedCharactersServerRpc();
             //AddPlayerToList(playerName, obj);
         }
     }
@@ -104,7 +105,7 @@ public class Player : NetworkBehaviour
         foreach (RaycastHit hit in hits)
         {
             TokenController target = hit.transform.GetComponent<TokenController>();
-            if (target == null) continue;
+            if (target == null) { continue; }
 
             if (Input.GetMouseButtonDown(0))
             {
@@ -114,19 +115,23 @@ public class Player : NetworkBehaviour
     }
 
     private void InteractWithMovement()
-    {       
+    {
+        if (EventSystem.current.IsPointerOverGameObject()) { return; }
         if (selectedToken == null) { return; }
-        if (playerName != selectedToken.ownerName.Value && !IsHost) { return; }
+        if (!IsOwner && !IsHost) { return; }
 
         RaycastHit hit;
         bool hasHit = Physics.Raycast(GetMouseRay(), out hit);
 
         if (hasHit)
         {
+            WalkableZone terrain = hit.transform.GetComponent<WalkableZone>();
+
+            if (terrain == null) { return; }
+
             if (Input.GetMouseButtonDown(0))
             {
                 if (playerName == selectedToken.ownerName.Value)
-                    //MoveTokenServerRpc(hit.point);
                     selectedToken.MoveToServerRpc(hit.point);
                 else if (IsHost)
                     selectedToken.MoveTo(hit.point);
