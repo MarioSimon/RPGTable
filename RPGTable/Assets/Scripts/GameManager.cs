@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Unity.Collections;
@@ -59,6 +60,106 @@ public class GameManager : NetworkBehaviour
     #endregion
 
     #region dice rolls
+
+    public IEnumerator RollDiceCo(diceType type, Vector3 position)
+    {
+        GameObject dice = new GameObject();
+        int result = 0;
+        position.y -= 0.5f;      
+
+        switch (type)
+        {
+            case diceType.d4:
+                dice = Instantiate(d4Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d4 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d4.IsStopped);
+
+                result = d4.GetDiceScore();
+                break;
+
+            case diceType.d6:
+                dice = Instantiate(d6Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d6 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d6.IsStopped);
+
+                result = d6.GetDiceScore();
+                break;
+            case diceType.d8:
+                dice = Instantiate(d8Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d8 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d8.IsStopped);
+
+                result = d8.GetDiceScore();
+                break;
+            case diceType.d10:
+                dice = Instantiate(d10Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d10 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d10.IsStopped);
+
+                result = d10.GetDiceScore();
+                break;
+            case diceType.pd:
+                dice = Instantiate(pdPrefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice pd = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(pd.IsStopped);
+
+                result = pd.GetDiceScore();
+                break;
+            case diceType.d12:
+                dice = Instantiate(d12Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d12 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d12.IsStopped);
+
+                result = d12.GetDiceScore();
+                break;
+            case diceType.d20:
+                dice = Instantiate(d20Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d20 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d20.IsStopped);
+
+                result = d20.GetDiceScore();
+                break;
+        }
+
+        yield return result;
+
+        dice.GetComponent<NetworkObject>().Despawn();
+    }
 
     public void RollDice(diceType type, Vector3 position, string thrownBy, int modifier)
     {
@@ -197,15 +298,6 @@ public class GameManager : NetworkBehaviour
             SpawnTokenServerRpc(ownerID, ownerName, avatarID, characterSheetInfo);
         }
     }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void SpawnTokenServerRpc(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
-    {
-        if (!IsHost) { return; }
-
-        SpawnToken(ownerID, ownerName, avatarID, characterSheetInfo);
-    }
-
 
     #endregion
 
@@ -406,6 +498,14 @@ public class GameManager : NetworkBehaviour
         AddPlayerToList(playerName, playerID);
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnTokenServerRpc(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
+    {
+        if (!IsHost) { return; }
+
+        SpawnToken(ownerID, ownerName, avatarID, characterSheetInfo);
+    }
+
     [ServerRpc (RequireOwnership = false)]
     public void AddSavedCharactersServerRpc(ServerRpcParams serverRpcParams = default)
     {
@@ -431,7 +531,7 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc (RequireOwnership = false)]
-    void SaveCharacterSheetChangesServerRpc(CharacterSheetInfo charInfo)
+    private void SaveCharacterSheetChangesServerRpc(CharacterSheetInfo charInfo)
     {
         characterSheets[charInfo.sheetID] = charInfo;
         SaveCharacterSheetChangesClientRpc(charInfo);

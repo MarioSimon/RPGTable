@@ -5,6 +5,7 @@ using Unity.Netcode.Transports.UTP;
 using System;
 using Unity.Collections;
 using System.Collections.Generic;
+using System.Collections;
 
 public class UIManager : NetworkBehaviour
 {
@@ -369,12 +370,59 @@ public class UIManager : NetworkBehaviour
         }
     }
 
+    private IEnumerator NotifyRollResult(diceType type, Vector3 position, string thrownBy)
+    {
+        CoroutineWithData cd = new CoroutineWithData(this, gameManager.RollDiceCo(type, position));
+        yield return cd.coroutine;
+
+        switch (type)
+        {
+            case diceType.d4:
+                NotifyDiceScoreClientRpc(thrownBy + "rolls a D4: " + cd.result.ToString());
+                break;
+            case diceType.d6:
+                NotifyDiceScoreClientRpc(thrownBy + "rolls a D6: " + cd.result.ToString());
+                break;
+            case diceType.d8:
+                NotifyDiceScoreClientRpc(thrownBy + "rolls a D8: " + cd.result.ToString());
+                break;
+            case diceType.d10:
+                NotifyDiceScoreClientRpc(thrownBy + "rolls a D10: " + cd.result.ToString());
+                break;
+            case diceType.d12:
+                NotifyDiceScoreClientRpc(thrownBy + "rolls a D12: " + cd.result.ToString());
+                break;
+            case diceType.d20:
+                NotifyDiceScoreClientRpc(thrownBy + "rolls a D20: " + cd.result.ToString());
+                break;
+        }    
+    }
+
+    private IEnumerator NotifyPercentileRollResult(diceType type, Vector3 position, string thrownBy)
+    {
+        CoroutineWithData d10cd = new CoroutineWithData(this, gameManager.RollDiceCo(diceType.d10, position));
+        yield return d10cd.coroutine;
+
+        CoroutineWithData pdcd = new CoroutineWithData(this, gameManager.RollDiceCo(diceType.pd, position));
+        yield return pdcd.coroutine;
+
+        NotifyDiceScoreClientRpc(thrownBy + "rolls a d100: " + ((int)d10cd.result + (int)pdcd.result).ToString());
+    }
+
     #region ServerRpc
 
     [ServerRpc(RequireOwnership = false)]
     private void RollDiceServerRpc(diceType type, Vector3 position, string thrownBy)
     {
-        gameManager.RollDice(type, position, thrownBy, 0);
+        if (type != diceType.pd)
+        {
+            StartCoroutine(NotifyRollResult(type, position, thrownBy));
+        }
+        else
+        {
+            StartCoroutine(NotifyPercentileRollResult(type, position, thrownBy));
+        }
+        
     }
     
     [ServerRpc(RequireOwnership = false)]
