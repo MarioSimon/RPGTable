@@ -174,7 +174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e2929ffa95d302479117f98c0458eb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tokenModel: {fileID: 426626478177194109}
+  tokenModel: {fileID: 7973839318323337379}
+  tokenBase: {fileID: 426626478177194109}
   tokenMenu: {fileID: 1878711165183701654, guid: a1b6cdbc4e4903442ab302e135a69a05, type: 3}
   characterSheetPrefab: {fileID: 6933813031592149426, guid: f55a0cf4e36b9984f8a744c78cc547fa, type: 3}
   animator: {fileID: 3675844277054281827}
@@ -618,13 +619,18 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 4ace53e2c6951db4ba99abaecfa9e688, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 1c5da0b04451fe0488631542b2158e33, type: 2}
+      objectReference: {fileID: 9100000, guid: b62a03b7cea76174b988e6beeee2c91f, type: 2}
     - target: {fileID: 5866666021909216657, guid: 4ace53e2c6951db4ba99abaecfa9e688, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ace53e2c6951db4ba99abaecfa9e688, type: 3}
+--- !u!1 &7973839318323337379 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 4ace53e2c6951db4ba99abaecfa9e688, type: 3}
+  m_PrefabInstance: {fileID: 7091389634574919154}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7341734015982158361 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4ace53e2c6951db4ba99abaecfa9e688, type: 3}

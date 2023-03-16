@@ -14,6 +14,7 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Canvas canvas;
     [SerializeField] NetworkManager networkManager;
     [SerializeField] GameManager gameManager;
+    [SerializeField] DiceHandler diceHandler;
     UnityTransport transport;
     readonly ushort port = 7777;
 
@@ -370,43 +371,61 @@ public class UIManager : NetworkBehaviour
         }
     }
 
-    private IEnumerator NotifyRollResult(diceType type, Vector3 position, string thrownBy)
+    private void RollDice(diceType type, Vector3 position, string thrownBy)
     {
-        CoroutineWithData cd = new CoroutineWithData(this, gameManager.RollDiceCo(type, position));
-        yield return cd.coroutine;
-
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
         switch (type)
         {
             case diceType.d4:
-                NotifyDiceScoreClientRpc(thrownBy + "rolls a D4: " + cd.result.ToString());
+                message = " [D4]: ";
                 break;
             case diceType.d6:
-                NotifyDiceScoreClientRpc(thrownBy + "rolls a D6: " + cd.result.ToString());
+                message = " [D6]: ";
                 break;
             case diceType.d8:
-                NotifyDiceScoreClientRpc(thrownBy + "rolls a D8: " + cd.result.ToString());
+                message = " [D8]: ";
                 break;
             case diceType.d10:
-                NotifyDiceScoreClientRpc(thrownBy + "rolls a D10: " + cd.result.ToString());
+                message = " [D10]: ";
                 break;
             case diceType.d12:
-                NotifyDiceScoreClientRpc(thrownBy + "rolls a D12: " + cd.result.ToString());
+                message = " [D12]: ";
                 break;
             case diceType.d20:
-                NotifyDiceScoreClientRpc(thrownBy + "rolls a D20: " + cd.result.ToString());
+                message = " [D20]: ";
                 break;
-        }    
+        }
+
+        diceHandler.AddRoll(rollKey, thrownBy, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, type, position, 0, ResolveSimpleRoll));
     }
 
-    private IEnumerator NotifyPercentileRollResult(diceType type, Vector3 position, string thrownBy)
+    private void RollD100(Vector3 position, string thrownBy)
     {
-        CoroutineWithData d10cd = new CoroutineWithData(this, gameManager.RollDiceCo(diceType.d10, position));
-        yield return d10cd.coroutine;
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = " [D100]: ";
 
-        CoroutineWithData pdcd = new CoroutineWithData(this, gameManager.RollDiceCo(diceType.pd, position));
-        yield return pdcd.coroutine;
+        diceHandler.AddRoll(rollKey, thrownBy, 2, message);
 
-        NotifyDiceScoreClientRpc(thrownBy + "rolls a d100: " + ((int)d10cd.result + (int)pdcd.result).ToString());
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.pd, position + Vector3.left, 0, ResolveSimpleRoll));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d10, position + Vector3.right, 0,  ResolveSimpleRoll));
+    }
+
+    public void ResolveSimpleRoll(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
+
+        diceHandler.DeleteRoll(rollKey);
     }
 
     #region ServerRpc
@@ -416,11 +435,11 @@ public class UIManager : NetworkBehaviour
     {
         if (type != diceType.pd)
         {
-            StartCoroutine(NotifyRollResult(type, position, thrownBy));
+            RollDice(type, position, thrownBy);
         }
         else
         {
-            StartCoroutine(NotifyPercentileRollResult(type, position, thrownBy));
+            RollD100(position, thrownBy);
         }
         
     }
@@ -502,6 +521,8 @@ public class UIManager : NetworkBehaviour
     [ClientRpc]
     public void NotifyDiceScoreClientRpc(string scoreMessage)
     {
+        if (!IsHost) { return; }
+
         diceRegistryText.text += "\n" + scoreMessage;
 
         if (!diceRegistry.activeInHierarchy)

@@ -9,7 +9,7 @@ public class DiceScoreCheck : MonoBehaviour
 
     private void OnTriggerStay(Collider col)
     {
-        StartCoroutine(ResetDice(col));
+        //StartCoroutine(ResetDice(col));
     }
 
     private IEnumerator ResetDice(Collider col)

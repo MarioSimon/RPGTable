@@ -73071,7 +73071,6 @@ MonoBehaviour:
     ideals: 
     bonds: 
     flaws: 
-  tokenPrefab: {fileID: 1564062960752013882, guid: 39d74c822aa0ede4d91f3ad7908e00f9, type: 3}
   characterSheet: {fileID: 6933813031592149426}
   buttonClose: {fileID: 4805136106845075047}
   buttonSpawnToken: {fileID: 7218074618594793360}

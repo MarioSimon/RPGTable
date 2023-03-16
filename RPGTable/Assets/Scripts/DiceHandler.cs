@@ -1,0 +1,201 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.Netcode;
+using UnityEngine;
+
+public class DiceHandler : NetworkBehaviour
+{
+    [SerializeField] private UIManager uiManager;
+    [SerializeField] private GameManager gameManager;
+
+    [SerializeField] private GameObject d4Prefab;
+    [SerializeField] private GameObject d6Prefab;
+    [SerializeField] private GameObject d8Prefab;
+    [SerializeField] private GameObject d10Prefab;
+    [SerializeField] private GameObject pdPrefab;
+    [SerializeField] private GameObject d12Prefab;
+    [SerializeField] private GameObject d20Prefab;
+
+    private Dictionary<string, DiceRollInfo> activeRolls;
+
+    private void Start()
+    {
+        activeRolls = new Dictionary<string, DiceRollInfo>();
+    }
+
+    public string GetNewRollKey(string keyPrefix)
+    {
+        string rollKey = "";
+        do
+        {
+            rollKey = keyPrefix + UnityEngine.Random.Range(int.MinValue, int.MaxValue).ToString();
+        } while (activeRolls.ContainsKey(rollKey));
+
+        return rollKey;
+    }
+
+    public void AddRoll(string rollKey, string thrownBy, int numberOfDices, string rollMessage)
+    {
+        if (activeRolls.ContainsKey(rollKey)) { return; }
+
+        DiceRollInfo newRoll;
+        newRoll.playerName = thrownBy;
+        newRoll.numberOfDices = numberOfDices;
+        newRoll.rolledDices = 0;
+        newRoll.diceScores = new int[numberOfDices];
+        newRoll.message = rollMessage;
+
+        activeRolls.Add(rollKey, newRoll);
+    }
+
+    public DiceRollInfo GetRollInfo(string rollKey)
+    {
+        return activeRolls[rollKey];
+    }
+
+    private void UpdateRoll(string rollKey, int result, int modifier, Action<string, int> resultFunction)
+    {
+        if (!activeRolls.ContainsKey(rollKey)) { return; }
+
+        DiceRollInfo roll = activeRolls[rollKey];
+
+        roll.rolledDices += 1;
+
+        for (int i = 0; i < roll.numberOfDices; i++)
+        {
+            if (roll.diceScores[i] < 1)
+            {
+                roll.diceScores[i] = result;
+                break;
+            }
+        }
+
+        if (roll.numberOfDices == roll.rolledDices)
+        {
+            resultFunction(rollKey, modifier);
+        }
+        else
+        {
+            activeRolls[rollKey] = roll;
+        }
+    }
+
+    public void DeleteRoll(string rollKey)
+    {
+        if (activeRolls.ContainsKey(rollKey))
+        {
+            activeRolls.Remove(rollKey);
+        }
+    }
+
+    public IEnumerator RollDice(string rollKey, diceType type, Vector3 position, int modifier, Action<string, int> resultFunction)
+    {
+        GameObject dice = new GameObject();
+        int result = 0;
+        position.y -= 0.5f;
+
+        switch (type)
+        {
+            case diceType.d4:
+                dice = Instantiate(d4Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d4 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d4.IsStopped);
+
+                result = d4.GetDiceScore();
+                break;
+
+            case diceType.d6:
+                dice = Instantiate(d6Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d6 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d6.IsStopped);
+
+                result = d6.GetDiceScore();
+                break;
+            case diceType.d8:
+                dice = Instantiate(d8Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d8 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d8.IsStopped);
+
+                result = d8.GetDiceScore();
+                break;
+            case diceType.d10:
+                dice = Instantiate(d10Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d10 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d10.IsStopped);
+
+                result = d10.GetDiceScore();
+                break;
+            case diceType.pd:
+                dice = Instantiate(pdPrefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice pd = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(pd.IsStopped);
+
+                result = pd.GetDiceScore();
+                break;
+            case diceType.d12:
+                dice = Instantiate(d12Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d12 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d12.IsStopped);
+
+                result = d12.GetDiceScore();
+                break;
+            case diceType.d20:
+                dice = Instantiate(d20Prefab, position, Quaternion.identity);
+                dice.GetComponent<NetworkObject>().Spawn();
+
+                Dice d20 = dice.GetComponent<Dice>();
+
+                yield return new WaitForSeconds(1);
+
+                yield return new WaitUntil(d20.IsStopped);
+
+                result = d20.GetDiceScore();
+                break;
+        }
+
+        UpdateRoll(rollKey, result, modifier, resultFunction);
+
+        yield return new WaitForSeconds(1.5f);
+
+        dice.GetComponent<NetworkObject>().Despawn(true);
+    }
+}
+public struct DiceRollInfo
+{
+    public string playerName;
+    public int numberOfDices;
+    public int rolledDices;
+    public int[] diceScores;
+    public string message;
+}
