@@ -13,42 +13,51 @@ public class Dice : MonoBehaviour
     private Rigidbody rb;
     [SerializeField] private GameObject sides;
 
-    public string thrownBy;
-    public int modifier;
-    public string line;
-
-    [SerializeField] private float throwForce = 2.0f; 
+    [SerializeField] private float throwForce = 20.0f; 
 
     #endregion
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        Vector3 throwDir = GetThrowDirection(Vector3.zero);
+        Vector3 throwDir = GetThrowDirection();
 
+        RandomRotation();
         TorqueDice();
         ThrowDice(throwDir);
     }
 
-    void TorqueDice()
+    private void TorqueDice()
     {
-        float dirX = Random.Range(0, 500);
-        float dirY = Random.Range(0, 500);
-        float dirZ = Random.Range(0, 500);
+        float dirX = Random.Range(200, 1000);
+        float dirY = Random.Range(200, 1000);
+        float dirZ = Random.Range(200, 1000);
 
         rb.AddTorque(dirX, dirY, dirZ);
     }
 
-    void ThrowDice(Vector3 throwDir)
+    private void RandomRotation()
     {
-        Vector3 velocity = new Vector3(throwDir.x, 0, throwDir.z) * throwForce;
+        int a = Random.Range(0, 360);
+        int b = Random.Range(0, 360);
+        int g = Random.Range(0, 360);
+
+        transform.eulerAngles = new Vector3(a, b, g);
+    }
+
+    private void ThrowDice(Vector3 throwDir)
+    {
+        Vector3 velocity = throwDir * throwForce;
 
         rb.AddForce(velocity);
     }
 
-    Vector3 GetThrowDirection(Vector3 tablePos)
+    private Vector3 GetThrowDirection()
     {
-        return tablePos - transform.position;
+        float dirX = Random.Range(-1f, 1f);
+        float dirZ = Random.Range(0f, 1f);
+
+        return new Vector3(dirX, 0, dirZ);
     }
 
     public bool IsStopped()

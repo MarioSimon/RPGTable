@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 488300566835795936}
   - component: {fileID: 726743497442750413}
   - component: {fileID: 7251315554642942507}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: d10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 161197249643304075}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 6387542069873662318}
   - {fileID: 4816520857454140116}
@@ -52,7 +52,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 161197249643304075}
   serializedVersion: 2
-  m_Mass: 2
+  m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -116,10 +116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 3
   sides: {fileID: 4614938403369954094}
-  thrownBy: 
-  modifier: 0
-  line: 
-  throwForce: 25
+  throwForce: 2000
 --- !u!1 &1080259018161960782
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,7 +127,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259018161960783}
   - component: {fileID: 1080259018161960780}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Side10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,7 +172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259018238425879}
   - component: {fileID: 1080259018238425876}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,7 +217,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259018480913819}
   - component: {fileID: 1080259018480913816}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -265,7 +262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259018489106026}
   - component: {fileID: 1080259018489106027}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Side4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -310,7 +307,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259018634583002}
   - component: {fileID: 1080259018634583003}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Side1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -355,7 +352,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259019106814824}
   - component: {fileID: 1080259019106814825}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -400,7 +397,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259019116235448}
   - component: {fileID: 1080259019116235449}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -445,7 +442,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259019289843347}
   - component: {fileID: 1080259019289843344}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Side5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -490,7 +487,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259019341064181}
   - component: {fileID: 1080259019341064178}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -535,7 +532,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259019367843267}
   - component: {fileID: 1080259019367843264}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Side2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -580,7 +577,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259019536410186}
   - component: {fileID: 1080259019536410187}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -625,7 +622,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259019540648418}
   - component: {fileID: 1080259019540648419}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Side7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -670,7 +667,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259019794016845}
   - component: {fileID: 1080259019794016842}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Side6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -715,7 +712,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259020047690507}
   - component: {fileID: 1080259020047690504}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Side3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -760,7 +757,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259020090872034}
   - component: {fileID: 1080259020090872035}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Col7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -805,7 +802,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259020127936081}
   - component: {fileID: 1080259020127936078}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Side9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -850,7 +847,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1080259020180433406}
   - component: {fileID: 1080259020180433407}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Side8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -896,7 +893,7 @@ GameObject:
   - component: {fileID: 4816520857454140116}
   - component: {fileID: 4706779202611444687}
   - component: {fileID: 7399213204763831349}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Decahedron.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -977,7 +974,7 @@ GameObject:
   - component: {fileID: 6387542069873662318}
   - component: {fileID: 6576214876208814018}
   - component: {fileID: 52772801576772341}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Decahedron
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1056,7 +1053,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8705787832291686407}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sides
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -1637,7 +1637,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, int.Parse(strModifier.text), ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(strModifier.text), ResolveCheckOrSave));
     }
 
     [ServerRpc]
@@ -1648,7 +1648,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, int.Parse(dexModifier.text), ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(dexModifier.text), ResolveCheckOrSave));
     }
 
     [ServerRpc]
@@ -1659,7 +1659,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, int.Parse(conModifier.text), ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(conModifier.text), ResolveCheckOrSave));
     }
 
     [ServerRpc]
@@ -1670,7 +1670,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, int.Parse(intModifier.text), ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(intModifier.text), ResolveCheckOrSave));
     }
 
     [ServerRpc]
@@ -1681,7 +1681,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, int.Parse(wisModifier.text), ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(wisModifier.text), ResolveCheckOrSave));
     }
 
     [ServerRpc]
@@ -1692,7 +1692,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, int.Parse(chaModifier.text), ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(chaModifier.text), ResolveCheckOrSave));
     }
 
     // ability saving throws
@@ -1715,7 +1715,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, bonus, ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     [ServerRpc]
@@ -1737,7 +1737,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, bonus, ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
     
     [ServerRpc]
@@ -1759,7 +1759,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, bonus, ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     [ServerRpc]
@@ -1781,7 +1781,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, bonus, ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     [ServerRpc]
@@ -1803,7 +1803,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, bonus, ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     [ServerRpc]
@@ -1825,7 +1825,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, bonus, ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     // other rolls
@@ -1845,7 +1845,7 @@ public class CharacterSheetManager : MonoBehaviour
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, bonus, ResolveCheckOrSave));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     [ServerRpc]
@@ -1856,7 +1856,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, 0, ResolveDeathSavingThrow));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, 0, ResolveDeathSavingThrow));
     }
 
     [ServerRpc]
@@ -1870,7 +1870,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, hitDice, Camera.main.transform.position, int.Parse(conModifier.text), ResolveHitDiceRoll));
+        StartCoroutine(diceHandler.RollDice(rollKey, hitDice, int.Parse(conModifier.text), ResolveHitDiceRoll));
     }
 
     [ServerRpc]
@@ -1884,7 +1884,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         diceHandler.AddRoll(rollKey, characterName.text, 1, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, Camera.main.transform.position, bonus, ResolveCheckOrSave));    
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));    
     }
 
     #endregion

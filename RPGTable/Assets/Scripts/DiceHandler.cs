@@ -19,6 +19,8 @@ public class DiceHandler : NetworkBehaviour
 
     private Dictionary<string, DiceRollInfo> activeRolls;
 
+    [SerializeField] Transform throwPoint;
+
     private void Start()
     {
         activeRolls = new Dictionary<string, DiceRollInfo>();
@@ -89,16 +91,15 @@ public class DiceHandler : NetworkBehaviour
         }
     }
 
-    public IEnumerator RollDice(string rollKey, diceType type, Vector3 position, int modifier, Action<string, int> resultFunction)
+    public IEnumerator RollDice(string rollKey, diceType type, int modifier, Action<string, int> resultFunction)
     {
         GameObject dice = new GameObject();
         int result = 0;
-        position.y -= 0.5f;
 
         switch (type)
         {
             case diceType.d4:
-                dice = Instantiate(d4Prefab, position, Quaternion.identity);
+                dice = Instantiate(d4Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
                 Dice d4 = dice.GetComponent<Dice>();
@@ -111,7 +112,7 @@ public class DiceHandler : NetworkBehaviour
                 break;
 
             case diceType.d6:
-                dice = Instantiate(d6Prefab, position, Quaternion.identity);
+                dice = Instantiate(d6Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
                 Dice d6 = dice.GetComponent<Dice>();
@@ -123,7 +124,7 @@ public class DiceHandler : NetworkBehaviour
                 result = d6.GetDiceScore();
                 break;
             case diceType.d8:
-                dice = Instantiate(d8Prefab, position, Quaternion.identity);
+                dice = Instantiate(d8Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
                 Dice d8 = dice.GetComponent<Dice>();
@@ -135,7 +136,7 @@ public class DiceHandler : NetworkBehaviour
                 result = d8.GetDiceScore();
                 break;
             case diceType.d10:
-                dice = Instantiate(d10Prefab, position, Quaternion.identity);
+                dice = Instantiate(d10Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
                 Dice d10 = dice.GetComponent<Dice>();
@@ -147,7 +148,7 @@ public class DiceHandler : NetworkBehaviour
                 result = d10.GetDiceScore();
                 break;
             case diceType.pd:
-                dice = Instantiate(pdPrefab, position, Quaternion.identity);
+                dice = Instantiate(pdPrefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
                 Dice pd = dice.GetComponent<Dice>();
@@ -159,7 +160,7 @@ public class DiceHandler : NetworkBehaviour
                 result = pd.GetDiceScore();
                 break;
             case diceType.d12:
-                dice = Instantiate(d12Prefab, position, Quaternion.identity);
+                dice = Instantiate(d12Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
                 Dice d12 = dice.GetComponent<Dice>();
@@ -171,7 +172,7 @@ public class DiceHandler : NetworkBehaviour
                 result = d12.GetDiceScore();
                 break;
             case diceType.d20:
-                dice = Instantiate(d20Prefab, position, Quaternion.identity);
+                dice = Instantiate(d20Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
                 Dice d20 = dice.GetComponent<Dice>();

@@ -45,6 +45,7 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button buttonThrowD12;
     [SerializeField] Button buttonThrowD20;
     [SerializeField] Button buttonThrowD100;
+    [SerializeField] InputField diceNumber;
 
     [Header("Dice Registry/Chat")]
     [SerializeField] GameObject minimizedBar;
@@ -116,6 +117,7 @@ public class UIManager : NetworkBehaviour
     private void Start()
     {
         inputFieldIP.text = "127.0.0.1";
+        diceNumber.text = "1";
 
         buttonHost.onClick.AddListener(() => StartHost());
         buttonClient.onClick.AddListener(() => StartClient());
@@ -135,14 +137,14 @@ public class UIManager : NetworkBehaviour
         diceRegistryOpenChat.onClick.AddListener(delegate { ToggleDiceRegistry(); ToggleTextChat(); });
         diceRegistryCloseRegistry.onClick.AddListener(delegate { ToggleDiceRegistry(); ToggleMinimizedBar(); });
 
-
-        buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, Camera.main.transform.position, localPlayer.playerName));
-        buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, Camera.main.transform.position, localPlayer.playerName));
-        buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(diceType.d8, Camera.main.transform.position, localPlayer.playerName));
-        buttonThrowD10.onClick.AddListener(() => RollDiceServerRpc(diceType.d10, Camera.main.transform.position, localPlayer.playerName));
-        buttonThrowD12.onClick.AddListener(() => RollDiceServerRpc(diceType.d12, Camera.main.transform.position, localPlayer.playerName));
-        buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(diceType.d20, Camera.main.transform.position, localPlayer.playerName));
-        buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(diceType.pd, Camera.main.transform.position, localPlayer.playerName));
+        buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(diceType.d4, localPlayer.playerName));
+        buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(diceType.d6, localPlayer.playerName));
+        buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(diceType.d8, localPlayer.playerName));
+        buttonThrowD10.onClick.AddListener(() => RollDiceServerRpc(diceType.d10, localPlayer.playerName));
+        buttonThrowD12.onClick.AddListener(() => RollDiceServerRpc(diceType.d12, localPlayer.playerName));
+        buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(diceType.d20, localPlayer.playerName));
+        buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(diceType.pd, localPlayer.playerName));
+        diceNumber.onValueChanged.AddListener(delegate { CheckInt(diceNumber); });
     }
 
     private void LateUpdate()
@@ -371,7 +373,7 @@ public class UIManager : NetworkBehaviour
         }
     }
 
-    private void RollDice(diceType type, Vector3 position, string thrownBy)
+    private void RollDice(diceType type, string thrownBy)
     {
         string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
         string message = "";
@@ -397,20 +399,23 @@ public class UIManager : NetworkBehaviour
                 break;
         }
 
-        diceHandler.AddRoll(rollKey, thrownBy, 1, message);
+        diceHandler.AddRoll(rollKey, thrownBy, int.Parse(diceNumber.text), message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, type, position, 0, ResolveSimpleRoll));
+        for (int i = 0; i < int.Parse(diceNumber.text); i ++)
+        {
+            StartCoroutine(diceHandler.RollDice(rollKey, type, 0, ResolveSimpleRoll));
+        }  
     }
 
-    private void RollD100(Vector3 position, string thrownBy)
+    private void RollD100(string thrownBy)
     {
         string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
         string message = " [D100]: ";
 
         diceHandler.AddRoll(rollKey, thrownBy, 2, message);
 
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.pd, position + Vector3.left, 0, ResolveSimpleRoll));
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d10, position + Vector3.right, 0,  ResolveSimpleRoll));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.pd, 0, ResolveSimpleRoll));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d10, 0,  ResolveSimpleRoll));
     }
 
     public void ResolveSimpleRoll(string rollKey, int modifier)
@@ -428,18 +433,35 @@ public class UIManager : NetworkBehaviour
         diceHandler.DeleteRoll(rollKey);
     }
 
+    void CheckInt(InputField inputField)
+    {
+        int value;
+        if (!int.TryParse(inputField.text, out value))
+        {
+            inputField.text = "1";
+        }
+        if(value < 1)
+        {
+            inputField.text = "1";
+        }
+        else if (value > 99)
+        {
+            inputField.text = "99";
+        }
+    }
+
     #region ServerRpc
 
     [ServerRpc(RequireOwnership = false)]
-    private void RollDiceServerRpc(diceType type, Vector3 position, string thrownBy)
+    private void RollDiceServerRpc(diceType type, string thrownBy)
     {
         if (type != diceType.pd)
         {
-            RollDice(type, position, thrownBy);
+            RollDice(type,thrownBy);
         }
         else
         {
-            RollD100(position, thrownBy);
+            RollD100(thrownBy);
         }
         
     }
