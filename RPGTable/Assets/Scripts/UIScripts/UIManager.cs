@@ -45,7 +45,13 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button buttonThrowD12;
     [SerializeField] Button buttonThrowD20;
     [SerializeField] Button buttonThrowD100;
+
     [SerializeField] InputField diceNumber;
+    [SerializeField] Toggle advantage;
+    [SerializeField] Toggle disadvantage;
+
+    [SerializeField] Button minimizeDiceCam;
+    [SerializeField] GameObject diceCamRender;
 
     [Header("Dice Registry/Chat")]
     [SerializeField] GameObject minimizedBar;
@@ -145,6 +151,7 @@ public class UIManager : NetworkBehaviour
         buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(diceType.d20, localPlayer.playerName));
         buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(diceType.pd, localPlayer.playerName));
         diceNumber.onValueChanged.AddListener(delegate { CheckInt(diceNumber); });
+        minimizeDiceCam.onClick.AddListener(() => ToggleDiceCam());
     }
 
     private void LateUpdate()
@@ -377,25 +384,27 @@ public class UIManager : NetworkBehaviour
     {
         string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
         string message = "";
+        int numberOfDices = int.Parse(diceNumber.text);
+
         switch (type)
         {
             case diceType.d4:
-                message = " [D4]: ";
+                message = " [" + numberOfDices + "D4]: ";
                 break;
             case diceType.d6:
-                message = " [D6]: ";
+                message = " [" + numberOfDices + "D6]: ";
                 break;
             case diceType.d8:
-                message = " [D8]: ";
+                message = " [" + numberOfDices + "D8]: ";
                 break;
             case diceType.d10:
-                message = " [D10]: ";
+                message = " [" + numberOfDices + "D10]: ";
                 break;
             case diceType.d12:
-                message = " [D12]: ";
+                message = " [" + numberOfDices + "D12]: ";
                 break;
             case diceType.d20:
-                message = " [D20]: ";
+                message = " [" + numberOfDices + "D20]: ";
                 break;
         }
 
@@ -760,6 +769,12 @@ public class UIManager : NetworkBehaviour
     {
         bool toggle = !characterCreator.activeInHierarchy;
         characterCreator.SetActive(toggle);
+    }
+
+    private void ToggleDiceCam()
+    {
+        bool toggle = !diceCamRender.activeInHierarchy;
+        diceCamRender.SetActive(toggle);
     }
 
     #endregion

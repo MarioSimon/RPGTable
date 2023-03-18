@@ -69,7 +69,6 @@ public class Dice : MonoBehaviour
     {
         int result = 0;
         Transform lowerSide = transform;
-        lowerSide.position = Vector3.zero;
 
         foreach(Transform side in sides.transform)
         {

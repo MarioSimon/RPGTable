@@ -1910,6 +1910,7 @@ MonoBehaviour:
   pdPrefab: {fileID: 3189847381327322211, guid: 242cdfc0d458abc468eaa42dcb73d2eb, type: 3}
   d12Prefab: {fileID: 9029430318022057906, guid: aee767fec02dc80489088402c64ec3f3, type: 3}
   d20Prefab: {fileID: 3110057177666186646, guid: 37494ceaa418bf448b0afaebda14dee7, type: 3}
+  diceCam: {fileID: 276572390}
   throwPoint: {fileID: 1961817867}
 --- !u!114 &27252888
 MonoBehaviour:
@@ -8799,7 +8800,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &276572391
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8820,7 +8821,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -750, y: 275}
+  m_AnchoredPosition: {x: -750, y: 150}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &276929974
@@ -9733,6 +9734,10 @@ MonoBehaviour:
   buttonThrowD20: {fileID: 1764585377}
   buttonThrowD100: {fileID: 1139257012}
   diceNumber: {fileID: 8901572}
+  advantage: {fileID: 0}
+  disadvantage: {fileID: 0}
+  minimizeDiceCam: {fileID: 1254471486}
+  diceCamRender: {fileID: 2013039970}
   minimizedBar: {fileID: 1683642283}
   minimizedBarOpenChat: {fileID: 1125319098}
   minimizedBarOpenRegistry: {fileID: 1349163076}
@@ -21494,7 +21499,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 865673392}
+        - m_Target: {fileID: 733837484}
           m_TargetAssemblyTypeName: UIDrag, Assembly-CSharp
           m_MethodName: DragHandler
           m_Mode: 0

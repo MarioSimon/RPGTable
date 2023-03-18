@@ -19,11 +19,24 @@ public class DiceHandler : NetworkBehaviour
 
     private Dictionary<string, DiceRollInfo> activeRolls;
 
-    [SerializeField] Transform throwPoint;
+    [SerializeField] private GameObject diceCam;
+    [SerializeField] private Transform throwPoint;
 
     private void Start()
     {
         activeRolls = new Dictionary<string, DiceRollInfo>();
+    }
+
+    private void Update()
+    {
+        if (activeRolls.Count > 0 && !diceCam.activeInHierarchy)
+        {
+            diceCam.SetActive(true);
+        }
+        else if (activeRolls.Count == 0 && diceCam.activeInHierarchy)
+        {
+            diceCam.SetActive(false);
+        }
     }
 
     public string GetNewRollKey(string keyPrefix)
@@ -93,6 +106,8 @@ public class DiceHandler : NetworkBehaviour
 
     public IEnumerator RollDice(string rollKey, diceType type, int modifier, Action<string, int> resultFunction)
     {
+        yield return new WaitForSeconds(0.25f);
+
         GameObject dice = new GameObject();
         int result = 0;
 
@@ -104,7 +119,7 @@ public class DiceHandler : NetworkBehaviour
 
                 Dice d4 = dice.GetComponent<Dice>();
 
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(1f);
 
                 yield return new WaitUntil(d4.IsStopped);
 
@@ -117,7 +132,7 @@ public class DiceHandler : NetworkBehaviour
 
                 Dice d6 = dice.GetComponent<Dice>();
 
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(1f);
 
                 yield return new WaitUntil(d6.IsStopped);
 
@@ -129,7 +144,7 @@ public class DiceHandler : NetworkBehaviour
 
                 Dice d8 = dice.GetComponent<Dice>();
 
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(1f);
 
                 yield return new WaitUntil(d8.IsStopped);
 
@@ -141,7 +156,7 @@ public class DiceHandler : NetworkBehaviour
 
                 Dice d10 = dice.GetComponent<Dice>();
 
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(1f);
 
                 yield return new WaitUntil(d10.IsStopped);
 
@@ -153,7 +168,7 @@ public class DiceHandler : NetworkBehaviour
 
                 Dice pd = dice.GetComponent<Dice>();
 
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(1f);
 
                 yield return new WaitUntil(pd.IsStopped);
 
@@ -165,7 +180,7 @@ public class DiceHandler : NetworkBehaviour
 
                 Dice d12 = dice.GetComponent<Dice>();
 
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(1f);
 
                 yield return new WaitUntil(d12.IsStopped);
 
@@ -177,7 +192,7 @@ public class DiceHandler : NetworkBehaviour
 
                 Dice d20 = dice.GetComponent<Dice>();
 
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(1f);
 
                 yield return new WaitUntil(d20.IsStopped);
 
@@ -187,9 +202,10 @@ public class DiceHandler : NetworkBehaviour
 
         UpdateRoll(rollKey, result, modifier, resultFunction);
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1f);
 
-        dice.GetComponent<NetworkObject>().Despawn(true);
+        dice.GetComponent<NetworkObject>().Despawn();
+        Destroy(dice.gameObject);
     }
 }
 public struct DiceRollInfo
