@@ -47,8 +47,7 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button buttonThrowD100;
 
     [SerializeField] InputField diceNumber;
-    [SerializeField] Toggle advantage;
-    [SerializeField] Toggle disadvantage;
+    [SerializeField] Toggle hideRoll;
 
     [SerializeField] Button minimizeDiceCam;
     [SerializeField] GameObject diceCamRender;
@@ -552,8 +551,6 @@ public class UIManager : NetworkBehaviour
     [ClientRpc]
     public void NotifyDiceScoreClientRpc(string scoreMessage)
     {
-        if (!IsHost) { return; }
-
         diceRegistryText.text += "\n" + scoreMessage;
 
         if (!diceRegistry.activeInHierarchy)

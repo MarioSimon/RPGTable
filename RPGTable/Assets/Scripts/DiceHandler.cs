@@ -29,13 +29,17 @@ public class DiceHandler : NetworkBehaviour
 
     private void Update()
     {
+        if (!IsHost) { return; }
+
         if (activeRolls.Count > 0 && !diceCam.activeInHierarchy)
         {
             diceCam.SetActive(true);
+            ShowDiceBoxClientRpc();
         }
         else if (activeRolls.Count == 0 && diceCam.activeInHierarchy)
         {
             diceCam.SetActive(false);
+            HideDiceBoxClientRpc();
         }
     }
 
@@ -207,6 +211,26 @@ public class DiceHandler : NetworkBehaviour
         dice.GetComponent<NetworkObject>().Despawn();
         Destroy(dice.gameObject);
     }
+
+    #region clientRpc
+
+    [ClientRpc]
+    private void ShowDiceBoxClientRpc()
+    {
+        if (IsOwner) { return; }
+
+        diceCam.SetActive(true);
+    }
+
+    [ClientRpc]
+    private void HideDiceBoxClientRpc()
+    {
+        if (IsOwner) { return; }
+
+        diceCam.SetActive(false);
+    }
+
+    #endregion
 }
 public struct DiceRollInfo
 {
