@@ -13,6 +13,7 @@ public class CharacterSheetManager : MonoBehaviour
     
     private GameManager gameManager;
     private UIManager uiManager;
+    private DiceHandler diceHandler;
 
     private GameObject currentPage;
     private bool permisson;
@@ -248,8 +249,9 @@ public class CharacterSheetManager : MonoBehaviour
 
     void Start()
     {
-        gameManager = GameObject.FindObjectOfType<GameManager>();
-        uiManager = GameObject.FindObjectOfType<UIManager>();
+        gameManager = FindObjectOfType<GameManager>();
+        uiManager = FindObjectOfType<UIManager>();
+        diceHandler = FindObjectOfType<DiceHandler>();
 
         // navigation related events
         buttonClose.onClick.AddListener(() => CloseSheet());
@@ -1156,6 +1158,88 @@ public class CharacterSheetManager : MonoBehaviour
         UpdateAbilityModifier(int.Parse(chaScore.text), chaModifier);
     }
 
+    // dice roll methods
+
+    void ResolveCheckOrSave(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        result += modifier;
+
+        uiManager.NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    void ResolveHitDiceRoll(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        result += modifier;
+
+        int hp = int.Parse(currHealthPoints.text) + result;
+        int maxHP = int.Parse(maxHealthPoints.text);
+
+        if (hp > maxHP)
+        {
+            hp = maxHP;
+        }
+
+        currHealthPoints.text = hp.ToString();
+
+        uiManager.NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    void ResolveDeathSavingThrow(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        result += modifier;
+
+        if (result == 1)
+        {
+            DeathSavingThrowFail();
+            DeathSavingThrowFail();
+        }
+        else if (result < 10)
+        {
+            DeathSavingThrowFail();
+        }
+        else if (result == 20)
+        {
+            currHealthPoints.text = "1";
+            ResetDeathSavingThrows();
+        }
+        else
+        {
+            DeathSavingThrowSuccess();
+        }
+
+        uiManager.NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
     // skill methods
 
     void CheckProficencyBonus()
@@ -1502,6 +1586,44 @@ public class CharacterSheetManager : MonoBehaviour
         buttonPersonality.interactable = personalityPublisher.isOn;
     }
 
+    void DeathSavingThrowFail()
+    {
+        if (!deathSaveFail1.isOn)
+        {
+            deathSaveFail1.isOn = true;
+            return;
+        }
+        if (!deathSaveFail2.isOn)
+        {
+            deathSaveFail2.isOn = true;
+            return;
+        }
+        if (!deathSaveFail3.isOn)
+        {
+            deathSaveFail3.isOn = true;
+            return;
+        }
+    }
+
+    void DeathSavingThrowSuccess()
+    {
+        if (!deathSaveSuccess1.isOn)
+        {
+            deathSaveSuccess1.isOn = true;
+            return;
+        }
+        if (!deathSaveSuccess2.isOn)
+        {
+            deathSaveSuccess2.isOn = true;
+            return;
+        }
+        if (!deathSaveSuccess3.isOn)
+        {
+            deathSaveSuccess3.isOn = true;
+            return;
+        }
+    }
+
     #endregion
 
     #region ServerRpc
@@ -1510,122 +1632,200 @@ public class CharacterSheetManager : MonoBehaviour
     [ServerRpc]
     void RollStrenghtCheckServerRpc()
     {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(strModifier.text), " [Strengh check (+" + strModifier.text + ")]: ");
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Strenght check (+" + strModifier.text + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(strModifier.text), ResolveCheckOrSave));
     }
 
     [ServerRpc]
     void RollDexterityCheckServerRpc()
     {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(dexModifier.text), " [Dexterity check (+" + dexModifier.text + ")]: ");
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Dexterity check (+" + dexModifier.text + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(dexModifier.text), ResolveCheckOrSave));
     }
 
     [ServerRpc]
     void RollConstitutionCheckServerRpc()
     {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(conModifier.text), " [Constitution check (+" + conModifier.text + ")]: ");
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Constitution check (+" + conModifier.text + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(conModifier.text), ResolveCheckOrSave));
     }
 
     [ServerRpc]
     void RollIntelligenceCheckServerRpc()
     {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(intModifier.text), " [Intelligence check (+" + intModifier.text + ")]: ");
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Intelligence check (+" + intModifier.text + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(intModifier.text), ResolveCheckOrSave));
     }
 
     [ServerRpc]
     void RollWisdomCheckServerRpc()
     {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(wisModifier.text), " [Wisdom check (+" + wisModifier.text + ")]: ");
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Wisdom check (+" + wisModifier.text + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(wisModifier.text), ResolveCheckOrSave));
     }
 
     [ServerRpc]
     void RollCharismaCheckServerRpc()
     {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(chaModifier.text), " [Charisma check (+" + chaModifier.text + ")]: ");
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Charisma check (+" + chaModifier.text + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, int.Parse(chaModifier.text), ResolveCheckOrSave));
     }
 
     // ability saving throws
     [ServerRpc]
     void RollStrengthSaveServerRpc()
     {
+        int bonus = 0;
+
         if (strProficency.isOn)
         {
-            int bonus = int.Parse(strModifier.text) + int.Parse(proficencyBonus.text);
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, bonus, " [Strengh saving throw (+" + bonus + ")]: ");
+            bonus = int.Parse(strModifier.text) + int.Parse(proficencyBonus.text);
         }
         else
         {
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(strModifier.text), " [Strengh saving throw (+" + strModifier.text + ")]: ");
-        }       
+            bonus = int.Parse(strModifier.text);
+        }
+
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Strenght saving throw (+" + bonus + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     [ServerRpc]
     void RollDexteritySaveServerRpc()
     {
+        int bonus = 0;
+
         if (dexProficency.isOn)
         {
-            int bonus = int.Parse(dexModifier.text) + int.Parse(proficencyBonus.text);
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, bonus, " [Dexterity saving throw (+" + bonus + ")]: ");
+            bonus = int.Parse(dexModifier.text) + int.Parse(proficencyBonus.text);
         }
         else
         {
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(dexModifier.text), " [Dexterity saving throw (+" + dexModifier.text + ")]: ");
+            bonus = int.Parse(dexModifier.text);
         }
+
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Dexterity saving throw (+" + bonus + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
     
     [ServerRpc]
     void RollConstitutionSaveServerRpc()
     {
+        int bonus = 0;
+
         if (conProficency.isOn)
         {
-            int bonus = int.Parse(conModifier.text) + int.Parse(proficencyBonus.text);
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, bonus, " [Constitution saving throw (+" + bonus + ")]: ");
+            bonus = int.Parse(conModifier.text) + int.Parse(proficencyBonus.text);
         }
         else
         {
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(conModifier.text), " [Constitution saving throw (+" + conModifier.text + ")]: ");
+            bonus = int.Parse(conModifier.text);
         }
+
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Constitution saving throw (+" + bonus + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     [ServerRpc]
     void RollIntelligenceSaveServerRpc()
     {
+        int bonus = 0;
+
         if (intProficency.isOn)
         {
-            int bonus = int.Parse(intModifier.text) + int.Parse(proficencyBonus.text);
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, bonus, " [Intelligence saving throw (+" + bonus + ")]: ");
+            bonus = int.Parse(intModifier.text) + int.Parse(proficencyBonus.text);
         }
         else
         {
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(conModifier.text), " [Intelligence saving throw (+" + conModifier.text + ")]: ");
+            bonus = int.Parse(intModifier.text);
         }
+
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Intelligence saving throw (+" + bonus + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     [ServerRpc]
     void RollWisdomSaveServerRpc()
     {
+        int bonus = 0;
+
         if (wisProficency.isOn)
         {
-            int bonus = int.Parse(wisModifier.text) + int.Parse(proficencyBonus.text);
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, bonus, " [Wisdom saving throw (+" + bonus + ")]: ");
+            bonus = int.Parse(wisModifier.text) + int.Parse(proficencyBonus.text);
         }
         else
         {
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(wisModifier.text), " [Wisdom saving throw (+" + wisModifier.text + ")]: ");
+            bonus = int.Parse(wisModifier.text);
         }
+
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Wisdom saving throw (+" + bonus + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     [ServerRpc]
     void RollCharismaSaveServerRpc()
     {
+        int bonus = 0;
+
         if (chaProficency.isOn)
         {
-            int bonus = int.Parse(chaModifier.text) + int.Parse(proficencyBonus.text);
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, bonus, " [Charisma saving throw (+" + bonus + ")]: ");
+            bonus = int.Parse(chaModifier.text) + int.Parse(proficencyBonus.text);
         }
         else
         {
-            gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(chaModifier.text), " [Charisma saving throw (+" + chaModifier.text + ")]: ");
+            bonus = int.Parse(chaModifier.text);
         }
+
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Charisma saving throw (+" + bonus + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     // other rolls
@@ -1637,13 +1837,26 @@ public class CharacterSheetManager : MonoBehaviour
             initiativeBonus.text = "0";
         }
 
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(initiativeBonus.text), " [Initiative (+" + initiativeBonus.text + ")]: ");
+        int bonus = int.Parse(initiativeBonus.text);
+
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Initiative check (+" + bonus + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));
     }
 
     [ServerRpc]
     void RollDeathSavingThrowServerRpc()
     {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, 0, " [Death saving throw]: ");
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Death saving throw]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, 0, ResolveDeathSavingThrow));
     }
 
     [ServerRpc]
@@ -1651,13 +1864,27 @@ public class CharacterSheetManager : MonoBehaviour
     {
         diceType hitDice = GetHitDice(hitDiceType);
         if (hitDice == diceType.pd) { return; }
-        gameManager.RollDice(hitDice, Camera.main.transform.position, characterName.text, int.Parse(conModifier.text), " [Hit dice (+" + conModifier.text + "]: ");
+
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [Hit dice ("+ conModifier.text +")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, hitDice, int.Parse(conModifier.text), ResolveHitDiceRoll));
     }
 
     [ServerRpc]
     void RollSkillCheckServerRpc(string skillName, string skillTotalBonus)
     {
-        gameManager.RollDice(diceType.d20, Camera.main.transform.position, characterName.text, int.Parse(skillTotalBonus), " ["+ skillName + " check (+" + skillTotalBonus + ")]: ");       
+
+        int bonus = int.Parse(skillTotalBonus);
+
+        string rollKey = diceHandler.GetNewRollKey(playerName.text + "-");
+        string message = " [" + skillName + " check (+" + skillTotalBonus + ")]: ";
+
+        diceHandler.AddRoll(rollKey, characterName.text, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, bonus, ResolveCheckOrSave));    
     }
 
     #endregion
