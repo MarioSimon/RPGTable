@@ -14,6 +14,7 @@ public class CharacterCreator : NetworkBehaviour
     [SerializeField] GameManager gameManager;
     [SerializeField] UIManager uIManager;
     [SerializeField] LibraryManager libraryManager;
+    [SerializeField] DiceHandler diceHandler;
 
     [Header("Basic info")]
     [SerializeField] InputField characterName;
@@ -580,6 +581,12 @@ public class CharacterCreator : NetworkBehaviour
             case 2:
                 SwitchToRollD20();
                 break;
+            case 3:
+                SwitchToRoll3D6();
+                break;
+            case 4:
+                SwitchToRoll4D6();
+                break;
         }
     }
 
@@ -629,6 +636,19 @@ public class CharacterCreator : NetworkBehaviour
         rollScores.SetActive(true);
         pointBuy.SetActive(false);
 
+        rollStrenght.onClick.RemoveAllListeners();
+        rollStrenght.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetStrengthD20));
+        rollDexterity.onClick.RemoveAllListeners();
+        rollDexterity.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetDexterityD20));
+        rollConstitution.onClick.RemoveAllListeners();
+        rollConstitution.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetConstitutionD20));
+        rollIntelligence.onClick.RemoveAllListeners();
+        rollIntelligence.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetIntelligenceD20));
+        rollWisdom.onClick.RemoveAllListeners();
+        rollWisdom.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetWisdomD20));
+        rollCharisma.onClick.RemoveAllListeners();
+        rollCharisma.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetCharismaD20));
+
         strScore.interactable = false;
         dexScore.interactable = false;
         conScore.interactable = false;
@@ -636,6 +656,453 @@ public class CharacterCreator : NetworkBehaviour
         wisScore.interactable = false;
         chaScore.interactable = false;
     }
+
+    private void SwitchToRoll3D6()
+    {
+        rollScores.SetActive(true);
+        pointBuy.SetActive(false);
+
+        rollStrenght.onClick.RemoveAllListeners();
+        rollStrenght.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetStrength3D6));
+        rollDexterity.onClick.RemoveAllListeners();
+        rollDexterity.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetDexterity3D6));
+        rollConstitution.onClick.RemoveAllListeners();
+        rollConstitution.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetConstitution3D6));
+        rollIntelligence.onClick.RemoveAllListeners();
+        rollIntelligence.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetIntelligence3D6));
+        rollWisdom.onClick.RemoveAllListeners();
+        rollWisdom.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetWisdom3D6));
+        rollCharisma.onClick.RemoveAllListeners();
+        rollCharisma.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetCharisma3D6));
+
+        strScore.interactable = false;
+        dexScore.interactable = false;
+        conScore.interactable = false;
+        intScore.interactable = false;
+        wisScore.interactable = false;
+        chaScore.interactable = false;
+    }
+
+    private void SwitchToRoll4D6()
+    {
+        rollScores.SetActive(true);
+        pointBuy.SetActive(false);
+
+        rollStrenght.onClick.RemoveAllListeners();
+        rollStrenght.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetStrength4D6));
+        rollDexterity.onClick.RemoveAllListeners();
+        rollDexterity.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetDexterity4D6));
+        rollConstitution.onClick.RemoveAllListeners();
+        rollConstitution.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetConstitution4D6));
+        rollIntelligence.onClick.RemoveAllListeners();
+        rollIntelligence.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetIntelligence4D6));
+        rollWisdom.onClick.RemoveAllListeners();
+        rollWisdom.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetWisdom4D6));
+        rollCharisma.onClick.RemoveAllListeners();
+        rollCharisma.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetCharisma4D6));
+
+        strScore.interactable = false;
+        dexScore.interactable = false;
+        conScore.interactable = false;
+        intScore.interactable = false;
+        wisScore.interactable = false;
+        chaScore.interactable = false;
+    }
+
+    #region d20 rolls
+
+    private void RollScoreD20(string thrownBy, Action<string, int> resultFunction)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 1, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, 0, resultFunction));
+    }
+
+    private void SetStrengthD20(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        strScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetDexterityD20(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        dexScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetConstitutionD20(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        conScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetIntelligenceD20(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        intScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetWisdomD20(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        wisScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetCharismaD20(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        chaScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    #endregion
+
+    #region 3d6 rolls
+
+    private void RollScore3D6(string thrownBy, Action<string, int> resultFunction)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 3, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
+    }
+
+    private void SetStrength3D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        strScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetDexterity3D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        dexScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetConstitution3D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        conScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetIntelligence3D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        intScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetWisdom3D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        wisScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetCharisma3D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        chaScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    #endregion
+
+    #region 4d6 rolls
+
+    private void RollScore4D6(string thrownBy, Action<string, int> resultFunction)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 4, message);
+
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
+        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
+    }
+
+    private void SetStrength4D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        List<int> diceResults = new List<int>(roll.diceScores);
+        int minValueIndex = 0;
+
+        for (int i = 1; i < diceResults.Count; i++)
+        {
+            if (diceResults[i] < diceResults[minValueIndex])
+            {
+                minValueIndex = i;
+            }
+        }
+
+        diceResults.RemoveAt(minValueIndex);
+
+        foreach (int diceScore in diceResults)
+        {
+            result += diceScore;
+        }
+
+        strScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetDexterity4D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        List<int> diceResults = new List<int>(roll.diceScores);
+        int minValueIndex = 0;
+
+        for (int i = 1; i < diceResults.Count; i++)
+        {
+            if (diceResults[i] < diceResults[minValueIndex])
+            {
+                minValueIndex = i;
+            }
+        }
+
+        diceResults.RemoveAt(minValueIndex);
+
+        foreach (int diceScore in diceResults)
+        {
+            result += diceScore;
+        }
+
+        dexScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetConstitution4D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        List<int> diceResults = new List<int>(roll.diceScores);
+        int minValueIndex = 0;
+
+        for (int i = 1; i < diceResults.Count; i++)
+        {
+            if (diceResults[i] < diceResults[minValueIndex])
+            {
+                minValueIndex = i;
+            }
+        }
+
+        diceResults.RemoveAt(minValueIndex);
+
+        foreach (int diceScore in diceResults)
+        {
+            result += diceScore;
+        }
+
+        conScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetIntelligence4D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        List<int> diceResults = new List<int>(roll.diceScores);
+        int minValueIndex = 0;
+
+        for (int i = 1; i < diceResults.Count; i++)
+        {
+            if (diceResults[i] < diceResults[minValueIndex])
+            {
+                minValueIndex = i;
+            }
+        }
+
+        diceResults.RemoveAt(minValueIndex);
+
+        foreach (int diceScore in diceResults)
+        {
+            result += diceScore;
+        }
+
+        intScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetWisdom4D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        List<int> diceResults = new List<int>(roll.diceScores);
+        int minValueIndex = 0;
+
+        for (int i = 1; i < diceResults.Count; i++)
+        {
+            if (diceResults[i] < diceResults[minValueIndex])
+            {
+                minValueIndex = i;
+            }
+        }
+
+        diceResults.RemoveAt(minValueIndex);
+
+        foreach (int diceScore in diceResults)
+        {
+            result += diceScore;
+        }
+
+        wisScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    private void SetCharisma4D6(string rollKey, int modifier)
+    {
+        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
+        int result = 0;
+
+        List<int> diceResults = new List<int>(roll.diceScores);
+        int minValueIndex = 0;
+
+        for (int i = 1; i < diceResults.Count; i++)
+        {
+            if (diceResults[i] < diceResults[minValueIndex])
+            {
+                minValueIndex = i;
+            }
+        }
+
+        diceResults.RemoveAt(minValueIndex);
+
+        foreach (int diceScore in diceResults)
+        {
+            result += diceScore;
+        }
+
+        chaScore.text = result.ToString();
+
+        diceHandler.DeleteRoll(rollKey);
+    }
+
+    #endregion
 
     private void UpdateTotalAbilityScoreAndModifier(InputField baseScore, Text raceBonus, Text totalScore, Text modifier, ref int scoreNumber)
     {
