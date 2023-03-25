@@ -44,8 +44,6 @@ namespace RuntimeHandle
 
             if (target == null)
                 target = transform;
-
-            CreateHandles();
         }
 
         public void CreateHandles()
