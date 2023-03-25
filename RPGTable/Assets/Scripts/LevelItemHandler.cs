@@ -25,8 +25,11 @@ public class LevelItemHandler : NetworkBehaviour
 
     void Start()
     {
-        transformHandle.Clear();
-        transformHandle.enabled = false;
+        if (transformHandle != null)
+        {
+            transformHandle.Clear();
+            transformHandle.enabled = false;
+        }     
     }
 
     private void Update()
@@ -81,11 +84,13 @@ public class LevelItemHandler : NetworkBehaviour
         levelEditorManager.SaveState();
         transformHandle.Clear();
 
-        this.gameObject.GetComponent<NetworkObject>().Despawn();
         if (itemMenuInstance != null)
         {
             Destroy(itemMenuInstance);
         }
+
+        gameObject.GetComponent<NetworkObject>().Despawn();
+        Destroy(gameObject);
     }
 
     public void OpenItemMenu()
@@ -93,6 +98,7 @@ public class LevelItemHandler : NetworkBehaviour
         if (itemMenuInstance != null)
         {
             Destroy(itemMenuInstance);
+            
         }
 
         GameObject contextMenu = Instantiate(itemMenu, Input.mousePosition, Quaternion.identity);
@@ -106,7 +112,6 @@ public class LevelItemHandler : NetworkBehaviour
 
         itemMenuInstance = contextMenu;
     }
-
 
     void InteractWithSelection()
     {

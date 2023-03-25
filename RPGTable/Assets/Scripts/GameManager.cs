@@ -178,6 +178,8 @@ public class GameManager : NetworkBehaviour
 
         foreach (GameObject item in currentLevel)
         {
+            if (item == null) { continue; }
+
             LevelItemInfo itemInfo;
             itemInfo.itemID = item.GetComponent<LevelItemHandler>().id;
             itemInfo.itemPosition = item.transform.position;

@@ -56,6 +56,7 @@ GameObject:
   - component: {fileID: 6750090896570783859}
   - component: {fileID: 6049272269166617968}
   - component: {fileID: 6100720092841656220}
+  - component: {fileID: 427321546948255007}
   m_Layer: 0
   m_Name: Table
   m_TagString: Untagged
@@ -135,6 +136,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemMenu: {fileID: 1878711165183701654, guid: f2ae9da069cf31e4aa370ecf88678252, type: 3}
   id: 13
+--- !u!114 &427321546948255007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166844284863223880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23786c5da38d1aa4c9832784de1fc3bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axes: 6
+  space: 1
+  type: 0
+  snappingType: 0
+  positionSnap: {x: 0, y: 0, z: 0}
+  rotationSnap: 0
+  scaleSnap: {x: 0, y: 0, z: 0}
+  autoScale: 0
+  autoScaleFactor: 1
+  handleCamera: {fileID: 0}
+  target: {fileID: 0}
 --- !u!1001 &7676985777268300594
 PrefabInstance:
   m_ObjectHideFlags: 0

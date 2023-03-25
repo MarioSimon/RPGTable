@@ -6,6 +6,7 @@ using System;
 using Unity.Collections;
 using System.Collections.Generic;
 using System.Collections;
+using static UnityEngine.UI.Dropdown;
 
 public class UIManager : NetworkBehaviour
 {
@@ -216,11 +217,28 @@ public class UIManager : NetworkBehaviour
 
     private void DeleteLevel()
     {
-        bool deleted = gameManager.DeleteLevel(levelList.captionText.text);
+        string levelName = levelList.captionText.text;
+
+        bool deleted = gameManager.DeleteLevel(levelName);
 
         if (deleted)
         {
-            // borrar el nivel borrado de la lista
+            int index = 0;
+
+            for(int i = 0; i < levelList.options.Count; i++)
+            {
+                if (levelList.options[i].text == levelName)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index > 0)
+            {
+                levelList.options.RemoveAt(index);
+                levelList.value = 0;
+            }
         }
     }
 
