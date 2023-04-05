@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 public class Dice : MonoBehaviour
 {
 
     #region Variables
 
-    public diceType type;
+    public DiceType type;
 
     private Rigidbody rb;
     [SerializeField] private GameObject sides;
@@ -80,25 +81,25 @@ public class Dice : MonoBehaviour
 
         switch (type)
         {
-            case diceType.d4:
+            case DiceType.d4:
                 result = GetD4Result(lowerSide);
                 break;
-            case diceType.d6:
+            case DiceType.d6:
                 result = GetD6Result(lowerSide);
                 break;
-            case diceType.d8:
+            case DiceType.d8:
                  result = GetD8Result(lowerSide);
                 break;
-            case diceType.d10:
+            case DiceType.d10:
                 result = GetD10Result(lowerSide);
                 break;
-            case diceType.pd:
+            case DiceType.pd:
                 result = GetDPResult(lowerSide);
                 break;
-            case diceType.d12:
+            case DiceType.d12:
                 result = GetD12Result(lowerSide);
                 break;
-            case diceType.d20:
+            case DiceType.d20:
                 result = GetD20Result(lowerSide);
                 break;
             default:
@@ -308,7 +309,7 @@ public class Dice : MonoBehaviour
 }
 
 
-public enum diceType
+public enum DiceType
 {
     d4 = 0,
     d6 = 1,

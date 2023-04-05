@@ -73,7 +73,7 @@ public class DiceHandler : NetworkBehaviour
         return activeRolls[rollKey];
     }
 
-    private void UpdateRoll(string rollKey, int result, int modifier, Action<string, int> resultFunction)
+    private void UpdateRoll(string rollKey, int result, int modifier, ClientRpcParams clientRpcParams, Action<string, int, ClientRpcParams, int> resultFunction, int sheetID)
     {
         if (!activeRolls.ContainsKey(rollKey)) { return; }
 
@@ -92,7 +92,7 @@ public class DiceHandler : NetworkBehaviour
 
         if (roll.numberOfDices == roll.rolledDices)
         {
-            resultFunction(rollKey, modifier);
+            resultFunction(rollKey, modifier, clientRpcParams, sheetID);
         }
         else
         {
@@ -108,7 +108,7 @@ public class DiceHandler : NetworkBehaviour
         }
     }
 
-    public IEnumerator RollDice(string rollKey, diceType type, int modifier, Action<string, int> resultFunction)
+    public IEnumerator RollDice(string rollKey, DiceType type, int modifier, ClientRpcParams clientRpcParams, Action<string, int, ClientRpcParams, int> resultFunction, int sheetID = -1)
     {
         yield return new WaitForSeconds(0.25f);
 
@@ -117,7 +117,7 @@ public class DiceHandler : NetworkBehaviour
 
         switch (type)
         {
-            case diceType.d4:
+            case DiceType.d4:
                 dice = Instantiate(d4Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
@@ -130,7 +130,7 @@ public class DiceHandler : NetworkBehaviour
                 result = d4.GetDiceScore();
                 break;
 
-            case diceType.d6:
+            case DiceType.d6:
                 dice = Instantiate(d6Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
@@ -142,7 +142,7 @@ public class DiceHandler : NetworkBehaviour
 
                 result = d6.GetDiceScore();
                 break;
-            case diceType.d8:
+            case DiceType.d8:
                 dice = Instantiate(d8Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
@@ -154,7 +154,7 @@ public class DiceHandler : NetworkBehaviour
 
                 result = d8.GetDiceScore();
                 break;
-            case diceType.d10:
+            case DiceType.d10:
                 dice = Instantiate(d10Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
@@ -166,7 +166,7 @@ public class DiceHandler : NetworkBehaviour
 
                 result = d10.GetDiceScore();
                 break;
-            case diceType.pd:
+            case DiceType.pd:
                 dice = Instantiate(pdPrefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
@@ -178,7 +178,7 @@ public class DiceHandler : NetworkBehaviour
 
                 result = pd.GetDiceScore();
                 break;
-            case diceType.d12:
+            case DiceType.d12:
                 dice = Instantiate(d12Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
@@ -190,7 +190,7 @@ public class DiceHandler : NetworkBehaviour
 
                 result = d12.GetDiceScore();
                 break;
-            case diceType.d20:
+            case DiceType.d20:
                 dice = Instantiate(d20Prefab, throwPoint.position, Quaternion.identity);
                 dice.GetComponent<NetworkObject>().Spawn();
 
@@ -204,12 +204,191 @@ public class DiceHandler : NetworkBehaviour
                 break;
         }
 
-        UpdateRoll(rollKey, result, modifier, resultFunction);
+        UpdateRoll(rollKey, result, modifier, clientRpcParams, resultFunction, sheetID);
 
         yield return new WaitForSeconds(1f);
 
         dice.GetComponent<NetworkObject>().Despawn();
         Destroy(dice.gameObject);
+    }
+
+    #region character sheet rolls
+
+    public void RollCheck(string characterName, string abilitySkill, int modifier)
+    {
+        RollCheckServerRpc(characterName, abilitySkill, modifier);
+    }
+
+    public void RollAbilitySave(string characterName, string ability, int modifier)
+    {
+        RollSaveServerRpc(characterName, ability, modifier);
+    }
+
+    public void RollHitDice(string characterName, DiceType hitDie, int sheetID, int modifier)
+    {
+        RollHitDiceServerRpc(characterName, hitDie, sheetID, modifier);
+    }
+
+    public void RollDeathSavingThrow(string characterName, int sheetID)
+    {
+        RollDeathSavingThrowServerRpc(characterName, sheetID);
+    }
+
+    void ResolveCheckOrSave(string rollKey, int modifier, ClientRpcParams clientRpcParams = default, int sheetID = -1)
+    {
+        DiceRollInfo roll = GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        result += modifier;
+
+        uiManager.NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
+
+        DeleteRoll(rollKey);
+    }
+
+    void ResolveHitDiceRoll(string rollKey, int modifier, ClientRpcParams clientRpcParams = default, int sheetID = -1)
+    {
+        DiceRollInfo roll = GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        result += modifier;
+
+        if (result <= 0)
+        {
+            result = 1;
+        }
+
+        HitDiceHealClientRpc(result, sheetID);
+
+        uiManager.NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
+
+        DeleteRoll(rollKey);
+    }
+
+    void ResolveDeathSavingThrow(string rollKey, int modifier, ClientRpcParams clientRpcParams = default, int sheetID = -1)
+    {
+        DiceRollInfo roll = GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (int diceScore in roll.diceScores)
+        {
+            result += diceScore;
+        }
+
+        ProcessDeathSavingThrowClientRpc(result, sheetID);
+        uiManager.NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
+
+        DeleteRoll(rollKey);
+    }
+
+    #endregion
+
+    [ServerRpc (RequireOwnership = false)]
+    void RollCheckServerRpc(string characterName, string abilitySkill, int modifier, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = GetNewRollKey(characterName + "-");
+        string message = "";
+
+
+        if (modifier >= 0)
+        {
+            message  = " [" + abilitySkill + "check (+" + modifier + ")]: ";
+        }
+        else
+        {
+            message = " [" + abilitySkill + "check (" + modifier + ")]: ";
+        }        
+        
+        AddRoll(rollKey, characterName, 1, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId}
+            }
+        };
+
+            StartCoroutine(RollDice(rollKey, DiceType.d20, modifier, clientRpcParams, ResolveCheckOrSave));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void RollSaveServerRpc(string characterName, string abilitySkill, int modifier, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = GetNewRollKey(characterName + "-");
+        string message = "";
+
+
+        if (modifier >= 0)
+        {
+            message = " [" + abilitySkill + " saving throw (+" + modifier + ")]: ";
+        }
+        else
+        {
+            message = " [" + abilitySkill + " saving throw (" + modifier + ")]: ";
+        }
+
+        AddRoll(rollKey, characterName, 1, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(RollDice(rollKey, DiceType.d20, modifier, clientRpcParams, ResolveCheckOrSave));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void RollHitDiceServerRpc(string characterName, DiceType hitDie, int modifier, int sheetID, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = GetNewRollKey(characterName + "-");
+        string message = "";
+
+
+        if (modifier >= 0)
+        {
+            message = " [Hit die (+" + modifier + ")]: ";
+        }
+        else
+        {
+            message = " [Hit die (+" + modifier + ")]: ";
+        }
+
+        AddRoll(rollKey, characterName, 1, message);
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams();
+
+        StartCoroutine(RollDice(rollKey, hitDie, modifier, clientRpcParams, ResolveHitDiceRoll, sheetID));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void RollDeathSavingThrowServerRpc(string characterName, int sheetID, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = GetNewRollKey(characterName + "-");
+        string message = " [Death saving throw]: ";
+
+        AddRoll(rollKey, characterName, 1, message);
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams();
+
+        StartCoroutine(RollDice(rollKey, DiceType.d20, 0, clientRpcParams, ResolveDeathSavingThrow, sheetID));
     }
 
     #region clientRpc
@@ -228,6 +407,35 @@ public class DiceHandler : NetworkBehaviour
         if (IsOwner) { return; }
 
         diceCam.SetActive(false);
+    }
+
+    [ClientRpc]
+    private void HitDiceHealClientRpc(int result, int sheetID)
+    {
+        CharacterSheetManager[] activeSheets = FindObjectsOfType<CharacterSheetManager>();
+
+        foreach (CharacterSheetManager sheet in activeSheets)
+        {
+            if (sheetID == sheet.CSInfo.sheetID)
+            {
+                sheet.HitDiceHeal(result);
+            }
+        }
+    }
+
+
+    [ClientRpc]
+    private void ProcessDeathSavingThrowClientRpc(int result, int sheetID)
+    {
+        CharacterSheetManager[] activeSheets = FindObjectsOfType<CharacterSheetManager>();
+
+        foreach (CharacterSheetManager sheet in activeSheets)
+        {
+            if (sheetID == sheet.CSInfo.sheetID)
+            {
+                sheet.ProcessDeathSavingThrow(result);
+            }
+        }
     }
 
     #endregion
