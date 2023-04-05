@@ -637,17 +637,17 @@ public class CharacterCreator : NetworkBehaviour
         pointBuy.SetActive(false);
 
         rollStrenght.onClick.RemoveAllListeners();
-        rollStrenght.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetStrengthD20));
+        rollStrenght.onClick.AddListener(() => RollStrengthD20ServerRpc(uIManager.localPlayer.name));
         rollDexterity.onClick.RemoveAllListeners();
-        rollDexterity.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetDexterityD20));
+        rollDexterity.onClick.AddListener(() => RollDexterityD20ServerRpc(uIManager.localPlayer.name));
         rollConstitution.onClick.RemoveAllListeners();
-        rollConstitution.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetConstitutionD20));
+        rollConstitution.onClick.AddListener(() => RollConstitutionD20ServerRpc(uIManager.localPlayer.name));
         rollIntelligence.onClick.RemoveAllListeners();
-        rollIntelligence.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetIntelligenceD20));
+        rollIntelligence.onClick.AddListener(() => RollIntelligenceD20ServerRpc(uIManager.localPlayer.name));
         rollWisdom.onClick.RemoveAllListeners();
-        rollWisdom.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetWisdomD20));
+        rollWisdom.onClick.AddListener(() => RollWisdomD20ServerRpc(uIManager.localPlayer.name));
         rollCharisma.onClick.RemoveAllListeners();
-        rollCharisma.onClick.AddListener(() => RollScoreD20(uIManager.localPlayer.name, SetCharismaD20));
+        rollCharisma.onClick.AddListener(() => RollCharismaD20ServerRpc(uIManager.localPlayer.name));
 
         strScore.interactable = false;
         dexScore.interactable = false;
@@ -663,17 +663,17 @@ public class CharacterCreator : NetworkBehaviour
         pointBuy.SetActive(false);
 
         rollStrenght.onClick.RemoveAllListeners();
-        rollStrenght.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetStrength3D6));
+        rollStrenght.onClick.AddListener(() => RollStrength3D6ServerRpc(uIManager.localPlayer.name));
         rollDexterity.onClick.RemoveAllListeners();
-        rollDexterity.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetDexterity3D6));
+        rollDexterity.onClick.AddListener(() => RollDexterity3D6ServerRpc(uIManager.localPlayer.name));
         rollConstitution.onClick.RemoveAllListeners();
-        rollConstitution.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetConstitution3D6));
+        rollConstitution.onClick.AddListener(() => RollConstitution3D6ServerRpc(uIManager.localPlayer.name));
         rollIntelligence.onClick.RemoveAllListeners();
-        rollIntelligence.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetIntelligence3D6));
+        rollIntelligence.onClick.AddListener(() => RollIntelligence3D6ServerRpc(uIManager.localPlayer.name));
         rollWisdom.onClick.RemoveAllListeners();
-        rollWisdom.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetWisdom3D6));
+        rollWisdom.onClick.AddListener(() => RollWisdom3D6ServerRpc(uIManager.localPlayer.name));
         rollCharisma.onClick.RemoveAllListeners();
-        rollCharisma.onClick.AddListener(() => RollScore3D6(uIManager.localPlayer.name, SetCharisma3D6));
+        rollCharisma.onClick.AddListener(() => RollCharisma3D6ServerRpc(uIManager.localPlayer.name));
 
         strScore.interactable = false;
         dexScore.interactable = false;
@@ -689,17 +689,17 @@ public class CharacterCreator : NetworkBehaviour
         pointBuy.SetActive(false);
 
         rollStrenght.onClick.RemoveAllListeners();
-        rollStrenght.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetStrength4D6));
+        rollStrenght.onClick.AddListener(() => RollStrength4D6ServerRpc(uIManager.localPlayer.name));
         rollDexterity.onClick.RemoveAllListeners();
-        rollDexterity.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetDexterity4D6));
+        rollDexterity.onClick.AddListener(() => RollDexterity4D6ServerRpc(uIManager.localPlayer.name));
         rollConstitution.onClick.RemoveAllListeners();
-        rollConstitution.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetConstitution4D6));
+        rollConstitution.onClick.AddListener(() => RollConstitution4D6ServerRpc(uIManager.localPlayer.name));
         rollIntelligence.onClick.RemoveAllListeners();
-        rollIntelligence.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetIntelligence4D6));
+        rollIntelligence.onClick.AddListener(() => RollIntelligence4D6ServerRpc(uIManager.localPlayer.name));
         rollWisdom.onClick.RemoveAllListeners();
-        rollWisdom.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetWisdom4D6));
+        rollWisdom.onClick.AddListener(() => RollWisdom4D6ServerRpc(uIManager.localPlayer.name));
         rollCharisma.onClick.RemoveAllListeners();
-        rollCharisma.onClick.AddListener(() => RollScore4D6(uIManager.localPlayer.name, SetCharisma4D6));
+        rollCharisma.onClick.AddListener(() => RollCharisma4D6ServerRpc(uIManager.localPlayer.name));
 
         strScore.interactable = false;
         dexScore.interactable = false;
@@ -711,17 +711,7 @@ public class CharacterCreator : NetworkBehaviour
 
     #region d20 rolls
 
-    private void RollScoreD20(string thrownBy, Action<string, int> resultFunction)
-    {
-        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
-        string message = "";
-
-        diceHandler.AddRoll(rollKey, thrownBy, 1, message);
-
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d20, 0, resultFunction));
-    }
-
-    private void SetStrengthD20(string rollKey, int modifier)
+    private void SetStrengthD20(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -731,12 +721,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        strScore.text = result.ToString();
+        SetStrengthClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetDexterityD20(string rollKey, int modifier)
+    private void SetDexterityD20(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -746,12 +736,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        dexScore.text = result.ToString();
+        SetDexterityClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetConstitutionD20(string rollKey, int modifier)
+    private void SetConstitutionD20(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -761,12 +751,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        conScore.text = result.ToString();
+        SetConstitutionClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetIntelligenceD20(string rollKey, int modifier)
+    private void SetIntelligenceD20(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -776,12 +766,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        intScore.text = result.ToString();
+        SetIntelligenceClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetWisdomD20(string rollKey, int modifier)
+    private void SetWisdomD20(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -791,12 +781,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        wisScore.text = result.ToString();
+        SetWisdomClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetCharismaD20(string rollKey, int modifier)
+    private void SetCharismaD20(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -806,7 +796,7 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        chaScore.text = result.ToString();
+        SetCharismaClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
@@ -815,19 +805,7 @@ public class CharacterCreator : NetworkBehaviour
 
     #region 3d6 rolls
 
-    private void RollScore3D6(string thrownBy, Action<string, int> resultFunction)
-    {
-        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
-        string message = "";
-
-        diceHandler.AddRoll(rollKey, thrownBy, 3, message);
-
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
-    }
-
-    private void SetStrength3D6(string rollKey, int modifier)
+    private void SetStrength3D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -837,12 +815,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        strScore.text = result.ToString();
+        SetStrengthClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetDexterity3D6(string rollKey, int modifier)
+    private void SetDexterity3D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -852,12 +830,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        dexScore.text = result.ToString();
+        SetDexterityClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetConstitution3D6(string rollKey, int modifier)
+    private void SetConstitution3D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -867,12 +845,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        conScore.text = result.ToString();
+        SetConstitutionClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetIntelligence3D6(string rollKey, int modifier)
+    private void SetIntelligence3D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -882,12 +860,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        intScore.text = result.ToString();
+        SetIntelligenceClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetWisdom3D6(string rollKey, int modifier)
+    private void SetWisdom3D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -897,12 +875,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        wisScore.text = result.ToString();
+        SetWisdomClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetCharisma3D6(string rollKey, int modifier)
+    private void SetCharisma3D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -912,7 +890,7 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        chaScore.text = result.ToString();
+        SetCharismaClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
@@ -921,20 +899,7 @@ public class CharacterCreator : NetworkBehaviour
 
     #region 4d6 rolls
 
-    private void RollScore4D6(string thrownBy, Action<string, int> resultFunction)
-    {
-        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
-        string message = "";
-
-        diceHandler.AddRoll(rollKey, thrownBy, 4, message);
-
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
-        StartCoroutine(diceHandler.RollDice(rollKey, diceType.d6, 0, resultFunction));
-    }
-
-    private void SetStrength4D6(string rollKey, int modifier)
+    private void SetStrength4D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -957,12 +922,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        strScore.text = result.ToString();
+        SetStrengthClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetDexterity4D6(string rollKey, int modifier)
+    private void SetDexterity4D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -985,12 +950,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        dexScore.text = result.ToString();
+        SetDexterityClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetConstitution4D6(string rollKey, int modifier)
+    private void SetConstitution4D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -1013,12 +978,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        conScore.text = result.ToString();
+        SetConstitutionClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetIntelligence4D6(string rollKey, int modifier)
+    private void SetIntelligence4D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -1041,12 +1006,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        intScore.text = result.ToString();
+        SetIntelligenceClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetWisdom4D6(string rollKey, int modifier)
+    private void SetWisdom4D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -1069,12 +1034,12 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        wisScore.text = result.ToString();
+        SetWisdomClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
 
-    private void SetCharisma4D6(string rollKey, int modifier)
+    private void SetCharisma4D6(string rollKey, int modifier, ClientRpcParams clientRpcParams, int sheetID = -1)
     {
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
@@ -1097,7 +1062,7 @@ public class CharacterCreator : NetworkBehaviour
             result += diceScore;
         }
 
-        chaScore.text = result.ToString();
+        SetCharismaClientRpc(result, clientRpcParams);
 
         diceHandler.DeleteRoll(rollKey);
     }
@@ -1313,6 +1278,418 @@ public class CharacterCreator : NetworkBehaviour
     #endregion
 
     #region serverRpc
+
+    #region score roll serverRpc
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollStrengthD20ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 1, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d20, 0, clientRpcParams, SetStrengthD20));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollDexterityD20ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 1, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d20, 0, clientRpcParams, SetDexterityD20));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollConstitutionD20ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 1, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d20, 0, clientRpcParams, SetConstitutionD20));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollIntelligenceD20ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 1, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d20, 0, clientRpcParams, SetIntelligenceD20));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollWisdomD20ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 1, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d20, 0, clientRpcParams, SetWisdomD20));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollCharismaD20ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 1, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d20, 0, clientRpcParams, SetCharismaD20));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollStrength3D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 3, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetStrength3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetStrength3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetStrength3D6));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollDexterity3D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 3, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetDexterity3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetDexterity3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetDexterity3D6));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollConstitution3D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 3, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetConstitution3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetConstitution3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetConstitution3D6));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollIntelligence3D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 3, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetIntelligence3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetIntelligence3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetIntelligence3D6));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollWisdom3D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 3, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetWisdom3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetWisdom3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetWisdom3D6));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollCharisma3D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 3, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetCharisma3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetCharisma3D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetCharisma3D6));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollStrength4D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 4, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetStrength4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetStrength4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetStrength4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetStrength4D6));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollDexterity4D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 4, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetDexterity4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetDexterity4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetDexterity4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetDexterity4D6));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollConstitution4D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 4, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetConstitution4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetConstitution4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetConstitution4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetConstitution4D6));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollIntelligence4D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 4, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetIntelligence4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetIntelligence4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetIntelligence4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetIntelligence4D6));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollWisdom4D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 3, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetWisdom4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetWisdom4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetWisdom4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetWisdom4D6));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollCharisma4D6ServerRpc(string thrownBy, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
+        string message = "";
+
+        diceHandler.AddRoll(rollKey, thrownBy, 3, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetCharisma4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetCharisma4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetCharisma4D6));
+        StartCoroutine(diceHandler.RollDice(rollKey, DiceType.d6, 0, clientRpcParams, SetCharisma4D6));
+    }
+
+    #endregion
 
     [ServerRpc(RequireOwnership = false)]
     private void CreateCharacterServerRpc(CharacterSheetInfo newCSInfo)
@@ -1876,5 +2253,45 @@ public class CharacterCreator : NetworkBehaviour
 
     #endregion
 
+    #region d20 stat rolls
+
+    [ClientRpc]
+    private void SetStrengthClientRpc(int result, ClientRpcParams clientRpcParams)
+    {
+        strScore.text = result.ToString();
+    }
+
+    [ClientRpc]
+    private void SetDexterityClientRpc(int result, ClientRpcParams clientRpcParams)
+    {
+        dexScore.text = result.ToString();
+    }
+
+    [ClientRpc]
+    private void SetConstitutionClientRpc(int result, ClientRpcParams clientRpcParams)
+    {
+        conScore.text = result.ToString();
+    }
+
+    [ClientRpc]
+    private void SetIntelligenceClientRpc(int result, ClientRpcParams clientRpcParams)
+    {
+        intScore.text = result.ToString();
+    }
+
+    [ClientRpc]
+    private void SetWisdomClientRpc(int result, ClientRpcParams clientRpcParams)
+    {
+        wisScore.text = result.ToString();
+    }
+
+    [ClientRpc]
+    private void SetCharismaClientRpc(int result, ClientRpcParams clientRpcParams)
+    {
+        chaScore.text = result.ToString();
+    }
+
+    #endregion
+    
     #endregion
 }
