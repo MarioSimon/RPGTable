@@ -200,9 +200,47 @@ public class CharacterSheetInfo : INetworkSerializable
     public string[] level9SpellDuration;
     public string[] level9SpellDescription;
 
-    public string actions = "";
-    public string bonusActions = "";
-    public string reactions = "";
+    public int actionCount = 0;
+    public string[] actionName;
+    public int[] actionType;
+    public int[] actionAttackMod;
+    public int[] actionD1NumDices;
+    public int[] actionD1DiceType;
+    public int[] actionD1FlatDamage;
+    public string[] actionD1Type;
+    public int[] actionD2NumDices;
+    public int[] actionD2DiceType;
+    public int[] actionD2FlatDamage;
+    public string[] actionD2Type;
+    public int[] actionDC;
+
+    public int bonusActionCount = 0;
+    public string[] bonusActionName;
+    public int[] bonusActionType;
+    public int[] bonusActionAttackMod;
+    public int[] bonusActionD1NumDices;
+    public int[] bonusActionD1DiceType;
+    public int[] bonusActionD1FlatDamage;
+    public string[] bonusActionD1Type;
+    public int[] bonusActionD2NumDices;
+    public int[] bonusActionD2DiceType;
+    public int[] bonusActionD2FlatDamage;
+    public string[] bonusActionD2Type;
+    public int[] bonusActionDC;
+
+    public int reactionCount = 0;
+    public string[] reactionName;
+    public int[] reactionType;
+    public int[] reactionAttackMod;
+    public int[] reactionD1NumDices;
+    public int[] reactionD1DiceType;
+    public int[] reactionD1FlatDamage;
+    public string[] reactionD1Type;
+    public int[] reactionD2NumDices;
+    public int[] reactionD2DiceType;
+    public int[] reactionD2FlatDamage;
+    public string[] reactionD2Type;
+    public int[] reactionDC;
 
     public string traits = "";
     public string ideals = "";
@@ -823,9 +861,140 @@ public class CharacterSheetInfo : INetworkSerializable
             serializer.SerializeValue(ref level9SpellDescription[i]);
         }
 
-        serializer.SerializeValue(ref actions);
-        serializer.SerializeValue(ref bonusActions);
-        serializer.SerializeValue(ref reactions);
+        serializer.SerializeValue(ref actionCount);
+        if (serializer.IsReader)
+        {
+            actionName = new string[actionCount];
+            actionType = new int[actionCount];
+            actionAttackMod = new int[actionCount];
+            actionD1NumDices = new int[actionCount];
+            actionD1DiceType = new int[actionCount];
+            actionD1FlatDamage = new int[actionCount];
+            actionD1Type = new string[actionCount];
+            actionD2NumDices = new int[actionCount];
+            actionD2DiceType = new int[actionCount];
+            actionD2FlatDamage = new int[actionCount];
+            actionD2Type = new string[actionCount];
+            actionDC = new int[actionCount];
+        }
+
+        for (int i = 0; i < actionCount; i++)
+        {
+            if (actionName[i] == null)
+            {
+                actionName[i] = "";
+            }
+            serializer.SerializeValue(ref actionName[i]);
+            serializer.SerializeValue(ref actionType[i]);
+            serializer.SerializeValue(ref actionAttackMod[i]);
+            serializer.SerializeValue(ref actionD1NumDices[i]);
+            serializer.SerializeValue(ref actionD1DiceType[i]);
+            serializer.SerializeValue(ref actionD1FlatDamage[i]);
+            if (actionD1Type[i] == null)
+            {
+                actionD1Type[i] = "";
+            }
+            serializer.SerializeValue(ref actionD1Type[i]);
+            serializer.SerializeValue(ref actionD2NumDices[i]);
+            serializer.SerializeValue(ref actionD2DiceType[i]);
+            serializer.SerializeValue(ref actionD2FlatDamage[i]);
+            if (actionD2Type[i] == null)
+            {
+                actionD2Type[i] = "";
+            }
+            serializer.SerializeValue(ref actionD2Type[i]);
+            serializer.SerializeValue(ref actionDC[i]);
+        }
+
+        serializer.SerializeValue(ref bonusActionCount);
+        if (serializer.IsReader)
+        {
+            bonusActionName = new string[bonusActionCount];
+            bonusActionType = new int[bonusActionCount];
+            bonusActionAttackMod = new int[bonusActionCount];
+            bonusActionD1NumDices = new int[bonusActionCount];
+            bonusActionD1DiceType = new int[bonusActionCount];
+            bonusActionD1FlatDamage = new int[bonusActionCount];
+            bonusActionD1Type = new string[bonusActionCount];
+            bonusActionD2NumDices = new int[bonusActionCount];
+            bonusActionD2DiceType = new int[bonusActionCount];
+            bonusActionD2FlatDamage = new int[bonusActionCount];
+            bonusActionD2Type = new string[bonusActionCount];
+            bonusActionDC = new int[bonusActionCount];
+        }
+
+        for (int i = 0; i < bonusActionCount; i++)
+        {
+            if (bonusActionName[i] == null)
+            {
+                bonusActionName[i] = "";
+            }
+            serializer.SerializeValue(ref bonusActionName[i]);
+            serializer.SerializeValue(ref bonusActionType[i]);
+            serializer.SerializeValue(ref bonusActionAttackMod[i]);
+            serializer.SerializeValue(ref bonusActionD1NumDices[i]);
+            serializer.SerializeValue(ref bonusActionD1DiceType[i]);
+            serializer.SerializeValue(ref bonusActionD1FlatDamage[i]);
+            if (bonusActionD1Type[i] == null)
+            {   
+                bonusActionD1Type[i] = "";
+            }
+            serializer.SerializeValue(ref bonusActionD1Type[i]);
+            serializer.SerializeValue(ref bonusActionD2NumDices[i]);
+            serializer.SerializeValue(ref bonusActionD2DiceType[i]);
+            serializer.SerializeValue(ref bonusActionD2FlatDamage[i]);
+            if (bonusActionD2Type[i] == null)
+            {
+                bonusActionD2Type[i] = "";
+            }
+            serializer.SerializeValue(ref bonusActionD2Type[i]);
+            serializer.SerializeValue(ref bonusActionDC[i]);
+        }
+
+        serializer.SerializeValue(ref reactionCount);
+        if (serializer.IsReader)
+        {
+            reactionName = new string[reactionCount];
+            reactionType = new int[reactionCount];
+            reactionAttackMod = new int[reactionCount];
+            reactionD1NumDices = new int[reactionCount];
+            reactionD1DiceType = new int[reactionCount];
+            reactionD1FlatDamage = new int[reactionCount];
+            reactionD1Type = new string[reactionCount];
+            reactionD2NumDices = new int[reactionCount];
+            reactionD2DiceType = new int[reactionCount];
+            reactionD2FlatDamage = new int[reactionCount];
+            reactionD2Type = new string[reactionCount];
+            reactionDC = new int[reactionCount];
+        }
+
+        for (int i = 0; i < reactionCount; i++)
+        {
+            if (reactionName[i] == null)
+            {
+                reactionName[i] = "";
+            }
+            serializer.SerializeValue(ref reactionName[i]);
+            serializer.SerializeValue(ref reactionType[i]);
+            serializer.SerializeValue(ref reactionAttackMod[i]);
+            serializer.SerializeValue(ref reactionD1NumDices[i]);
+            serializer.SerializeValue(ref reactionD1DiceType[i]);
+            serializer.SerializeValue(ref reactionD1FlatDamage[i]);
+            if (reactionD1Type[i] == null)
+            {
+                reactionD1Type[i] = "";
+            }
+            serializer.SerializeValue(ref reactionD1Type[i]);
+            serializer.SerializeValue(ref reactionD2NumDices[i]);
+            serializer.SerializeValue(ref reactionD2DiceType[i]);
+            serializer.SerializeValue(ref reactionD2FlatDamage[i]);
+            if (reactionD2Type[i] == null)
+            {
+                reactionD2Type[i] = "";
+            }
+            serializer.SerializeValue(ref reactionD2Type[i]);
+            serializer.SerializeValue(ref reactionDC[i]);
+        }
 
         serializer.SerializeValue(ref traits);
         serializer.SerializeValue(ref ideals);

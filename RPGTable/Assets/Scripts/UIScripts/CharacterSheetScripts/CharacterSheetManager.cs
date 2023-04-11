@@ -221,10 +221,21 @@ public class CharacterSheetManager : MonoBehaviour
     #region Actions
 
     [Header("Actions")]
+
     [SerializeField] GameObject actions;
-    [SerializeField] InputField actionsText;
-    [SerializeField] InputField bonusActions;
-    [SerializeField] InputField reactions;
+    [SerializeField] GameObject actionsPrefab;
+
+    [SerializeField] GameObject actionsParent;
+    [SerializeField] Button addAction;
+    List<GameObject> actionList = new List<GameObject>();
+
+    [SerializeField] GameObject bonusActionsParent;
+    [SerializeField] Button addBonusAction;
+    List<GameObject> bonusActionList = new List<GameObject>();
+
+    [SerializeField] GameObject reactionsParent;
+    [SerializeField] Button addReaction;
+    List<GameObject> reactionList = new List<GameObject>();
 
     [SerializeField] Image actionsBlocker;
     [SerializeField] Toggle actionsPublisher;
@@ -319,6 +330,14 @@ public class CharacterSheetManager : MonoBehaviour
         foreach (Skill skill in skillList)
         {
             proficencyBonus.onValueChanged.AddListener(delegate { CalculateSkillTotalBonus(skill.skillProficency, skill.skillCharacteristic, skill.skillExtraBonus, skill.skillTotalBonus); });
+
+            strScore.onValueChanged.AddListener(delegate { CalculateSkillTotalBonus(skill.skillProficency, skill.skillCharacteristic, skill.skillExtraBonus, skill.skillTotalBonus);  });
+            dexScore.onValueChanged.AddListener(delegate { CalculateSkillTotalBonus(skill.skillProficency, skill.skillCharacteristic, skill.skillExtraBonus, skill.skillTotalBonus); });
+            conScore.onValueChanged.AddListener(delegate { CalculateSkillTotalBonus(skill.skillProficency, skill.skillCharacteristic, skill.skillExtraBonus, skill.skillTotalBonus); });
+            intScore.onValueChanged.AddListener(delegate { CalculateSkillTotalBonus(skill.skillProficency, skill.skillCharacteristic, skill.skillExtraBonus, skill.skillTotalBonus); });
+            wisScore.onValueChanged.AddListener(delegate { CalculateSkillTotalBonus(skill.skillProficency, skill.skillCharacteristic, skill.skillExtraBonus, skill.skillTotalBonus); });
+            chaScore.onValueChanged.AddListener(delegate { CalculateSkillTotalBonus(skill.skillProficency, skill.skillCharacteristic, skill.skillExtraBonus, skill.skillTotalBonus); });
+
             skill.skillProficency.onValueChanged.AddListener(delegate { CalculateSkillTotalBonus(skill.skillProficency, skill.skillCharacteristic, skill.skillExtraBonus, skill.skillTotalBonus); });
             skill.skillCharacteristic.onValueChanged.AddListener(delegate { CalculateSkillTotalBonus(skill.skillProficency, skill.skillCharacteristic, skill.skillExtraBonus, skill.skillTotalBonus); });
             skill.skillExtraBonus.onValueChanged.AddListener(delegate { CalculateSkillTotalBonus(skill.skillProficency, skill.skillCharacteristic, skill.skillExtraBonus, skill.skillTotalBonus); });
@@ -348,6 +367,10 @@ public class CharacterSheetManager : MonoBehaviour
         spellLevelSelector.onValueChanged.AddListener(delegate { SwitchSpellLevelList(); });
         addSpell.onClick.AddListener(() => AddSpell());
 
+        // action related events
+        addAction.onClick.AddListener(() => AddNewAction(actionList, actionsParent));
+        addBonusAction.onClick.AddListener(() => AddNewAction(bonusActionList, bonusActionsParent));
+        addReaction.onClick.AddListener(() => AddNewAction(reactionList, reactionsParent));
 
         if (CSInfo != null)
         {
@@ -696,10 +719,161 @@ public class CharacterSheetManager : MonoBehaviour
             spell.spellDescription.text = CSInfo.level9SpellDescription[i];
         }
 
-        actionsText.text = CSInfo.actions;
-        bonusActions.text = CSInfo.bonusActions;
-        reactions.text = CSInfo.reactions;
+        for (int i = 0; i < CSInfo.actionCount; i++)
+        {
+            AddNewAction(actionList, actionsParent);
+            ActionInfo action = actionList[i].GetComponent<ActionInfo>();
+            action.actionName.text = CSInfo.actionName[i];
+            action.actionType.value = CSInfo.actionType[i];
+            action.attackMod = CSInfo.actionAttackMod[i];
+            action.damage1NumDices = CSInfo.actionD1NumDices[i];
+            switch (CSInfo.actionD1DiceType[i])
+            {
+                case 0:
+                    action.damage1Dice = DiceType.d4;
+                    break;
+                case 1:
+                    action.damage1Dice = DiceType.d6;
+                    break;
+                case 2:
+                    action.damage1Dice = DiceType.d8;
+                    break;
+                case 3:
+                    action.damage1Dice = DiceType.d10;
+                    break;
+                case 4:
+                    action.damage1Dice = DiceType.d12;
+                    break;
+            }
+            action.damage1FlatDamage = CSInfo.actionD1FlatDamage[i];
+            action.damage1Type = CSInfo.actionD1Type[i];
+            action.damage2NumDices = CSInfo.actionD2NumDices[i];
+            switch (CSInfo.actionD2DiceType[i])
+            {
+                case 0:
+                    action.damage2Dice = DiceType.d4;
+                    break;
+                case 1:
+                    action.damage2Dice = DiceType.d6;
+                    break;
+                case 2:
+                    action.damage2Dice = DiceType.d8;
+                    break;
+                case 3:
+                    action.damage2Dice = DiceType.d10;
+                    break;
+                case 4:
+                    action.damage2Dice = DiceType.d12;
+                    break;
+            }
+            action.damage2FlatDamage = CSInfo.actionD2FlatDamage[i];
+            action.damage2Type = CSInfo.actionD2Type[i];
+            action.saveDC = CSInfo.actionDC[i];
+        }
 
+        for (int i = 0; i < CSInfo.bonusActionCount; i++)
+        {
+            AddNewAction(bonusActionList, bonusActionsParent);
+            ActionInfo action = bonusActionList[i].GetComponent<ActionInfo>();
+            action.actionName.text = CSInfo.bonusActionName[i];
+            action.actionType.value = CSInfo.bonusActionType[i];
+            action.attackMod = CSInfo.bonusActionAttackMod[i];
+            action.damage1NumDices = CSInfo.bonusActionD1NumDices[i];
+            switch (CSInfo.bonusActionD1DiceType[i])
+            {
+                case 0:
+                    action.damage1Dice = DiceType.d4;
+                    break;
+                case 1:
+                    action.damage1Dice = DiceType.d6;
+                    break;
+                case 2:
+                    action.damage1Dice = DiceType.d8;
+                    break;
+                case 3:
+                    action.damage1Dice = DiceType.d10;
+                    break;
+                case 4:
+                    action.damage1Dice = DiceType.d12;
+                    break;
+            }
+            action.damage1FlatDamage = CSInfo.bonusActionD1FlatDamage[i];
+            action.damage1Type = CSInfo.bonusActionD1Type[i];
+            action.damage2NumDices = CSInfo.bonusActionD2NumDices[i];
+            switch (CSInfo.bonusActionD2DiceType[i])
+            {
+                case 0:
+                    action.damage2Dice = DiceType.d4;
+                    break;
+                case 1:
+                    action.damage2Dice = DiceType.d6;
+                    break;
+                case 2:
+                    action.damage2Dice = DiceType.d8;
+                    break;
+                case 3:
+                    action.damage2Dice = DiceType.d10;
+                    break;
+                case 4:
+                    action.damage2Dice = DiceType.d12;
+                    break;
+            }
+            action.damage2FlatDamage = CSInfo.bonusActionD2FlatDamage[i];
+            action.damage2Type = CSInfo.bonusActionD2Type[i];
+            action.saveDC = CSInfo.bonusActionDC[i];
+        }
+
+        for (int i = 0; i < CSInfo.reactionCount; i++)
+        {
+            AddNewAction(reactionList, reactionsParent);
+            ActionInfo action = reactionList[i].GetComponent<ActionInfo>();
+            action.actionName.text = CSInfo.reactionName[i];
+            action.actionType.value = CSInfo.reactionType[i];
+            action.attackMod = CSInfo.reactionAttackMod[i];
+            action.damage1NumDices = CSInfo.reactionD1NumDices[i];
+            switch (CSInfo.reactionD1DiceType[i])
+            {
+                case 0:
+                    action.damage1Dice = DiceType.d4;
+                    break;
+                case 1:
+                    action.damage1Dice = DiceType.d6;
+                    break;
+                case 2:
+                    action.damage1Dice = DiceType.d8;
+                    break;
+                case 3:
+                    action.damage1Dice = DiceType.d10;
+                    break;
+                case 4:
+                    action.damage1Dice = DiceType.d12;
+                    break;
+            }
+            action.damage1FlatDamage = CSInfo.reactionD1FlatDamage[i];
+            action.damage1Type = CSInfo.reactionD1Type[i];
+            action.damage2NumDices = CSInfo.reactionD2NumDices[i];
+            switch (CSInfo.reactionD2DiceType[i])
+            {
+                case 0:
+                    action.damage2Dice = DiceType.d4;
+                    break;
+                case 1:
+                    action.damage2Dice = DiceType.d6;
+                    break;
+                case 2:
+                    action.damage2Dice = DiceType.d8;
+                    break;
+                case 3:
+                    action.damage2Dice = DiceType.d10;
+                    break;
+                case 4:
+                    action.damage2Dice = DiceType.d12;
+                    break;
+            }
+            action.damage2FlatDamage = CSInfo.reactionD2FlatDamage[i];
+            action.damage2Type = CSInfo.reactionD2Type[i];
+            action.saveDC = CSInfo.reactionDC[i];
+        }
 
         traits.text = CSInfo.traits;
         ideals.text = CSInfo.ideals;
@@ -1040,9 +1214,98 @@ public class CharacterSheetManager : MonoBehaviour
             CSInfo.level9SpellDescription[i] = spell.spellDescription.text;
         }
 
-        CSInfo.actions = actionsText.text;
-        CSInfo.bonusActions = bonusActions.text;
-        CSInfo.reactions = reactions.text;
+        CSInfo.actionCount = actionList.Count;
+        CSInfo.actionName = new string[CSInfo.actionCount];
+        CSInfo.actionType = new int[CSInfo.actionCount];
+        CSInfo.actionAttackMod = new int[CSInfo.actionCount];
+        CSInfo.actionD1NumDices = new int[CSInfo.actionCount];
+        CSInfo.actionD1DiceType = new int[CSInfo.actionCount];
+        CSInfo.actionD1FlatDamage = new int[CSInfo.actionCount];
+        CSInfo.actionD1Type = new string[CSInfo.actionCount];
+        CSInfo.actionD2NumDices = new int[CSInfo.actionCount];
+        CSInfo.actionD2DiceType = new int[CSInfo.actionCount];
+        CSInfo.actionD2FlatDamage = new int[CSInfo.actionCount];
+        CSInfo.actionD2Type = new string[CSInfo.actionCount];
+        CSInfo.actionDC = new int[CSInfo.actionCount];
+        for (int i = 0; i < CSInfo.actionCount; i++)
+        {
+            ActionInfo action = actionList[i].GetComponent<ActionInfo>();
+
+            CSInfo.actionName[i] = action.actionName.text;
+            CSInfo.actionType[i] = action.actionType.value;
+            CSInfo.actionAttackMod[i] = action.attackMod;
+            CSInfo.actionD1NumDices[i] = action.damage1NumDices;
+            CSInfo.actionD1DiceType[i] = action.wpnDamage1DamageType.value;
+            CSInfo.actionD1FlatDamage[i] = action.damage1FlatDamage;
+            CSInfo.actionD1Type[i] = action.damage1Type;
+            CSInfo.actionD2NumDices[i] = action.damage2NumDices;
+            CSInfo.actionD2DiceType[i] = action.wpnDamage2DamageType.value;
+            CSInfo.actionD2FlatDamage[i] = action.damage2FlatDamage;
+            CSInfo.actionD2Type[i] = action.damage2Type;
+            CSInfo.actionDC[i] = action.saveDC;
+        }
+
+        CSInfo.bonusActionCount = bonusActionList.Count;
+        CSInfo.bonusActionName = new string[CSInfo.bonusActionCount];
+        CSInfo.bonusActionType = new int[CSInfo.bonusActionCount];
+        CSInfo.bonusActionAttackMod = new int[CSInfo.bonusActionCount];
+        CSInfo.bonusActionD1NumDices = new int[CSInfo.bonusActionCount];
+        CSInfo.bonusActionD1DiceType = new int[CSInfo.bonusActionCount];
+        CSInfo.bonusActionD1FlatDamage = new int[CSInfo.bonusActionCount];
+        CSInfo.bonusActionD1Type = new string[CSInfo.bonusActionCount];
+        CSInfo.bonusActionD2NumDices = new int[CSInfo.bonusActionCount];
+        CSInfo.bonusActionD2DiceType = new int[CSInfo.bonusActionCount];
+        CSInfo.bonusActionD2FlatDamage = new int[CSInfo.bonusActionCount];
+        CSInfo.bonusActionD2Type = new string[CSInfo.bonusActionCount];
+        CSInfo.bonusActionDC = new int[CSInfo.bonusActionCount];
+        for (int i = 0; i < CSInfo.bonusActionCount; i++)
+        {
+            ActionInfo action = bonusActionList[i].GetComponent<ActionInfo>();
+
+            CSInfo.bonusActionName[i] = action.actionName.text;
+            CSInfo.bonusActionType[i] = action.actionType.value;
+            CSInfo.bonusActionAttackMod[i] = action.attackMod;
+            CSInfo.bonusActionD1NumDices[i] = action.damage1NumDices;
+            CSInfo.bonusActionD1DiceType[i] = action.wpnDamage1DamageType.value;
+            CSInfo.bonusActionD1FlatDamage[i] = action.damage1FlatDamage;
+            CSInfo.bonusActionD1Type[i] = action.damage1Type;
+            CSInfo.bonusActionD2NumDices[i] = action.damage2NumDices;
+            CSInfo.bonusActionD2DiceType[i] = action.wpnDamage2DamageType.value;
+            CSInfo.bonusActionD2FlatDamage[i] = action.damage2FlatDamage;
+            CSInfo.bonusActionD2Type[i] = action.damage2Type;
+            CSInfo.bonusActionDC[i] = action.saveDC;
+        }
+
+        CSInfo.reactionCount = reactionList.Count;
+        CSInfo.reactionName = new string[CSInfo.reactionCount];
+        CSInfo.reactionType = new int[CSInfo.reactionCount];
+        CSInfo.reactionAttackMod = new int[CSInfo.reactionCount];
+        CSInfo.reactionD1NumDices = new int[CSInfo.reactionCount];
+        CSInfo.reactionD1DiceType = new int[CSInfo.reactionCount];
+        CSInfo.reactionD1FlatDamage = new int[CSInfo.reactionCount];
+        CSInfo.reactionD1Type = new string[CSInfo.reactionCount];
+        CSInfo.reactionD2NumDices = new int[CSInfo.reactionCount];
+        CSInfo.reactionD2DiceType = new int[CSInfo.reactionCount];
+        CSInfo.reactionD2FlatDamage = new int[CSInfo.reactionCount];
+        CSInfo.reactionD2Type = new string[CSInfo.reactionCount];
+        CSInfo.reactionDC = new int[CSInfo.reactionCount];
+        for (int i = 0; i < CSInfo.reactionCount; i++)
+        {
+            ActionInfo action = reactionList[i].GetComponent<ActionInfo>();
+
+            CSInfo.reactionName[i] = action.actionName.text;
+            CSInfo.reactionType[i] = action.actionType.value;
+            CSInfo.reactionAttackMod[i] = action.attackMod;
+            CSInfo.reactionD1NumDices[i] = action.damage1NumDices;
+            CSInfo.reactionD1DiceType[i] = action.wpnDamage1DamageType.value;
+            CSInfo.reactionD1FlatDamage[i] = action.damage1FlatDamage;
+            CSInfo.reactionD1Type[i] = action.damage1Type;
+            CSInfo.reactionD2NumDices[i] = action.damage2NumDices;
+            CSInfo.reactionD2DiceType[i] = action.wpnDamage2DamageType.value;
+            CSInfo.reactionD2FlatDamage[i] = action.damage2FlatDamage;
+            CSInfo.reactionD2Type[i] = action.damage2Type;
+            CSInfo.reactionDC[i] = action.saveDC;
+        }
 
         CSInfo.traits = traits.text;
         CSInfo.ideals = ideals.text;
@@ -1160,6 +1423,36 @@ public class CharacterSheetManager : MonoBehaviour
         UpdateAbilityModifier(int.Parse(chaScore.text), chaModifier);
     }
 
+    public int GetStrMod()
+    {
+        return int.Parse(strModifier.text);
+    }
+
+    public int GetDexMod()
+    {
+        return int.Parse(dexModifier.text);
+    }
+
+    public int GetConMod()
+    {
+        return int.Parse(conModifier.text);
+    }
+
+    public int GetIntMod()
+    {
+        return int.Parse(intModifier.text);
+    }
+
+    public int GetWisMod()
+    {
+        return int.Parse(wisModifier.text);
+    }
+
+    public int GetChaMod()
+    {
+        return int.Parse(chaModifier.text);
+    }
+
     // dice roll methods
 
     public void ResolveCheckOrSave(string rollKey, int modifier)
@@ -1249,6 +1542,11 @@ public class CharacterSheetManager : MonoBehaviour
             totalBonus = profMod + charMod;
         }
         total.text = totalBonus.ToString();
+    }
+
+    public int GetProficencyBonus()
+    {
+        return int.Parse(proficencyBonus.text);
     }
 
     // inventory methods
@@ -1402,6 +1700,17 @@ public class CharacterSheetManager : MonoBehaviour
         spellItem.GetComponent<RectTransform>().SetParent(listArea.transform);
         spellItem.GetComponent<RectTransform>().localPosition = position;
         spellList.Add(spell);
+    }
+
+    // action methods
+
+    private void AddNewAction(List<GameObject> actionsList, GameObject actionsParent)
+    {
+        GameObject action = Instantiate(actionsPrefab);
+        GameObject actionItem = action.GetComponent<ActionInfo>().actionItem;
+        action.GetComponent<ActionInfo>().sheetManager = this;
+        actionItem.GetComponent<RectTransform>().SetParent(actionsParent.transform);
+        actionList.Add(action);
     }
 
     // token related methods
