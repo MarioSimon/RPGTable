@@ -835,6 +835,7 @@ public class UIManager : NetworkBehaviour
         ActivateInGameHUD();
 
         StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
+        gameManager.LoadCharactersFromJSON();
     }
 
     private void StartClient()
