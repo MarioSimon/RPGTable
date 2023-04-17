@@ -166,17 +166,6 @@ public class UIManager : NetworkBehaviour
 
     public void AddCharacterButton(int characterID, string characterName, int portraitID)
     {
-        Vector3 position;
-
-        if (characterList.Count % 2 == 0)
-        {
-            position = new Vector3(characterListArea.GetComponent<RectTransform>().rect.width / 4, -characterSpace / 2 - characterList.Count / 2 * characterSpace, 0);
-        }
-        else
-        {
-            position = new Vector3(characterListArea.GetComponent<RectTransform>().rect.width / 4 * 3, -characterSpace / 2 - characterList.Count / 2 * characterSpace, 0);
-        }
-
         GameObject newCharacterButton = Instantiate(characterButtonPrefab);
 
         newCharacterButton.GetComponent<CharacterSelector>().characterName.text = characterName;
@@ -184,9 +173,21 @@ public class UIManager : NetworkBehaviour
         newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.avatarPortrait[portraitID];
 
         newCharacterButton.GetComponent<RectTransform>().SetParent(characterListArea.transform);
-        newCharacterButton.GetComponent<RectTransform>().localPosition = position;
 
         characterList.Add(newCharacterButton);
+    }
+
+    public void RemoveCharacterButton(int characterID)
+    {
+        GameObject characterButton = characterList[characterID];
+
+        characterList.RemoveAt(characterID);
+        Destroy(characterButton);
+    }
+
+    public void UpdateCharacterButtonID(int newID)
+    {
+        characterList[newID].GetComponent<CharacterSelector>().charID = newID;
     }
 
     private void SaveLevel()
@@ -682,7 +683,7 @@ public class UIManager : NetworkBehaviour
     }
     #endregion
 
-    #region UI Related Methods
+    #region UI Navigation Methods
 
     private void ActivateMainMenu()
     {

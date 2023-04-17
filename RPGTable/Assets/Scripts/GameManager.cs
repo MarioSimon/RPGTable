@@ -104,6 +104,34 @@ public class GameManager : NetworkBehaviour
         return characterSheets.Count;
     }
 
+    public void DeleteCharacter(int characterID)
+    {
+        if (!IsHost)
+        {
+            DeleteCharacterServerRpc(characterID);
+        }
+        else
+        {
+            if (characterID > characterSheets.Count || characterID < 0) { return; }
+
+            characterSheets.RemoveAt(characterID);
+            uiManager.RemoveCharacterButton(characterID);
+            UpdateCharacterIDs();
+            SaveCharactersToJSON();
+
+            DeleteCharacterClientRpc(characterID);
+        }
+    }
+
+    private void UpdateCharacterIDs()
+    {
+        for (int i = 0; i < characterSheets.Count; i++)
+        {
+            characterSheets[i].sheetID = i;
+            uiManager.UpdateCharacterButtonID(i);
+        }
+    }
+
     public void SaveCharactersToJSON()
     {
         if (characterSheets.Count < 1) { return; }
@@ -339,6 +367,21 @@ public class GameManager : NetworkBehaviour
         characterSheets[charInfo.sheetID] = charInfo;
         SaveCharacterSheetChangesClientRpc(charInfo);
     }
+
+    [ServerRpc (RequireOwnership = false)]
+    private void DeleteCharacterServerRpc(int characterID)
+    {
+        if (characterID > characterSheets.Count || characterID < 0) { return; }
+
+        characterSheets.RemoveAt(characterID);
+        uiManager.RemoveCharacterButton(characterID);
+        UpdateCharacterIDs();
+        SaveCharactersToJSON();
+
+        DeleteCharacterClientRpc(characterID);
+    }
+
+    
     #endregion
 
     #region ClientRpc
@@ -362,6 +405,17 @@ public class GameManager : NetworkBehaviour
     void SaveCharacterSheetChangesClientRpc(CharacterSheetInfo charInfo)
     {
         characterSheets[charInfo.sheetID] = charInfo;
+    }
+
+    [ClientRpc]
+    private void DeleteCharacterClientRpc(int characterID)
+    {
+        if (IsHost) { return; }
+        if (characterID > characterSheets.Count || characterID < 0) { return; }
+
+        characterSheets.RemoveAt(characterID);
+        uiManager.RemoveCharacterButton(characterID);
+        UpdateCharacterIDs();
     }
 
     #endregion

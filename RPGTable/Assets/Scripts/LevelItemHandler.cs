@@ -11,6 +11,8 @@ public class LevelItemHandler : NetworkBehaviour
     RuntimeTransformHandle transformHandle;
     Canvas canvas;
 
+    public GameObject levelEditorWindow;
+
     [SerializeField] GameObject itemMenu;
     GameObject itemMenuInstance;
 
@@ -97,8 +99,12 @@ public class LevelItemHandler : NetworkBehaviour
     {
         if (itemMenuInstance != null)
         {
-            Destroy(itemMenuInstance);
-            
+            Destroy(itemMenuInstance);     
+        }
+
+        if (levelEditorWindow != null && !levelEditorWindow.activeInHierarchy)
+        {
+            return;
         }
 
         GameObject contextMenu = Instantiate(itemMenu, Input.mousePosition, Quaternion.identity);

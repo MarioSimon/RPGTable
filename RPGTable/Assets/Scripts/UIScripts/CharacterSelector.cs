@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -12,6 +13,7 @@ public class CharacterSelector : MonoBehaviour
     
     [SerializeField] GameObject characterSelector;
     [SerializeField] GameObject characterSheetPrefab;
+    [SerializeField] RightClickButton rightClickButton;
 
     public int charID;
 
@@ -19,17 +21,48 @@ public class CharacterSelector : MonoBehaviour
     public Image characterPortrait;
     public Text characterName;
 
+    [SerializeField] GameObject contextMenu;
+
     void Start()
     {
         uIManager = FindObjectOfType<UIManager>();
         gameManager = FindObjectOfType<GameManager>();
         canvas = FindObjectOfType<Canvas>();
 
-        selectCharacter.onClick.AddListener(delegate { OpenCharacterSheetServerRpc(); uIManager.ToggleCharacterSelector(); });
+        selectCharacter.onClick.AddListener(delegate { OpenCharacterSheet(); uIManager.ToggleCharacterSelector(); });
+        rightClickButton.rightClick.AddListener(() => OpenContextMenu());
+
+        ContextMenu contextMenuHandler = contextMenu.GetComponent<ContextMenu>();
+        //contextMenuHandler.buttonList[0].onClick.AddListener(() => RemoveCharacterOwnership());
+        contextMenuHandler.buttonList[1].onClick.AddListener(() => DeleteCharacter());
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    void OpenCharacterSheetServerRpc()
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            CloseContextMenu();
+        }
+    }
+
+    private void CloseContextMenu()
+    {
+        contextMenu.SetActive(false);
+    }
+
+    private void OpenContextMenu()
+    {
+        contextMenu.SetActive(true);      
+    }
+
+    private void DeleteCharacter()
+    {
+        contextMenu.SetActive(false);
+
+        gameManager.DeleteCharacter(charID);
+    }
+
+    void OpenCharacterSheet()
     {
         CharacterSheetInfo CSInfo = gameManager.GetSheetInfo(charID);
         if (CSInfo == null) { return; }
