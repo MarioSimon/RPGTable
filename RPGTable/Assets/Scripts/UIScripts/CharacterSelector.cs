@@ -11,7 +11,6 @@ public class CharacterSelector : MonoBehaviour
     GameManager gameManager;
     Canvas canvas;
     
-    [SerializeField] GameObject characterSelector;
     [SerializeField] GameObject characterSheetPrefab;
     [SerializeField] RightClickButton rightClickButton;
 

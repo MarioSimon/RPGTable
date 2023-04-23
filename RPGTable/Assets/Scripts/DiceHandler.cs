@@ -234,6 +234,41 @@ public class DiceHandler : NetworkBehaviour
         RollDeathSavingThrowServerRpc(characterName, sheetID);
     }
 
+    public void RollAttackAction(AttackRollInfo attackRollInfo)
+    {
+        RollAttackActionServerRpc(attackRollInfo);
+    }
+
+    [ServerRpc]
+    private void RollAttackActionServerRpc(AttackRollInfo attackRollInfo, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = GetNewRollKey(attackRollInfo.characterName + "-");
+        string message = "";
+
+        if (attackRollInfo.toHitModifier >= 0)
+        {
+            message = " [" + attackRollInfo.actionName + " (+" + attackRollInfo.toHitModifier + ")]: ";
+        }
+        else
+        {
+            message = " [" + attackRollInfo.actionName + " (" + attackRollInfo.toHitModifier + ")]: ";
+        }
+
+        AddRoll(rollKey, attackRollInfo.characterName, 1, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(RollDice(rollKey, DiceType.d20, attackRollInfo.toHitModifier, clientRpcParams, ResolveCheckOrSave));
+    }
+
     void ResolveCheckOrSave(string rollKey, int modifier, ClientRpcParams clientRpcParams = default, int sheetID = -1)
     {
         DiceRollInfo roll = GetRollInfo(rollKey);
@@ -293,6 +328,8 @@ public class DiceHandler : NetworkBehaviour
 
     #endregion
 
+    #region serverRpc
+
     [ServerRpc (RequireOwnership = false)]
     void RollCheckServerRpc(string characterName, string abilitySkill, int modifier, ServerRpcParams serverRpcParams = default)
     {
@@ -302,11 +339,11 @@ public class DiceHandler : NetworkBehaviour
 
         if (modifier >= 0)
         {
-            message  = " [" + abilitySkill + "check (+" + modifier + ")]: ";
+            message  = " [" + abilitySkill + " (+" + modifier + ")]: ";
         }
         else
         {
-            message = " [" + abilitySkill + "check (" + modifier + ")]: ";
+            message = " [" + abilitySkill + " (" + modifier + ")]: ";
         }        
         
         AddRoll(rollKey, characterName, 1, message);
@@ -321,7 +358,7 @@ public class DiceHandler : NetworkBehaviour
             }
         };
 
-            StartCoroutine(RollDice(rollKey, DiceType.d20, modifier, clientRpcParams, ResolveCheckOrSave));
+        StartCoroutine(RollDice(rollKey, DiceType.d20, modifier, clientRpcParams, ResolveCheckOrSave));
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -391,6 +428,8 @@ public class DiceHandler : NetworkBehaviour
         StartCoroutine(RollDice(rollKey, DiceType.d20, 0, clientRpcParams, ResolveDeathSavingThrow, sheetID));
     }
 
+    #endregion
+
     #region clientRpc
 
     [ClientRpc]
@@ -423,7 +462,6 @@ public class DiceHandler : NetworkBehaviour
         }
     }
 
-
     [ClientRpc]
     private void ProcessDeathSavingThrowClientRpc(int result, int sheetID)
     {
@@ -440,6 +478,47 @@ public class DiceHandler : NetworkBehaviour
 
     #endregion
 }
+
+public struct AttackRollInfo : INetworkSerializable
+{
+    public int sheetID;
+
+    public string characterName;
+    public string actionName;
+
+    public int toHitModifier;
+
+    public int damage1NumberOfDices;
+    public DiceType damage1Dice;
+    public int damage1Modifier;
+    public string damage1Type;
+
+    public int damage2NumberOfDices;
+    public DiceType damage2Dice;
+    public int damage2Modifier;
+    public string damage2Type;
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref sheetID);
+
+        serializer.SerializeValue(ref characterName);
+        serializer.SerializeValue(ref actionName);
+
+        serializer.SerializeValue(ref toHitModifier);
+
+        serializer.SerializeValue(ref damage1NumberOfDices);
+        serializer.SerializeValue(ref damage1Dice);
+        serializer.SerializeValue(ref damage1Modifier);
+        serializer.SerializeValue(ref damage1Type);
+
+        serializer.SerializeValue(ref damage2NumberOfDices);
+        serializer.SerializeValue(ref damage2Dice);
+        serializer.SerializeValue(ref damage2Modifier);
+        serializer.SerializeValue(ref damage2Type);
+    }
+}
+
 public struct DiceRollInfo
 {
     public string playerName;

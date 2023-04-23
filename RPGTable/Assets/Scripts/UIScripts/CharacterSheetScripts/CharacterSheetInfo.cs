@@ -203,43 +203,58 @@ public class CharacterSheetInfo : INetworkSerializable
     public int actionCount = 0;
     public string[] actionName;
     public int[] actionType;
-    public int[] actionAttackMod;
-    public int[] actionD1NumDices;
+    public int[] actionWeapon;
+    public int[] actionAttackAbility;
+    public string[] actionAttackOtherBonus;
+    public bool[] actionAttackProficency;
+    public string[] actionD1NumDices;
     public int[] actionD1DiceType;
-    public int[] actionD1FlatDamage;
-    public string[] actionD1Type;
-    public int[] actionD2NumDices;
+    public int[] actionD1Ability;
+    public string[] actionD1OtherBonus;
+    public int[] actionD1Type;
+    public string[] actionD2NumDices;
     public int[] actionD2DiceType;
-    public int[] actionD2FlatDamage;
-    public string[] actionD2Type;
+    public int[] actionD2Ability;
+    public string[] actionD2OtherBonus;
+    public int[] actionD2Type;
     public int[] actionDC;
 
     public int bonusActionCount = 0;
     public string[] bonusActionName;
     public int[] bonusActionType;
-    public int[] bonusActionAttackMod;
-    public int[] bonusActionD1NumDices;
+    public int[] bonusActionWeapon;
+    public int[] bonusActionAttackAbility;
+    public string[] bonusActionAttackOtherBonus;
+    public bool[] bonusActionAttackProficency;
+    public string[] bonusActionD1NumDices;
     public int[] bonusActionD1DiceType;
-    public int[] bonusActionD1FlatDamage;
-    public string[] bonusActionD1Type;
-    public int[] bonusActionD2NumDices;
+    public int[] bonusActionD1Ability;
+    public string[] bonusActionD1OtherBonus;
+    public int[] bonusActionD1Type;
+    public string[] bonusActionD2NumDices;
     public int[] bonusActionD2DiceType;
-    public int[] bonusActionD2FlatDamage;
-    public string[] bonusActionD2Type;
+    public int[] bonusActionD2Ability;
+    public string[] bonusActionD2OtherBonus;
+    public int[] bonusActionD2Type;
     public int[] bonusActionDC;
 
     public int reactionCount = 0;
     public string[] reactionName;
     public int[] reactionType;
-    public int[] reactionAttackMod;
-    public int[] reactionD1NumDices;
+    public int[] reactionWeapon;
+    public int[] reactionAttackAbility;
+    public string[] reactionAttackOtherBonus;
+    public bool[] reactionAttackProficency;
+    public string[] reactionD1NumDices;
     public int[] reactionD1DiceType;
-    public int[] reactionD1FlatDamage;
-    public string[] reactionD1Type;
-    public int[] reactionD2NumDices;
+    public int[] reactionD1Ability;
+    public string[] reactionD1OtherBonus;
+    public int[] reactionD1Type;
+    public string[] reactionD2NumDices;
     public int[] reactionD2DiceType;
-    public int[] reactionD2FlatDamage;
-    public string[] reactionD2Type;
+    public int[] reactionD2Ability;
+    public string[] reactionD2OtherBonus;
+    public int[] reactionD2Type;
     public int[] reactionDC;
 
     public string traits = "";
@@ -866,15 +881,24 @@ public class CharacterSheetInfo : INetworkSerializable
         {
             actionName = new string[actionCount];
             actionType = new int[actionCount];
-            actionAttackMod = new int[actionCount];
-            actionD1NumDices = new int[actionCount];
+            actionWeapon = new int[actionCount];
+
+            actionAttackAbility = new int[actionCount];
+            actionAttackOtherBonus = new string[actionCount];
+            actionAttackProficency = new bool[actionCount];
+
+            actionD1NumDices = new string[actionCount];
             actionD1DiceType = new int[actionCount];
-            actionD1FlatDamage = new int[actionCount];
-            actionD1Type = new string[actionCount];
-            actionD2NumDices = new int[actionCount];
+            actionD1Ability = new int[actionCount];
+            actionD1OtherBonus = new string[actionCount];
+            actionD1Type = new int[actionCount];
+
+            actionD2NumDices = new string[actionCount];
             actionD2DiceType = new int[actionCount];
-            actionD2FlatDamage = new int[actionCount];
-            actionD2Type = new string[actionCount];
+            actionD2Ability = new int[actionCount];
+            actionD2OtherBonus = new string[actionCount];
+            actionD2Type = new int[actionCount];
+
             actionDC = new int[actionCount];
         }
 
@@ -886,23 +910,44 @@ public class CharacterSheetInfo : INetworkSerializable
             }
             serializer.SerializeValue(ref actionName[i]);
             serializer.SerializeValue(ref actionType[i]);
-            serializer.SerializeValue(ref actionAttackMod[i]);
+            serializer.SerializeValue(ref actionWeapon[i]);
+
+            serializer.SerializeValue(ref actionAttackAbility[i]);
+            if (actionAttackOtherBonus[i] == null)
+            {
+                actionAttackOtherBonus[i] = "";
+            }
+            serializer.SerializeValue(ref actionAttackOtherBonus[i]);
+            serializer.SerializeValue(ref actionAttackProficency[i]);
+
+            if (actionD1NumDices[i] == null)
+            {
+                actionD1NumDices[i] = "";
+            }
             serializer.SerializeValue(ref actionD1NumDices[i]);
             serializer.SerializeValue(ref actionD1DiceType[i]);
-            serializer.SerializeValue(ref actionD1FlatDamage[i]);
-            if (actionD1Type[i] == null)
+            serializer.SerializeValue(ref actionD1Ability[i]);
+            if (actionD1OtherBonus[i] == null)
             {
-                actionD1Type[i] = "";
+                actionD1OtherBonus[i] = "";
             }
+            serializer.SerializeValue(ref actionD1OtherBonus[i]);
             serializer.SerializeValue(ref actionD1Type[i]);
+
+            if (actionD2NumDices[i] == null)
+            {
+                actionD2NumDices[i] = "";
+            }
             serializer.SerializeValue(ref actionD2NumDices[i]);
             serializer.SerializeValue(ref actionD2DiceType[i]);
-            serializer.SerializeValue(ref actionD2FlatDamage[i]);
-            if (actionD2Type[i] == null)
+            serializer.SerializeValue(ref actionD2Ability[i]);
+            if (actionD2OtherBonus[i] == null)
             {
-                actionD2Type[i] = "";
+                actionD2OtherBonus[i] = "";
             }
+            serializer.SerializeValue(ref actionD2OtherBonus[i]);
             serializer.SerializeValue(ref actionD2Type[i]);
+
             serializer.SerializeValue(ref actionDC[i]);
         }
 
@@ -911,15 +956,24 @@ public class CharacterSheetInfo : INetworkSerializable
         {
             bonusActionName = new string[bonusActionCount];
             bonusActionType = new int[bonusActionCount];
-            bonusActionAttackMod = new int[bonusActionCount];
-            bonusActionD1NumDices = new int[bonusActionCount];
+            bonusActionWeapon = new int[bonusActionCount];
+
+            bonusActionAttackAbility = new int[bonusActionCount];
+            bonusActionAttackOtherBonus = new string[bonusActionCount];
+            bonusActionAttackProficency = new bool[bonusActionCount];
+
+            bonusActionD1NumDices = new string[bonusActionCount];
             bonusActionD1DiceType = new int[bonusActionCount];
-            bonusActionD1FlatDamage = new int[bonusActionCount];
-            bonusActionD1Type = new string[bonusActionCount];
-            bonusActionD2NumDices = new int[bonusActionCount];
+            bonusActionD1Ability = new int[bonusActionCount];
+            bonusActionD1OtherBonus = new string[bonusActionCount];
+            bonusActionD1Type = new int[bonusActionCount];
+
+            bonusActionD2NumDices = new string[bonusActionCount];
             bonusActionD2DiceType = new int[bonusActionCount];
-            bonusActionD2FlatDamage = new int[bonusActionCount];
-            bonusActionD2Type = new string[bonusActionCount];
+            bonusActionD2Ability = new int[bonusActionCount];
+            bonusActionD2OtherBonus = new string[bonusActionCount];
+            bonusActionD2Type = new int[bonusActionCount];
+
             bonusActionDC = new int[bonusActionCount];
         }
 
@@ -931,23 +985,44 @@ public class CharacterSheetInfo : INetworkSerializable
             }
             serializer.SerializeValue(ref bonusActionName[i]);
             serializer.SerializeValue(ref bonusActionType[i]);
-            serializer.SerializeValue(ref bonusActionAttackMod[i]);
+            serializer.SerializeValue(ref bonusActionWeapon[i]);
+
+            serializer.SerializeValue(ref bonusActionAttackAbility[i]);
+            if (bonusActionAttackOtherBonus[i] == null)
+            {
+                bonusActionAttackOtherBonus[i] = "";
+            }
+            serializer.SerializeValue(ref bonusActionAttackOtherBonus[i]);
+            serializer.SerializeValue(ref bonusActionAttackProficency[i]);
+
+            if (bonusActionD1NumDices[i] == null)
+            {
+                bonusActionD1NumDices[i] = "";
+            }
             serializer.SerializeValue(ref bonusActionD1NumDices[i]);
             serializer.SerializeValue(ref bonusActionD1DiceType[i]);
-            serializer.SerializeValue(ref bonusActionD1FlatDamage[i]);
-            if (bonusActionD1Type[i] == null)
-            {   
-                bonusActionD1Type[i] = "";
+            serializer.SerializeValue(ref bonusActionD1Ability[i]);
+            if (bonusActionD1OtherBonus[i] == null)
+            {
+                bonusActionD1OtherBonus[i] = "";
             }
+            serializer.SerializeValue(ref bonusActionD1OtherBonus[i]);
             serializer.SerializeValue(ref bonusActionD1Type[i]);
+
+            if (bonusActionD2NumDices[i] == null)
+            {
+                bonusActionD2NumDices[i] = "";
+            }
             serializer.SerializeValue(ref bonusActionD2NumDices[i]);
             serializer.SerializeValue(ref bonusActionD2DiceType[i]);
-            serializer.SerializeValue(ref bonusActionD2FlatDamage[i]);
-            if (bonusActionD2Type[i] == null)
+            serializer.SerializeValue(ref bonusActionD2Ability[i]);
+            if (bonusActionD2OtherBonus[i] == null)
             {
-                bonusActionD2Type[i] = "";
+                bonusActionD2OtherBonus[i] = "";
             }
+            serializer.SerializeValue(ref bonusActionD2OtherBonus[i]);
             serializer.SerializeValue(ref bonusActionD2Type[i]);
+
             serializer.SerializeValue(ref bonusActionDC[i]);
         }
 
@@ -956,15 +1031,24 @@ public class CharacterSheetInfo : INetworkSerializable
         {
             reactionName = new string[reactionCount];
             reactionType = new int[reactionCount];
-            reactionAttackMod = new int[reactionCount];
-            reactionD1NumDices = new int[reactionCount];
+            reactionWeapon = new int[reactionCount];
+
+            reactionAttackAbility = new int[reactionCount];
+            reactionAttackOtherBonus = new string[reactionCount];
+            reactionAttackProficency = new bool[reactionCount];
+
+            reactionD1NumDices = new string[reactionCount];
             reactionD1DiceType = new int[reactionCount];
-            reactionD1FlatDamage = new int[reactionCount];
-            reactionD1Type = new string[reactionCount];
-            reactionD2NumDices = new int[reactionCount];
+            reactionD1Ability = new int[reactionCount];
+            reactionD1OtherBonus = new string[reactionCount];
+            reactionD1Type = new int[reactionCount];
+
+            reactionD2NumDices = new string[reactionCount];
             reactionD2DiceType = new int[reactionCount];
-            reactionD2FlatDamage = new int[reactionCount];
-            reactionD2Type = new string[reactionCount];
+            reactionD2Ability = new int[reactionCount];
+            reactionD2OtherBonus = new string[reactionCount];
+            reactionD2Type = new int[reactionCount];
+
             reactionDC = new int[reactionCount];
         }
 
@@ -976,23 +1060,44 @@ public class CharacterSheetInfo : INetworkSerializable
             }
             serializer.SerializeValue(ref reactionName[i]);
             serializer.SerializeValue(ref reactionType[i]);
-            serializer.SerializeValue(ref reactionAttackMod[i]);
+            serializer.SerializeValue(ref reactionWeapon[i]);
+
+            serializer.SerializeValue(ref reactionAttackAbility[i]);
+            if (reactionAttackOtherBonus[i] == null)
+            {
+                reactionAttackOtherBonus[i] = "";
+            }
+            serializer.SerializeValue(ref reactionAttackOtherBonus[i]);
+            serializer.SerializeValue(ref reactionAttackProficency[i]);
+
+            if (reactionD1NumDices[i] == null)
+            {
+                reactionD1NumDices[i] = "";
+            }
             serializer.SerializeValue(ref reactionD1NumDices[i]);
             serializer.SerializeValue(ref reactionD1DiceType[i]);
-            serializer.SerializeValue(ref reactionD1FlatDamage[i]);
-            if (reactionD1Type[i] == null)
+            serializer.SerializeValue(ref reactionD1Ability[i]);
+            if (reactionD1OtherBonus[i] == null)
             {
-                reactionD1Type[i] = "";
+                reactionD1OtherBonus[i] = "";
             }
+            serializer.SerializeValue(ref reactionD1OtherBonus[i]);
             serializer.SerializeValue(ref reactionD1Type[i]);
+
+            if (reactionD2NumDices[i] == null)
+            {
+                reactionD2NumDices[i] = "";
+            }
             serializer.SerializeValue(ref reactionD2NumDices[i]);
             serializer.SerializeValue(ref reactionD2DiceType[i]);
-            serializer.SerializeValue(ref reactionD2FlatDamage[i]);
-            if (reactionD2Type[i] == null)
+            serializer.SerializeValue(ref reactionD2Ability[i]);
+            if (reactionD2OtherBonus[i] == null)
             {
-                reactionD2Type[i] = "";
+                reactionD2OtherBonus[i] = "";
             }
+            serializer.SerializeValue(ref reactionD2OtherBonus[i]);
             serializer.SerializeValue(ref reactionD2Type[i]);
+
             serializer.SerializeValue(ref reactionDC[i]);
         }
 

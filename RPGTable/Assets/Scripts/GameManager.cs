@@ -108,7 +108,10 @@ public class GameManager : NetworkBehaviour
     {
         if (!IsHost)
         {
-            DeleteCharacterServerRpc(characterID);
+            if (NetworkManager.LocalClientId == characterSheets[characterID].ownerID)
+            {
+                DeleteCharacterServerRpc(characterID);
+            }            
         }
         else
         {

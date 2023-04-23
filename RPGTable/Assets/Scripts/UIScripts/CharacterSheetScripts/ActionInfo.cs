@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ActionInfo : MonoBehaviour
 {
     Canvas canvas;
-    
+    DiceHandler diceHandler;
 
     public CharacterSheetManager sheetManager;
 
@@ -53,7 +53,9 @@ public class ActionInfo : MonoBehaviour
     private void Start()
     {
         canvas = FindObjectOfType<Canvas>();
+        diceHandler = FindObjectOfType<DiceHandler>();
 
+        rollAction.onClick.AddListener(() => RollAttack());
         openConfiguration.onClick.AddListener(() => ShowConfigurationPanel());
         closeWeaponAttackPanel.onClick.AddListener(() => CloseWeaponConfigurationPanel());
 
@@ -75,6 +77,49 @@ public class ActionInfo : MonoBehaviour
 
         weaponAttackConfiguration.GetComponent<RectTransform>().SetParent(canvas.transform);
         weaponAttackConfiguration.GetComponent<RectTransform>().localPosition = Vector3.zero;
+    }
+
+    public void SetActionConfig()
+    {
+        SetAttackModifier(wpnAttackAbility, wpnOtherAttackBonus, wpnAttackProficency, wpnTotalAttackModifier);
+
+        SetDamage1NDices(wpnDamage1NumberOfDices);
+        SetDamage1Dice(wpnDamage1DiceType);
+        SetDamage1FlatDamage(wpnDamage1Ability, wpnDamage1OtherBonus);
+        SetDamage1Type(wpnDamage1DamageType);
+
+        SetDamage2NDices(wpnDamage1NumberOfDices);
+        SetDamage2Dice(wpnDamage1DiceType);
+        SetDamage2FlatDamage(wpnDamage1Ability, wpnDamage1OtherBonus);
+        SetDamage2Type(wpnDamage1DamageType);
+    }
+
+    private void RollAttack()
+    {
+        if (actionType.value > 1) { return; }
+
+        AttackRollInfo attackRollInfo = new AttackRollInfo();
+
+        attackRollInfo.sheetID = sheetManager.CSInfo.sheetID;
+
+        attackRollInfo.actionName = actionName.text;
+        attackRollInfo.characterName = sheetManager.CSInfo.characterName;
+
+        attackRollInfo.toHitModifier = attackMod;
+
+        attackRollInfo.damage1NumberOfDices = damage1NumDices;
+        attackRollInfo.damage1Dice = damage1Dice;
+        attackRollInfo.damage1Modifier = damage1FlatDamage;
+        attackRollInfo.damage1Type = damage1Type;
+
+        attackRollInfo.damage2NumberOfDices = damage2NumDices;
+        attackRollInfo.damage2Dice = damage2Dice;
+        attackRollInfo.damage2Modifier = damage2FlatDamage;
+        attackRollInfo.damage2Type = damage2Type;
+
+
+        diceHandler.RollAttackAction(attackRollInfo);
+
     }
 
     private void ShowConfigurationPanel()
