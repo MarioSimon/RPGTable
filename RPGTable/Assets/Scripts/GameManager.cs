@@ -83,6 +83,7 @@ public class GameManager : NetworkBehaviour
     public void AddNewCharacterSheetInfo(CharacterSheetInfo charInfo)
     {
         UpdateSheetListClientRpc(charInfo);
+        SaveCharactersToJSON();
         uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName, charInfo.avatarID);
     }
 
@@ -94,6 +95,7 @@ public class GameManager : NetworkBehaviour
         } else
         {
             SaveCharacterSheetChangesClientRpc(charInfo);
+            SaveCharactersToJSON();
         }            
     }
 
@@ -102,6 +104,64 @@ public class GameManager : NetworkBehaviour
         return characterSheets.Count;
     }
 
+    public void DeleteCharacter(int characterID)
+    {
+        if (!IsHost)
+        {
+            if (NetworkManager.LocalClientId == characterSheets[characterID].ownerID)
+            {
+                DeleteCharacterServerRpc(characterID);
+            }            
+        }
+        else
+        {
+            if (characterID > characterSheets.Count || characterID < 0) { return; }
+
+            characterSheets.RemoveAt(characterID);
+            uiManager.RemoveCharacterButton(characterID);
+            UpdateCharacterIDs();
+            SaveCharactersToJSON();
+
+            DeleteCharacterClientRpc(characterID);
+        }
+    }
+
+    private void UpdateCharacterIDs()
+    {
+        for (int i = 0; i < characterSheets.Count; i++)
+        {
+            characterSheets[i].sheetID = i;
+            uiManager.UpdateCharacterButtonID(i);
+        }
+    }
+
+    public void SaveCharactersToJSON()
+    {
+        if (characterSheets.Count < 1) { return; }
+
+        SerializableList<CharacterSheetInfo> savedCharactersInfo = new SerializableList<CharacterSheetInfo>();
+
+        foreach (CharacterSheetInfo CSInfo in characterSheets)
+        {
+            savedCharactersInfo.list.Add(CSInfo);
+        }
+
+        string json = JsonUtility.ToJson(savedCharactersInfo);
+        File.WriteAllText(Application.dataPath + "/StreamingAssets/player characters.json", json);
+    }
+
+    public void LoadCharactersFromJSON()
+    {
+        if (!File.Exists(Application.dataPath + "/StreamingAssets/player characters.json")) { return; }
+
+        string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/player characters.json");
+        SerializableList<CharacterSheetInfo> savedCharactersInfo = JsonUtility.FromJson<SerializableList<CharacterSheetInfo>>(jsonString);
+
+        foreach (CharacterSheetInfo CSInfo in savedCharactersInfo.list)
+        {
+            AddNewCharacterSheetInfo(CSInfo);
+        }
+    }
     #endregion
 
     #region levels
@@ -232,7 +292,7 @@ public class GameManager : NetworkBehaviour
         string json = JsonUtility.ToJson(savedLevelsInfo);
         File.WriteAllText(Application.dataPath + "/StreamingAssets/levels.json", json);
 
-        Debug.Log("SAVED LEVELS AT " + Application.dataPath + "/StreamingAssets/levels.json");
+        //Debug.Log("SAVED LEVELS AT " + Application.dataPath + "/StreamingAssets/levels.json");
     }
 
     public List<string> LoadLevelsFromJSON()
@@ -310,6 +370,21 @@ public class GameManager : NetworkBehaviour
         characterSheets[charInfo.sheetID] = charInfo;
         SaveCharacterSheetChangesClientRpc(charInfo);
     }
+
+    [ServerRpc (RequireOwnership = false)]
+    private void DeleteCharacterServerRpc(int characterID)
+    {
+        if (characterID > characterSheets.Count || characterID < 0) { return; }
+
+        characterSheets.RemoveAt(characterID);
+        uiManager.RemoveCharacterButton(characterID);
+        UpdateCharacterIDs();
+        SaveCharactersToJSON();
+
+        DeleteCharacterClientRpc(characterID);
+    }
+
+    
     #endregion
 
     #region ClientRpc
@@ -333,6 +408,17 @@ public class GameManager : NetworkBehaviour
     void SaveCharacterSheetChangesClientRpc(CharacterSheetInfo charInfo)
     {
         characterSheets[charInfo.sheetID] = charInfo;
+    }
+
+    [ClientRpc]
+    private void DeleteCharacterClientRpc(int characterID)
+    {
+        if (IsHost) { return; }
+        if (characterID > characterSheets.Count || characterID < 0) { return; }
+
+        characterSheets.RemoveAt(characterID);
+        uiManager.RemoveCharacterButton(characterID);
+        UpdateCharacterIDs();
     }
 
     #endregion
