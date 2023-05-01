@@ -31,7 +31,7 @@ public class UIManager : NetworkBehaviour
     [Header("In Game HUD")]
     [SerializeField] GameObject inGameHUD;
     [SerializeField] Button toggleLibrary;
-    [SerializeField] Button buttonSpawnNewCharSheet;
+    
     [SerializeField] Button toggleCharSelector;
     [SerializeField] Button toggleDiceBox;
     [SerializeField] Button toggleDmInventory;
@@ -81,6 +81,7 @@ public class UIManager : NetworkBehaviour
     List<GameObject> characterList = new List<GameObject>();
     [SerializeField] float characterSpace;
     [SerializeField] GameObject characterButtonPrefab;
+    [SerializeField] Button buttonSpawnNewCharSheet;
 
     [SerializeField] GameObject characterCreator;
     [SerializeField] Button closeCharacterCreator;
