@@ -73,6 +73,7 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button diceRegistryCloseRegistry;
     [SerializeField] GameObject diceRegistryChatNotification;
     [SerializeField] Text diceRegistryText;
+    [SerializeField] GameObject diceRegistryContent;
 
     [Header("Characters")]
     [SerializeField] GameObject characterSelector;
@@ -583,7 +584,12 @@ public class UIManager : NetworkBehaviour
     [ClientRpc]
     public void NotifyDiceScoreClientRpc(string scoreMessage)
     {
-        diceRegistryText.text += "\n" + scoreMessage;
+        GameObject message = Instantiate(messagePrefab);
+
+        message.GetComponent<Text>().text = scoreMessage;
+
+        message.GetComponent<RectTransform>().SetParent(diceRegistryContent.GetComponent<RectTransform>());
+        message.GetComponent<RectTransform>().SetAsLastSibling();
 
         if (!diceRegistry.activeInHierarchy)
         {
