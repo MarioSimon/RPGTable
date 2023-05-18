@@ -51,7 +51,7 @@ public class TokenController : NetworkBehaviour
     {
         if (!IsOwner && !IsHost) { return; }
 
-        Test();
+        //Test();
 
         if (Input.GetMouseButtonDown(1))
         {
@@ -603,6 +603,8 @@ public class TokenController : NetworkBehaviour
     [ServerRpc]
     private void DestroyTokenServerRpc()
     {
+        DestroyShortcutsClientRpc(characterSheetInfo.sheetID);
+
         this.gameObject.GetComponent<NetworkObject>().Despawn();
     }
 
@@ -776,6 +778,20 @@ public class TokenController : NetworkBehaviour
     private void TauntGestureClientRpc()
     {
         animator.SetTrigger("taunt");
+    }
+
+    [ClientRpc]
+    private void DestroyShortcutsClientRpc(int sheetID)
+    {
+        CharacterShortcut[] shortcuts = FindObjectsOfType<CharacterShortcut>();
+
+        foreach (CharacterShortcut sc in shortcuts)
+        {
+            if (sc.charID == sheetID)
+            {
+                Destroy(sc.gameObject);
+            }
+        }
     }
 
     #endregion

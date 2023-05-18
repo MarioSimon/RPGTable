@@ -31,11 +31,11 @@ public class UIManager : NetworkBehaviour
     [Header("In Game HUD")]
     [SerializeField] GameObject inGameHUD;
     [SerializeField] Button toggleLibrary;
-    
     [SerializeField] Button toggleCharSelector;
     [SerializeField] Button toggleDiceBox;
     [SerializeField] Button toggleDmInventory;
-    [SerializeField] GameObject charSheetPrefab;
+
+    [SerializeField] GameObject activeTokensParent;
 
     [Header("Dice Box")]
     [SerializeField] GameObject diceBox;
@@ -190,6 +190,11 @@ public class UIManager : NetworkBehaviour
     public void UpdateCharacterButtonID(int newID)
     {
         characterList[newID].GetComponent<CharacterSelector>().charID = newID;
+    }
+
+    public GameObject GetActiveTokensParent()
+    {
+        return activeTokensParent;
     }
 
     private void SaveLevel()
