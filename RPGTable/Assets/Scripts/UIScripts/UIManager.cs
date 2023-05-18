@@ -857,7 +857,7 @@ public class UIManager : NetworkBehaviour
 
         NetworkManager.Singleton.StartClient();
 
-        Destroy(toggleDmInventory.gameObject);
+        Destroy(toggleDmInventory.transform.parent.gameObject);
 
         DeactivateMainMenu();
         ActivateInGameHUD();
