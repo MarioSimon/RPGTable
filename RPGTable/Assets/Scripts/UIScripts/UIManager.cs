@@ -863,6 +863,7 @@ public class UIManager : NetworkBehaviour
         ActivateInGameHUD();
 
         StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
+        StartCoroutine(gameManager.LoadActiveTokenShortcut());
     }
 
     private bool SetIPAndPort()

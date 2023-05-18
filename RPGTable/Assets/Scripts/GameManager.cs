@@ -73,6 +73,13 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public IEnumerator LoadActiveTokenShortcut()
+    {
+        yield return new WaitForSeconds(1);
+
+        LoadActiveTokenShortcutsServerRpc();
+    }
+
     #endregion
 
     #region character sheets
@@ -386,7 +393,29 @@ public class GameManager : NetworkBehaviour
         DeleteCharacterClientRpc(characterID);
     }
 
-    
+    [ServerRpc(RequireOwnership = false)]
+    public void LoadActiveTokenShortcutsServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            CharacterShortcut[] tokenShortcuts = FindObjectsOfType<CharacterShortcut>();
+
+            foreach (CharacterShortcut cs in tokenShortcuts)
+            {
+                SpawnTokenShortcutClientRpc(GetSheetInfo(cs.charID), clientRpcParams);
+            }
+        }
+    }
     #endregion
 
     #region ClientRpc
@@ -424,7 +453,7 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void SpawnTokenShortcutClientRpc(CharacterSheetInfo characterSheetInfo)
+    private void SpawnTokenShortcutClientRpc(CharacterSheetInfo characterSheetInfo, ClientRpcParams clientRpcParams = default)
     {
         GameObject tokenShortcut = Instantiate(tokenShortcutPrefab);
         tokenShortcut.GetComponent<CharacterShortcut>().characterName.text = characterSheetInfo.characterName;
