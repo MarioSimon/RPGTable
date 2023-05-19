@@ -31,11 +31,11 @@ public class UIManager : NetworkBehaviour
     [Header("In Game HUD")]
     [SerializeField] GameObject inGameHUD;
     [SerializeField] Button toggleLibrary;
-    [SerializeField] Button buttonSpawnNewCharSheet;
     [SerializeField] Button toggleCharSelector;
     [SerializeField] Button toggleDiceBox;
     [SerializeField] Button toggleDmInventory;
-    [SerializeField] GameObject charSheetPrefab;
+
+    [SerializeField] GameObject activeTokensParent;
 
     [Header("Dice Box")]
     [SerializeField] GameObject diceBox;
@@ -73,6 +73,7 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button diceRegistryCloseRegistry;
     [SerializeField] GameObject diceRegistryChatNotification;
     [SerializeField] Text diceRegistryText;
+    [SerializeField] GameObject diceRegistryContent;
 
     [Header("Characters")]
     [SerializeField] GameObject characterSelector;
@@ -81,6 +82,7 @@ public class UIManager : NetworkBehaviour
     List<GameObject> characterList = new List<GameObject>();
     [SerializeField] float characterSpace;
     [SerializeField] GameObject characterButtonPrefab;
+    [SerializeField] Button buttonSpawnNewCharSheet;
 
     [SerializeField] GameObject characterCreator;
     [SerializeField] Button closeCharacterCreator;
@@ -188,6 +190,11 @@ public class UIManager : NetworkBehaviour
     public void UpdateCharacterButtonID(int newID)
     {
         characterList[newID].GetComponent<CharacterSelector>().charID = newID;
+    }
+
+    public GameObject GetActiveTokensParent()
+    {
+        return activeTokensParent;
     }
 
     private void SaveLevel()
@@ -582,7 +589,12 @@ public class UIManager : NetworkBehaviour
     [ClientRpc]
     public void NotifyDiceScoreClientRpc(string scoreMessage)
     {
-        diceRegistryText.text += "\n" + scoreMessage;
+        GameObject message = Instantiate(messagePrefab);
+
+        message.GetComponent<Text>().text = scoreMessage;
+
+        message.GetComponent<RectTransform>().SetParent(diceRegistryContent.GetComponent<RectTransform>());
+        message.GetComponent<RectTransform>().SetAsLastSibling();
 
         if (!diceRegistry.activeInHierarchy)
         {
@@ -845,12 +857,13 @@ public class UIManager : NetworkBehaviour
 
         NetworkManager.Singleton.StartClient();
 
-        Destroy(toggleDmInventory.gameObject);
+        Destroy(toggleDmInventory.transform.parent.gameObject);
 
         DeactivateMainMenu();
         ActivateInGameHUD();
 
         StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
+        StartCoroutine(gameManager.LoadActiveTokenShortcut());
     }
 
     private bool SetIPAndPort()
