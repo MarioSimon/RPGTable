@@ -15,6 +15,7 @@ public class ActionInfo : MonoBehaviour
     public InputField actionName;
     public Dropdown actionType;    
     public Button rollAction;
+    public Button rollDamage;
     public Button openConfiguration;
 
     public int attackMod;
@@ -56,6 +57,7 @@ public class ActionInfo : MonoBehaviour
         diceHandler = FindObjectOfType<DiceHandler>();
 
         rollAction.onClick.AddListener(() => RollAttack());
+        rollDamage.onClick.AddListener(() => RollDamage());
         openConfiguration.onClick.AddListener(() => ShowConfigurationPanel());
         closeWeaponAttackPanel.onClick.AddListener(() => CloseWeaponConfigurationPanel());
 
@@ -69,11 +71,11 @@ public class ActionInfo : MonoBehaviour
         wpnDamage1OtherBonus.onValueChanged.AddListener(delegate { SetDamage1FlatDamage(wpnDamage1Ability, wpnDamage1OtherBonus); });
         wpnDamage1DamageType.onValueChanged.AddListener(delegate { SetDamage1Type(wpnDamage1DamageType); });
 
-        wpnDamage2NumberOfDices.onValueChanged.AddListener(delegate { SetDamage1NDices(wpnDamage2NumberOfDices); });
-        wpnDamage2DiceType.onValueChanged.AddListener(delegate { SetDamage1Dice(wpnDamage2DiceType); });
-        wpnDamage2Ability.onValueChanged.AddListener(delegate { SetDamage1FlatDamage(wpnDamage2Ability, wpnDamage2OtherBonus); });
-        wpnDamage2OtherBonus.onValueChanged.AddListener(delegate { SetDamage1FlatDamage(wpnDamage2Ability, wpnDamage2OtherBonus); });
-        wpnDamage2DamageType.onValueChanged.AddListener(delegate { SetDamage1Type(wpnDamage2DamageType); });
+        wpnDamage2NumberOfDices.onValueChanged.AddListener(delegate { SetDamage2NDices(wpnDamage2NumberOfDices); });
+        wpnDamage2DiceType.onValueChanged.AddListener(delegate { SetDamage2Dice(wpnDamage2DiceType); });
+        wpnDamage2Ability.onValueChanged.AddListener(delegate { SetDamage2FlatDamage(wpnDamage2Ability, wpnDamage2OtherBonus); });
+        wpnDamage2OtherBonus.onValueChanged.AddListener(delegate { SetDamage2FlatDamage(wpnDamage2Ability, wpnDamage2OtherBonus); });
+        wpnDamage2DamageType.onValueChanged.AddListener(delegate { SetDamage2Type(wpnDamage2DamageType); });
 
         weaponAttackConfiguration.GetComponent<RectTransform>().SetParent(canvas.transform);
         weaponAttackConfiguration.GetComponent<RectTransform>().localPosition = Vector3.zero;
@@ -88,10 +90,10 @@ public class ActionInfo : MonoBehaviour
         SetDamage1FlatDamage(wpnDamage1Ability, wpnDamage1OtherBonus);
         SetDamage1Type(wpnDamage1DamageType);
 
-        SetDamage2NDices(wpnDamage1NumberOfDices);
-        SetDamage2Dice(wpnDamage1DiceType);
-        SetDamage2FlatDamage(wpnDamage1Ability, wpnDamage1OtherBonus);
-        SetDamage2Type(wpnDamage1DamageType);
+        SetDamage2NDices(wpnDamage2NumberOfDices);
+        SetDamage2Dice(wpnDamage2DiceType);
+        SetDamage2FlatDamage(wpnDamage1Ability, wpnDamage2OtherBonus);
+        SetDamage2Type(wpnDamage2DamageType);
     }
 
     private void RollAttack()
@@ -117,9 +119,31 @@ public class ActionInfo : MonoBehaviour
         attackRollInfo.damage2Modifier = damage2FlatDamage;
         attackRollInfo.damage2Type = damage2Type;
 
-
         diceHandler.RollAttackAction(attackRollInfo);
+    }
 
+    private void RollDamage()
+    {
+        AttackRollInfo attackRollInfo = new AttackRollInfo();
+
+        attackRollInfo.sheetID = sheetManager.CSInfo.sheetID;
+
+        attackRollInfo.actionName = actionName.text;
+        attackRollInfo.characterName = sheetManager.CSInfo.characterName;
+
+        attackRollInfo.toHitModifier = attackMod;
+
+        attackRollInfo.damage1NumberOfDices = damage1NumDices;
+        attackRollInfo.damage1Dice = damage1Dice;
+        attackRollInfo.damage1Modifier = damage1FlatDamage;
+        attackRollInfo.damage1Type = damage1Type;
+
+        attackRollInfo.damage2NumberOfDices = damage2NumDices;
+        attackRollInfo.damage2Dice = damage2Dice;
+        attackRollInfo.damage2Modifier = damage2FlatDamage;
+        attackRollInfo.damage2Type = damage2Type;
+
+        diceHandler.RollActionDamage(attackRollInfo);
     }
 
     private void ShowConfigurationPanel()
@@ -234,23 +258,26 @@ public class ActionInfo : MonoBehaviour
 
         switch (damageAbility.value)
         {
-            case 0:
+            case 1:
                 abilityDamage = sheetManager.GetStrMod();
                 break;
-            case 1:
+            case 2:
                 abilityDamage = sheetManager.GetDexMod();
                 break;
-            case 2:
+            case 3:
                 abilityDamage = sheetManager.GetConMod();
                 break;
-            case 3:
+            case 4:
                 abilityDamage = sheetManager.GetIntMod();
                 break;
-            case 4:
+            case 5:
                 abilityDamage = sheetManager.GetWisMod();
                 break;
-            case 5:
+            case 6:
                 abilityDamage = sheetManager.GetChaMod();
+                break;
+            default:
+                abilityDamage = 0;
                 break;
         }
 
@@ -353,23 +380,26 @@ public class ActionInfo : MonoBehaviour
 
         switch (damageAbility.value)
         {
-            case 0:
+            case 1:
                 abilityDamage = sheetManager.GetStrMod();
                 break;
-            case 1:
+            case 2:
                 abilityDamage = sheetManager.GetDexMod();
                 break;
-            case 2:
+            case 3:
                 abilityDamage = sheetManager.GetConMod();
                 break;
-            case 3:
+            case 4:
                 abilityDamage = sheetManager.GetIntMod();
                 break;
-            case 4:
+            case 5:
                 abilityDamage = sheetManager.GetWisMod();
                 break;
-            case 5:
+            case 6:
                 abilityDamage = sheetManager.GetChaMod();
+                break;
+            default:
+                abilityDamage = 0;
                 break;
         }
 

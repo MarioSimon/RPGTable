@@ -457,9 +457,9 @@ public class UIManager : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
