@@ -292,7 +292,7 @@ public class DiceHandler : NetworkBehaviour
 
         if (attackRollInfo.damage2NumberOfDices == 0 && attackRollInfo.damage2Modifier == 0)
         {
-            message = " [" + attackRollInfo.actionName + " attack]: {0} " + attackRollInfo.damage1Type;
+            message = " [" + attackRollInfo.actionName + " damage]: {0} " + attackRollInfo.damage1Type;
         }
         else
         {
