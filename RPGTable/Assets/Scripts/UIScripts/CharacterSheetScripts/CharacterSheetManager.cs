@@ -1446,24 +1446,6 @@ public class CharacterSheetManager : MonoBehaviour
     }
 
     // dice roll methods
-
-    public void ResolveCheckOrSave(string rollKey, int modifier)
-    {
-        DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
-        int result = 0;
-
-        foreach (int diceScore in roll.diceScores)
-        {
-            result += diceScore;
-        }
-
-        result += modifier;
-
-        uiManager.NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
-
-        diceHandler.DeleteRoll(rollKey);
-    }
-
     public void HitDiceHeal(int result)
     {
         int hp = int.Parse(currHealthPoints.text) + result;

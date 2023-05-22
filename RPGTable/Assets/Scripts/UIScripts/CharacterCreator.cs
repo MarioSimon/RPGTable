@@ -716,9 +716,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetStrengthClientRpc(result, clientRpcParams);
@@ -731,9 +731,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetDexterityClientRpc(result, clientRpcParams);
@@ -746,9 +746,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetConstitutionClientRpc(result, clientRpcParams);
@@ -761,9 +761,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetIntelligenceClientRpc(result, clientRpcParams);
@@ -776,9 +776,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetWisdomClientRpc(result, clientRpcParams);
@@ -791,9 +791,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetCharismaClientRpc(result, clientRpcParams);
@@ -810,9 +810,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetStrengthClientRpc(result, clientRpcParams);
@@ -825,9 +825,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetDexterityClientRpc(result, clientRpcParams);
@@ -840,9 +840,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetConstitutionClientRpc(result, clientRpcParams);
@@ -855,9 +855,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetIntelligenceClientRpc(result, clientRpcParams);
@@ -870,9 +870,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetWisdomClientRpc(result, clientRpcParams);
@@ -885,9 +885,9 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetCharismaClientRpc(result, clientRpcParams);
@@ -904,12 +904,12 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        List<int> diceResults = new List<int>(roll.diceScores);
+        List<DiceResult> diceResults = new List<DiceResult>(roll.diceScores);
         int minValueIndex = 0;
 
         for (int i = 1; i < diceResults.Count; i++)
         {
-            if (diceResults[i] < diceResults[minValueIndex])
+            if (diceResults[i].result < diceResults[minValueIndex].result)
             {
                 minValueIndex = i;
             }
@@ -917,9 +917,9 @@ public class CharacterCreator : NetworkBehaviour
 
         diceResults.RemoveAt(minValueIndex);
 
-        foreach (int diceScore in diceResults)
+        foreach (DiceResult diceScore in diceResults)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetStrengthClientRpc(result, clientRpcParams);
@@ -932,12 +932,12 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        List<int> diceResults = new List<int>(roll.diceScores);
+        List<DiceResult> diceResults = new List<DiceResult>(roll.diceScores);
         int minValueIndex = 0;
 
         for (int i = 1; i < diceResults.Count; i++)
         {
-            if (diceResults[i] < diceResults[minValueIndex])
+            if (diceResults[i].result < diceResults[minValueIndex].result)
             {
                 minValueIndex = i;
             }
@@ -945,9 +945,9 @@ public class CharacterCreator : NetworkBehaviour
 
         diceResults.RemoveAt(minValueIndex);
 
-        foreach (int diceScore in diceResults)
+        foreach (DiceResult diceScore in diceResults)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetDexterityClientRpc(result, clientRpcParams);
@@ -960,12 +960,12 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        List<int> diceResults = new List<int>(roll.diceScores);
+        List<DiceResult> diceResults = new List<DiceResult>(roll.diceScores);
         int minValueIndex = 0;
 
         for (int i = 1; i < diceResults.Count; i++)
         {
-            if (diceResults[i] < diceResults[minValueIndex])
+            if (diceResults[i].result < diceResults[minValueIndex].result)
             {
                 minValueIndex = i;
             }
@@ -973,9 +973,9 @@ public class CharacterCreator : NetworkBehaviour
 
         diceResults.RemoveAt(minValueIndex);
 
-        foreach (int diceScore in diceResults)
+        foreach (DiceResult diceScore in diceResults)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetConstitutionClientRpc(result, clientRpcParams);
@@ -988,12 +988,12 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        List<int> diceResults = new List<int>(roll.diceScores);
+        List<DiceResult> diceResults = new List<DiceResult>(roll.diceScores);
         int minValueIndex = 0;
 
         for (int i = 1; i < diceResults.Count; i++)
         {
-            if (diceResults[i] < diceResults[minValueIndex])
+            if (diceResults[i].result < diceResults[minValueIndex].result)
             {
                 minValueIndex = i;
             }
@@ -1001,9 +1001,9 @@ public class CharacterCreator : NetworkBehaviour
 
         diceResults.RemoveAt(minValueIndex);
 
-        foreach (int diceScore in diceResults)
+        foreach (DiceResult diceScore in diceResults)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetIntelligenceClientRpc(result, clientRpcParams);
@@ -1016,12 +1016,12 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        List<int> diceResults = new List<int>(roll.diceScores);
+        List<DiceResult> diceResults = new List<DiceResult>(roll.diceScores);
         int minValueIndex = 0;
 
         for (int i = 1; i < diceResults.Count; i++)
         {
-            if (diceResults[i] < diceResults[minValueIndex])
+            if (diceResults[i].result < diceResults[minValueIndex].result)
             {
                 minValueIndex = i;
             }
@@ -1029,9 +1029,9 @@ public class CharacterCreator : NetworkBehaviour
 
         diceResults.RemoveAt(minValueIndex);
 
-        foreach (int diceScore in diceResults)
+        foreach (DiceResult diceScore in diceResults)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetWisdomClientRpc(result, clientRpcParams);
@@ -1044,12 +1044,12 @@ public class CharacterCreator : NetworkBehaviour
         DiceRollInfo roll = diceHandler.GetRollInfo(rollKey);
         int result = 0;
 
-        List<int> diceResults = new List<int>(roll.diceScores);
+        List<DiceResult> diceResults = new List<DiceResult>(roll.diceScores);
         int minValueIndex = 0;
 
         for (int i = 1; i < diceResults.Count; i++)
         {
-            if (diceResults[i] < diceResults[minValueIndex])
+            if (diceResults[i].result < diceResults[minValueIndex].result)
             {
                 minValueIndex = i;
             }
@@ -1057,9 +1057,9 @@ public class CharacterCreator : NetworkBehaviour
 
         diceResults.RemoveAt(minValueIndex);
 
-        foreach (int diceScore in diceResults)
+        foreach (DiceResult diceScore in diceResults)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         SetCharismaClientRpc(result, clientRpcParams);

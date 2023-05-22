@@ -54,7 +54,7 @@ public class DiceHandler : NetworkBehaviour
         return rollKey;
     }
 
-    public void AddRoll(string rollKey, string thrownBy, int numberOfDices, string rollMessage)
+    public void AddRoll(string rollKey, string thrownBy, int numberOfDices, string rollMessage, DiceType[] diceTypes = default)
     {
         if (activeRolls.ContainsKey(rollKey)) { return; }
 
@@ -62,7 +62,8 @@ public class DiceHandler : NetworkBehaviour
         newRoll.playerName = thrownBy;
         newRoll.numberOfDices = numberOfDices;
         newRoll.rolledDices = 0;
-        newRoll.diceScores = new int[numberOfDices];
+        newRoll.diceScores = new DiceResult[numberOfDices];
+        newRoll.diceTypes = diceTypes;
         newRoll.message = rollMessage;
 
         activeRolls.Add(rollKey, newRoll);
@@ -73,7 +74,7 @@ public class DiceHandler : NetworkBehaviour
         return activeRolls[rollKey];
     }
 
-    private void UpdateRoll(string rollKey, int result, int modifier, ClientRpcParams clientRpcParams, Action<string, int, ClientRpcParams, int> resultFunction, int sheetID)
+    private void UpdateRoll(string rollKey, DiceResult diceResult, int modifier, ClientRpcParams clientRpcParams, Action<string, int, ClientRpcParams, int> resultFunction, int sheetID)
     {
         if (!activeRolls.ContainsKey(rollKey)) { return; }
 
@@ -83,9 +84,9 @@ public class DiceHandler : NetworkBehaviour
 
         for (int i = 0; i < roll.numberOfDices; i++)
         {
-            if (roll.diceScores[i] < 1)
+            if (roll.diceScores[i].result < 1)
             {
-                roll.diceScores[i] = result;
+                roll.diceScores[i] = diceResult;
                 break;
             }
         }
@@ -113,7 +114,9 @@ public class DiceHandler : NetworkBehaviour
         yield return new WaitForSeconds(0.25f);
 
         GameObject dice = new GameObject();
-        int result = 0;
+        DiceResult result;
+        result.result = -1;
+        result.diceType = DiceType.pd;
 
         switch (type)
         {
@@ -127,7 +130,8 @@ public class DiceHandler : NetworkBehaviour
 
                 yield return new WaitUntil(d4.IsStopped);
 
-                result = d4.GetDiceScore();
+                result.result = d4.GetDiceScore();
+                result.diceType = DiceType.d4;
                 break;
 
             case DiceType.d6:
@@ -140,7 +144,8 @@ public class DiceHandler : NetworkBehaviour
 
                 yield return new WaitUntil(d6.IsStopped);
 
-                result = d6.GetDiceScore();
+                result.result = d6.GetDiceScore();
+                result.diceType = DiceType.d6;
                 break;
             case DiceType.d8:
                 dice = Instantiate(d8Prefab, throwPoint.position, Quaternion.identity);
@@ -152,7 +157,8 @@ public class DiceHandler : NetworkBehaviour
 
                 yield return new WaitUntil(d8.IsStopped);
 
-                result = d8.GetDiceScore();
+                result.result = d8.GetDiceScore();
+                result.diceType = DiceType.d8;
                 break;
             case DiceType.d10:
                 dice = Instantiate(d10Prefab, throwPoint.position, Quaternion.identity);
@@ -164,7 +170,8 @@ public class DiceHandler : NetworkBehaviour
 
                 yield return new WaitUntil(d10.IsStopped);
 
-                result = d10.GetDiceScore();
+                result.result = d10.GetDiceScore();
+                result.diceType = DiceType.d10;
                 break;
             case DiceType.pd:
                 dice = Instantiate(pdPrefab, throwPoint.position, Quaternion.identity);
@@ -176,7 +183,8 @@ public class DiceHandler : NetworkBehaviour
 
                 yield return new WaitUntil(pd.IsStopped);
 
-                result = pd.GetDiceScore();
+                result.result = pd.GetDiceScore();
+                result.diceType = DiceType.pd;
                 break;
             case DiceType.d12:
                 dice = Instantiate(d12Prefab, throwPoint.position, Quaternion.identity);
@@ -188,7 +196,8 @@ public class DiceHandler : NetworkBehaviour
 
                 yield return new WaitUntil(d12.IsStopped);
 
-                result = d12.GetDiceScore();
+                result.result = d12.GetDiceScore();
+                result.diceType = DiceType.d12;
                 break;
             case DiceType.d20:
                 dice = Instantiate(d20Prefab, throwPoint.position, Quaternion.identity);
@@ -200,7 +209,8 @@ public class DiceHandler : NetworkBehaviour
 
                 yield return new WaitUntil(d20.IsStopped);
 
-                result = d20.GetDiceScore();
+                result.result = d20.GetDiceScore();
+                result.diceType = DiceType.d20;
                 break;
         }
 
@@ -239,6 +249,11 @@ public class DiceHandler : NetworkBehaviour
         RollAttackActionServerRpc(attackRollInfo);
     }
 
+    public void RollActionDamage(AttackRollInfo attackRollInfo)
+    {
+        RollActionDamageServerRpc(attackRollInfo);
+    }
+
     [ServerRpc]
     private void RollAttackActionServerRpc(AttackRollInfo attackRollInfo, ServerRpcParams serverRpcParams = default)
     {
@@ -269,14 +284,58 @@ public class DiceHandler : NetworkBehaviour
         StartCoroutine(RollDice(rollKey, DiceType.d20, attackRollInfo.toHitModifier, clientRpcParams, ResolveCheckOrSave));
     }
 
+    [ServerRpc]
+    private void RollActionDamageServerRpc(AttackRollInfo attackRollInfo, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = GetNewRollKey(attackRollInfo.characterName + "-");
+        string message = "";
+
+        if (attackRollInfo.damage2NumberOfDices == 0 && attackRollInfo.damage2Modifier == 0)
+        {
+            message = " [" + attackRollInfo.actionName + " damage]: {0} " + attackRollInfo.damage1Type;
+        }
+        else
+        {
+            message = " [" + attackRollInfo.actionName + " damage]: {0} " + attackRollInfo.damage1Type + " +  {1} " + attackRollInfo.damage2Type;
+        }
+
+        int numDices = attackRollInfo.damage1NumberOfDices + attackRollInfo.damage2NumberOfDices;
+
+        DiceType[] dicetypes = { attackRollInfo.damage1Dice, attackRollInfo.damage2Dice };
+
+        if (numDices > 0)
+            AddRoll(rollKey, attackRollInfo.characterName, numDices, message, dicetypes);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        for (int i = 0; i < attackRollInfo.damage1NumberOfDices; i++)
+        {
+            StartCoroutine(RollDice(rollKey, attackRollInfo.damage1Dice, attackRollInfo.damage1Modifier, clientRpcParams, ResolveDamageRoll));
+        }
+
+        for (int i = 0; i < attackRollInfo.damage2NumberOfDices; i++)
+        {
+            StartCoroutine(RollDice(rollKey, attackRollInfo.damage2Dice, attackRollInfo.damage1Modifier, clientRpcParams, ResolveDamageRoll));
+        }
+    }
+
+
     void ResolveCheckOrSave(string rollKey, int modifier, ClientRpcParams clientRpcParams = default, int sheetID = -1)
     {
         DiceRollInfo roll = GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         result += modifier;
@@ -286,14 +345,41 @@ public class DiceHandler : NetworkBehaviour
         DeleteRoll(rollKey);
     }
 
+    void ResolveDamageRoll(string rollKey, int modifier, ClientRpcParams clientRpcParams = default, int sheetID = -1)
+    {
+        DiceRollInfo roll = GetRollInfo(rollKey);
+        int result1 = 0;
+        int result2 = 0;
+
+        foreach (DiceResult diceScore in roll.diceScores)
+        {
+            if (diceScore.diceType == roll.diceTypes[0])
+            {
+                result1 += diceScore.result;
+            }
+            else
+            {
+                result2 += diceScore.result;
+            }
+        }
+        result1 += modifier;
+
+        string message = string.Format(roll.message, result1, result2);
+
+        uiManager.NotifyDiceScoreClientRpc(roll.playerName + message);
+
+        DeleteRoll(rollKey);
+
+    }
+
     void ResolveHitDiceRoll(string rollKey, int modifier, ClientRpcParams clientRpcParams = default, int sheetID = -1)
     {
         DiceRollInfo roll = GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         result += modifier;
@@ -315,9 +401,9 @@ public class DiceHandler : NetworkBehaviour
         DiceRollInfo roll = GetRollInfo(rollKey);
         int result = 0;
 
-        foreach (int diceScore in roll.diceScores)
+        foreach (DiceResult diceScore in roll.diceScores)
         {
-            result += diceScore;
+            result += diceScore.result;
         }
 
         ProcessDeathSavingThrowClientRpc(result, sheetID);
@@ -524,6 +610,13 @@ public struct DiceRollInfo
     public string playerName;
     public int numberOfDices;
     public int rolledDices;
-    public int[] diceScores;
+    public DiceResult[] diceScores;
+    public DiceType[] diceTypes;
     public string message;
+}
+
+public struct DiceResult
+{
+    public DiceType diceType;
+    public int result;
 }
