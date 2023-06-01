@@ -13,11 +13,13 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] UIManager uiManager;
     [SerializeField] LevelEditorManager levelEditorManager;
-    [SerializeField] List<CharacterSheetInfo> characterSheets;
 
-    [SerializeField] List<GameObject> avatarList;
+    List<CharacterSheetInfo> characterSheets;
+    List<NPCSheetInfo> NPCSheets;
+
+    [SerializeField] List<GameObject> playerAvatarList;
     [SerializeField] GameObject tokenShortcutPrefab;
-    public List<Sprite> avatarPortrait;
+    public List<Sprite> playerAvatarPortrait;
 
     Dictionary<string, ulong> playerList;
 
@@ -29,7 +31,10 @@ public class GameManager : NetworkBehaviour
     private void Start()
     {
         characterSheets = new List<CharacterSheetInfo>();
+        NPCSheets = new List<NPCSheetInfo>();
+
         playerList = new Dictionary<string, ulong>();
+
         currentLevel = new List<GameObject>();
         savedLevels = new Dictionary<string, List<LevelItemInfo>>();
     }
@@ -58,7 +63,7 @@ public class GameManager : NetworkBehaviour
     {
         if (IsHost)
         {
-            GameObject token = Instantiate(avatarList[avatarID], Vector3.zero, Quaternion.identity);
+            GameObject token = Instantiate(playerAvatarList[avatarID], Vector3.zero, Quaternion.identity);
 
             TokenController tokenController = token.GetComponent<TokenController>();
             tokenController.ownerName.Value = new FixedString64Bytes(ownerName);
@@ -78,6 +83,40 @@ public class GameManager : NetworkBehaviour
         yield return new WaitForSeconds(1);
 
         LoadActiveTokenShortcutsServerRpc();
+    }
+
+    #endregion
+
+    #region NPC sheets
+
+    public NPCSheetInfo GetNPCSheetInfo(int index)
+    {
+        return NPCSheets[index];
+    }
+
+    public void AddNewNPCSheetInfo(NPCSheetInfo NPCInfo)
+    {
+        if (!IsHost) { return; }
+
+        NPCSheets.Add(NPCInfo);
+    }
+
+    public int GetNewNPCSheetID()
+    {
+        return NPCSheets.Count;
+    }
+
+    public void DeleteNPC(int NPC_ID)
+    {
+        if (NPC_ID > characterSheets.Count || NPC_ID < 0) { return; }
+
+        NPCSheets.RemoveAt(NPC_ID);
+        UpdateNPCIDs();
+    }
+
+    private void UpdateNPCIDs()
+    {
+        
     }
 
     #endregion
@@ -326,7 +365,7 @@ public class GameManager : NetworkBehaviour
                 newLevels.Add(levelName);
             }            
         }
-        Debug.Log("LOADED LEVELS FROM " + Application.dataPath + "/StreamingAssets/levels.json");
+        //Debug.Log("LOADED LEVELS FROM " + Application.dataPath + "/StreamingAssets/levels.json");
 
         return newLevels;
     }
@@ -457,7 +496,7 @@ public class GameManager : NetworkBehaviour
     {
         GameObject tokenShortcut = Instantiate(tokenShortcutPrefab);
         tokenShortcut.GetComponent<CharacterShortcut>().characterName.text = characterSheetInfo.characterName;
-        tokenShortcut.GetComponent<CharacterShortcut>().characterPortrait.sprite = avatarPortrait[characterSheetInfo.avatarID];
+        tokenShortcut.GetComponent<CharacterShortcut>().characterPortrait.sprite = playerAvatarPortrait[characterSheetInfo.avatarID];
         tokenShortcut.GetComponent<CharacterShortcut>().charID = characterSheetInfo.sheetID;
         tokenShortcut.GetComponent<RectTransform>().SetParent(uiManager.GetActiveTokensParent().GetComponent<RectTransform>());
     }

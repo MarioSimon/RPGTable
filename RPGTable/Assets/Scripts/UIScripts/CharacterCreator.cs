@@ -241,7 +241,7 @@ public class CharacterCreator : NetworkBehaviour
     private void SetNewAvatar(int id)
     {
         avatarID = id;
-        avatarPortrait.sprite = gameManager.avatarPortrait[id];
+        avatarPortrait.sprite = gameManager.playerAvatarPortrait[id];
     }
 
     #region race

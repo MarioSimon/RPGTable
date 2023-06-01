@@ -10356,6 +10356,7 @@ MonoBehaviour:
   toggleCharSelector: {fileID: 526961701}
   toggleDiceBox: {fileID: 408782012}
   toggleDmInventory: {fileID: 1008411858}
+  toggleNPCList: {fileID: 1697911188}
   activeTokensParent: {fileID: 382702138}
   diceBox: {fileID: 586615381}
   buttonThrowD4: {fileID: 150895744}
@@ -10392,7 +10393,7 @@ MonoBehaviour:
   characterListArea: {fileID: 1979980786}
   characterSpace: 145
   characterButtonPrefab: {fileID: 1876182483925196248, guid: d8d9706efa093c547941fd76c9dd9757, type: 3}
-  buttonSpawnNewCharSheet: {fileID: 185950798}
+  toggleCharacterCreator: {fileID: 185950798}
   characterCreator: {fileID: 392132511}
   closeCharacterCreator: {fileID: 566626090}
   dmInventory: {fileID: 752610335}
@@ -10416,6 +10417,8 @@ MonoBehaviour:
   deleteLevel: {fileID: 1172442811}
   library: {fileID: 52346423}
   closeLibrary: {fileID: 2070854326}
+  npcList: {fileID: 1101403611}
+  closeNPCList: {fileID: 90315644}
 --- !u!4 &316338589
 Transform:
   m_ObjectHideFlags: 0
@@ -21554,9 +21557,9 @@ RectTransform:
   m_Father: {fileID: 1036324116}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -535}
   m_SizeDelta: {x: 90, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &695277131
@@ -22027,7 +22030,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &709672852
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22060,7 +22063,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4716981, g: 0.31862032, b: 0.17577429, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -23639,9 +23642,9 @@ RectTransform:
   m_Father: {fileID: 1036324116}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -380}
   m_SizeDelta: {x: 90, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &774729983
@@ -25967,7 +25970,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &853588722
 RectTransform:
   m_ObjectHideFlags: 0
@@ -31082,9 +31085,9 @@ RectTransform:
   m_Father: {fileID: 1036324116}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -225}
   m_SizeDelta: {x: 90, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1038176576
@@ -32606,6 +32609,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1101403612}
+  - component: {fileID: 1101403613}
   m_Layer: 5
   m_Name: NPCList
   m_TagString: Untagged
@@ -32633,6 +32637,24 @@ RectTransform:
   m_AnchoredPosition: {x: 910, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1101403613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101403611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a79ebfb42c6ae04685eb678cabb2a48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uIManager: {fileID: 316338588}
+  gameManager: {fileID: 1016826984}
+  NPCListParent: {fileID: 1570660744}
+  NPCSelectorPrefab: {fileID: 6618944126834043771, guid: 6aef3c9b6711890499f14fae5a06c173, type: 3}
+  addNPC: {fileID: 725041349}
+  searchBar: {fileID: 652381055}
 --- !u!1 &1104266360
 GameObject:
   m_ObjectHideFlags: 0
@@ -45167,7 +45189,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 300}
+  m_SizeDelta: {x: 0, y: 30}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1570660746
 MonoBehaviour:
@@ -45182,7 +45204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
-  m_VerticalFit: 0
+  m_VerticalFit: 2
 --- !u!114 &1570660747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45196,12 +45218,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 5
+    m_Left: 0
     m_Right: 0
-    m_Top: 0
+    m_Top: 20
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 0
+  m_Spacing: 30
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -48201,7 +48223,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1688289005
 RectTransform:
   m_ObjectHideFlags: 0
@@ -48611,7 +48633,7 @@ GameObject:
   - component: {fileID: 1697911189}
   - component: {fileID: 1697911188}
   m_Layer: 5
-  m_Name: DMInventoryBtn
+  m_Name: NPCListBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54965,9 +54987,9 @@ RectTransform:
   m_Father: {fileID: 1036324116}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -80}
   m_SizeDelta: {x: 90, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1961817866

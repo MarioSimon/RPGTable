@@ -34,6 +34,7 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button toggleCharSelector;
     [SerializeField] Button toggleDiceBox;
     [SerializeField] Button toggleDmInventory;
+    [SerializeField] Button toggleNPCList;
 
     [SerializeField] GameObject activeTokensParent;
 
@@ -82,7 +83,7 @@ public class UIManager : NetworkBehaviour
     List<GameObject> characterList = new List<GameObject>();
     [SerializeField] float characterSpace;
     [SerializeField] GameObject characterButtonPrefab;
-    [SerializeField] Button buttonSpawnNewCharSheet;
+    [SerializeField] Button toggleCharacterCreator;
 
     [SerializeField] GameObject characterCreator;
     [SerializeField] Button closeCharacterCreator;
@@ -113,6 +114,11 @@ public class UIManager : NetworkBehaviour
     [Header("Library")]
     [SerializeField] GameObject library;
     [SerializeField] Button closeLibrary;
+
+
+    [Header("NPC List")]
+    [SerializeField] GameObject npcList;
+    [SerializeField] Button closeNPCList;
     #endregion
 
     #region Unity Event Functions
@@ -132,11 +138,13 @@ public class UIManager : NetworkBehaviour
 
         toggleLibrary.onClick.AddListener(() => ToggleLibrary());
         closeLibrary.onClick.AddListener(() => ToggleLibrary());
-        buttonSpawnNewCharSheet.onClick.AddListener(() => ToggleCharacterCreator());
+        toggleCharacterCreator.onClick.AddListener(() => ToggleCharacterCreator());
         closeCharacterCreator.onClick.AddListener(() => ToggleCharacterCreator());
         toggleCharSelector.onClick.AddListener(() => ToggleCharacterSelector());
         closeCharacterSelector.onClick.AddListener(() => ToggleCharacterSelector());
         toggleDiceBox.onClick.AddListener(() => ToggleDiceBox());
+        toggleNPCList.onClick.AddListener(() => ToggleNPCList());
+        closeNPCList.onClick.AddListener(() => ToggleNPCList());
 
         minimizedBarOpenChat.onClick.AddListener(delegate { ToggleMinimizedBar(); ToggleTextChat(); });
         minimizedBarOpenRegistry.onClick.AddListener(delegate { ToggleMinimizedBar(); ToggleDiceRegistry(); });
@@ -172,7 +180,7 @@ public class UIManager : NetworkBehaviour
 
         newCharacterButton.GetComponent<CharacterSelector>().characterName.text = characterName;
         newCharacterButton.GetComponent<CharacterSelector>().charID = characterID;
-        newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.avatarPortrait[portraitID];
+        newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.playerAvatarPortrait[portraitID];
 
         newCharacterButton.GetComponent<RectTransform>().SetParent(characterListArea.transform);
 
@@ -621,7 +629,7 @@ public class UIManager : NetworkBehaviour
 
         newCharacterButton.GetComponent<CharacterSelector>().characterName.text = characterName;
         newCharacterButton.GetComponent<CharacterSelector>().charID = characterID;
-        newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.avatarPortrait[portraitID];
+        newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.playerAvatarPortrait[portraitID];
 
         newCharacterButton.GetComponent<RectTransform>().SetParent(characterListArea.transform);
         newCharacterButton.GetComponent<RectTransform>().localPosition = position;
@@ -727,6 +735,12 @@ public class UIManager : NetworkBehaviour
     {
         bool toggle = !diceBox.activeInHierarchy;
         diceBox.SetActive(toggle);
+    }
+
+    private void ToggleNPCList()
+    {
+        bool toggle = !npcList.activeInHierarchy;
+        npcList.SetActive(toggle);
     }
 
     private void ToggleTextChat()
@@ -858,6 +872,7 @@ public class UIManager : NetworkBehaviour
         NetworkManager.Singleton.StartClient();
 
         Destroy(toggleDmInventory.transform.parent.gameObject);
+        Destroy(toggleNPCList.transform.parent.gameObject);
 
         DeactivateMainMenu();
         ActivateInGameHUD();
