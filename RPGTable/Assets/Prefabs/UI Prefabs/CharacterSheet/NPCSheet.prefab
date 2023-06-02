@@ -925,8 +925,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -147, y: 152}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -192, y: 152}
+  m_SizeDelta: {x: 70, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270241555769633
 CanvasRenderer:
@@ -1777,8 +1777,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270241685251140
 CanvasRenderer:
@@ -1977,8 +1977,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270241726534620
 CanvasRenderer:
@@ -2270,6 +2270,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4535895190cacfd42afefe9d1c0d98ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NPCSheet: {fileID: 717270241773302701}
+  NPCInfo:
+    sheetID: -1
+    avatarID: 0
+    animatorID: -1
+    NPCName: 
+    NPCSize: 0
+    NPCType: 0
+    NPCAlignement: 0
+    armorClass: 
+    healthPoints: 
+    speed: 
+    strScore: 
+    dexScore: 
+    conScore: 
+    intScore: 
+    wisScore: 
+    chaScore: 
+    skills: 
+    damageVulnerabilites: 
+    damageResistances: 
+    damageInmunities: 
+    conditionInmunities: 
+    senses: 
+    languages: 
+    challenge: 
+    actionCount: 0
+    actionName: []
+    actionType: 
+    actionWeapon: 
+    actionAttackAbility: 
+    actionAttackOtherBonus: []
+    actionAttackProficency: 
+    actionD1NumDices: []
+    actionD1DiceType: 
+    actionD1Ability: 
+    actionD1OtherBonus: []
+    actionD1Type: 
+    actionD2NumDices: []
+    actionD2DiceType: 
+    actionD2Ability: 
+    actionD2OtherBonus: []
+    actionD2Type: 
+    actionDC: 
   closeNPCSheet: {fileID: 1664923737742480492}
   spawnNPCToken: {fileID: 4956514852938241149}
   statsPage: {fileID: 717270241664222349}
@@ -2277,48 +2321,48 @@ MonoBehaviour:
   NPCSize: {fileID: 2195851140601039972}
   NPCType: {fileID: 9055424125943802201}
   NPCAlignement: {fileID: 1247784702310930108}
-  NPCArmorClass: {fileID: 717270242844171470}
-  NPCHitPoints: {fileID: 717270243192372499}
-  NPCSpeed: {fileID: 717270241951516351}
-  NPCStrScore: {fileID: 717270243179921175}
-  NPCStrModifier: {fileID: 717270242159617553}
-  NPCStrCheck: {fileID: 717270241550028168}
-  NPCStrSave: {fileID: 717270242907842064}
-  NPCDexScore: {fileID: 717270243316988161}
-  NPCDexModifier: {fileID: 717270243425894990}
-  NPCDexCheck: {fileID: 717270242021390814}
-  NPCDexSave: {fileID: 717270242624017463}
-  NPCConScore: {fileID: 717270241780937274}
-  NPCConModifier: {fileID: 717270243091631681}
-  NPCConCheck: {fileID: 717270242105860980}
-  NPCConSave: {fileID: 717270241975726179}
-  NPCIntScore: {fileID: 717270242465193714}
-  NPCIntModifier: {fileID: 717270242736643116}
-  NPCIntCheck: {fileID: 717270242144367166}
-  NPCIntSave: {fileID: 717270242137568265}
-  NPCWisScore: {fileID: 717270241590751390}
-  NPCWisModifier: {fileID: 717270242903559418}
-  NPCWisCheck: {fileID: 717270242144367166}
-  NPCWisSave: {fileID: 717270242469718404}
-  NPCChaScore: {fileID: 717270242742477030}
-  NPCChaModifier: {fileID: 717270242665619925}
-  NPCChaCheck: {fileID: 717270241560274232}
-  NPCChaSave: {fileID: 717270242806234477}
-  NPCSkills: {fileID: 717270243080102261}
-  NPCDamageVulnerabilites: {fileID: 717270241896437146}
-  NPCDamageResistances: {fileID: 717270242258082580}
-  NPCDamageInmunities: {fileID: 717270242660172151}
-  NPCConditionInmunities: {fileID: 717270241914794074}
-  NPCSenses: {fileID: 717270242801735941}
-  NPCLanguages: {fileID: 717270243197717610}
-  NPCChallenge: {fileID: 717270242334003480}
+  armorClass: {fileID: 717270242844171470}
+  healthPoints: {fileID: 717270243192372499}
+  speed: {fileID: 717270241951516351}
+  strScore: {fileID: 717270243179921175}
+  strModifier: {fileID: 717270242159617553}
+  strCheck: {fileID: 717270241550028168}
+  strSave: {fileID: 717270242907842064}
+  dexScore: {fileID: 717270243316988161}
+  dexModifier: {fileID: 717270243425894990}
+  dexCheck: {fileID: 717270242021390814}
+  dexSave: {fileID: 717270242624017463}
+  conScore: {fileID: 717270241780937274}
+  conModifier: {fileID: 717270243091631681}
+  conCheck: {fileID: 717270242105860980}
+  conSave: {fileID: 717270241975726179}
+  intScore: {fileID: 717270242465193714}
+  intModifier: {fileID: 717270242736643116}
+  intCheck: {fileID: 717270241726252244}
+  intSave: {fileID: 717270242137568265}
+  wisScore: {fileID: 717270241590751390}
+  wisModifier: {fileID: 717270242903559418}
+  wisCheck: {fileID: 717270242144367166}
+  wisSave: {fileID: 717270242469718404}
+  chaScore: {fileID: 717270242742477030}
+  chaModifier: {fileID: 717270242665619925}
+  chaCheck: {fileID: 717270241560274232}
+  chaSave: {fileID: 717270242806234477}
+  skills: {fileID: 717270243080102261}
+  damageVulnerabilites: {fileID: 717270241896437146}
+  damageResistances: {fileID: 717270242258082580}
+  damageInmunities: {fileID: 717270242660172151}
+  conditionInmunities: {fileID: 717270241914794074}
+  senses: {fileID: 717270242801735941}
+  languages: {fileID: 717270243197717610}
+  challenge: {fileID: 717270242334003480}
   openCombatPage: {fileID: 717270242802047578}
   combatPage: {fileID: 2244159344417824589}
   traitsParent: {fileID: 3105311004774607720}
-  traitPrefab: {fileID: 0}
+  traitsPrefab: {fileID: 0}
   addTrait: {fileID: 551222207028770155}
-  actionsParent: {fileID: 3292938581148944135, guid: 65f59ad5706de53489ab82de61ee0ffd, type: 3}
-  actionPrefab: {fileID: 0}
+  actionsParent: {fileID: 3526376484297556053}
+  actionsPrefab: {fileID: 3292938581148944135, guid: 65f59ad5706de53489ab82de61ee0ffd, type: 3}
   addAction: {fileID: 2566494761824833115}
   openStatsPage: {fileID: 540510792233270378}
 --- !u!1 &717270241775284644
@@ -2355,8 +2399,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -147, y: 182}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -181.7, y: 182}
+  m_SizeDelta: {x: 90, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270241775284641
 CanvasRenderer:
@@ -3443,8 +3487,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270242000100384
 CanvasRenderer:
@@ -4227,8 +4271,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270242113475471
 CanvasRenderer:
@@ -4548,8 +4592,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -148, y: 122}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -202, y: 122}
+  m_SizeDelta: {x: 50, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270242151710038
 CanvasRenderer:
@@ -5586,8 +5630,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270242416666589
 CanvasRenderer:
@@ -6135,6 +6179,8 @@ GameObject:
   - component: {fileID: 717270242584836094}
   - component: {fileID: 717270242584836092}
   - component: {fileID: 717270242584836093}
+  - component: {fileID: 666570203152803084}
+  - component: {fileID: 9001326585690035149}
   m_Layer: 5
   m_Name: DragBar
   m_TagString: Untagged
@@ -6199,6 +6245,49 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &666570203152803084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 717270242584836095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5925821fbc78fea4a8be6fd93dea32f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
+  UIPanel: {fileID: 717270241773302701}
+--- !u!114 &9001326585690035149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 717270242584836095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 5
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 666570203152803084}
+          m_TargetAssemblyTypeName: UIDrag, Assembly-CSharp
+          m_MethodName: DragHandler
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &717270242602979522
 GameObject:
   m_ObjectHideFlags: 0
@@ -7896,8 +7985,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270242811152948
 CanvasRenderer:
@@ -8555,8 +8644,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270242960767732
 CanvasRenderer:
@@ -8713,8 +8802,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270242992175959
 CanvasRenderer:
@@ -10032,8 +10121,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270243266942509
 CanvasRenderer:
@@ -10878,8 +10967,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270243539720327
 CanvasRenderer:
@@ -11431,8 +11520,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717270243619176783
 CanvasRenderer:

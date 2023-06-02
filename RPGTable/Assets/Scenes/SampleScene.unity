@@ -12179,7 +12179,7 @@ RectTransform:
   m_Father: {fileID: 1038176577}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.20014185}
+  m_AnchorMin: {x: 0, y: 0.19999999}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
@@ -30757,8 +30757,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiManager: {fileID: 316338588}
   levelEditorManager: {fileID: 649087541}
-  characterSheets: []
-  avatarList:
+  playerAvatarList:
   - {fileID: 6908615707928747110, guid: cb0ced53a6ba58c42bb0505b2967ffb2, type: 3}
   - {fileID: 6908615707928747110, guid: c4168c32955136c4889728216eec9a45, type: 3}
   - {fileID: 6908615707928747110, guid: b375fc46ae4d67f43af49f1611046b6f, type: 3}
@@ -30772,7 +30771,7 @@ MonoBehaviour:
   - {fileID: 6908615707928747110, guid: 0c3548ed0b20a1b42b34b9bea5a8e17c, type: 3}
   - {fileID: 6908615707928747110, guid: e6644fbb359e69f4c89cbbe503e04f88, type: 3}
   tokenShortcutPrefab: {fileID: 8641440178500542071, guid: 5ad2d8bbb1e07b64e84eaf5f2b6711d1, type: 3}
-  avatarPortrait:
+  playerAvatarPortrait:
   - {fileID: 21300000, guid: cc669ef1dcca95645849bbe9ab11ba35, type: 3}
   - {fileID: 21300000, guid: 309f6bfa7628c5841b092883cb6a6f90, type: 3}
   - {fileID: 21300000, guid: 5630961959af6894c8a70c1707e20237, type: 3}
@@ -38669,7 +38668,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 370852692}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.79985815
+  m_Size: 0.8
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

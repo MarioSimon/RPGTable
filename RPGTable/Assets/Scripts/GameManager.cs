@@ -106,6 +106,11 @@ public class GameManager : NetworkBehaviour
         return NPCSheets.Count;
     }
 
+    public void SaveNPCSheetChanges(NPCSheetInfo NPCInfo)
+    {
+
+    }
+
     public void DeleteNPC(int NPC_ID)
     {
         if (NPC_ID > characterSheets.Count || NPC_ID < 0) { return; }
