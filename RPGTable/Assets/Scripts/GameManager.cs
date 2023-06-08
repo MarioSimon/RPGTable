@@ -15,11 +15,13 @@ public class GameManager : NetworkBehaviour
     [SerializeField] LevelEditorManager levelEditorManager;
 
     List<CharacterSheetInfo> characterSheets;
-    List<NPCSheetInfo> NPCSheets;
-
-    [SerializeField] List<GameObject> playerAvatarList;
-    [SerializeField] GameObject tokenShortcutPrefab;
+    [SerializeField] List<GameObject> playerAvatarList;  
     public List<Sprite> playerAvatarPortrait;
+
+    List<NPCSheetInfo> NPCSheets;
+    [SerializeField] List<GameObject> NPCAvatarList;
+
+    [SerializeField] GameObject tokenShortcutPrefab;
 
     Dictionary<string, ulong> playerList;
 
@@ -59,7 +61,7 @@ public class GameManager : NetworkBehaviour
 
     #region tokens
 
-    public void SpawnToken(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
+    public void SpawnPlayerToken(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
     {
         if (IsHost)
         {
@@ -67,6 +69,7 @@ public class GameManager : NetworkBehaviour
 
             TokenController tokenController = token.GetComponent<TokenController>();
             tokenController.ownerName.Value = new FixedString64Bytes(ownerName);
+            tokenController.tokenType = tokenType.PC;
             tokenController.characterSheetInfo = characterSheetInfo;
             token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
 
@@ -74,7 +77,26 @@ public class GameManager : NetworkBehaviour
         }
         else
         {
-            SpawnTokenServerRpc(ownerID, ownerName, avatarID, characterSheetInfo);
+            SpawnPlayerTokenServerRpc(ownerID, ownerName, avatarID, characterSheetInfo);
+        }
+    }
+
+    public void SpawnNPCToken(ulong ownerID, string ownerName, int avatarID, NPCSheetInfo _NPCSheetInfo)
+    {
+        if (IsHost)
+        {
+            GameObject token = Instantiate(NPCAvatarList[avatarID], Vector3.zero, Quaternion.identity);
+
+            TokenController tokenController = token.GetComponent<TokenController>();
+            tokenController.ownerName.Value = new FixedString64Bytes(ownerName);
+            _NPCSheetInfo.sheetID = -1;
+            tokenController.tokenType = tokenType.NPC;
+            tokenController.NPCSheetInfo = _NPCSheetInfo;
+            token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
+        }
+        else
+        {
+            SpawnNPCTokenServerRpc(ownerID, ownerName, avatarID, _NPCSheetInfo);
         }
     }
 
@@ -99,6 +121,7 @@ public class GameManager : NetworkBehaviour
         if (!IsHost) { return; }
 
         NPCSheets.Add(NPCInfo);
+        SaveNPCsToJSON();
     }
 
     public int GetNewNPCSheetID()
@@ -108,7 +131,11 @@ public class GameManager : NetworkBehaviour
 
     public void SaveNPCSheetChanges(NPCSheetInfo NPCInfo)
     {
+        if (NPCInfo.sheetID < 0) { return; }
 
+        NPCSheets[NPCInfo.sheetID] = NPCInfo;
+        SaveNPCsToJSON();
+        uiManager.UpdateNPCButtonName(NPCInfo.sheetID, NPCInfo.NPCName);
     }
 
     public void DeleteNPC(int NPC_ID)
@@ -122,6 +149,36 @@ public class GameManager : NetworkBehaviour
     private void UpdateNPCIDs()
     {
         
+    }
+
+    public void SaveNPCsToJSON()
+    {
+        if (NPCSheets.Count < 1) { return; }
+
+        SerializableList<NPCSheetInfo> savedNPCInfo = new SerializableList<NPCSheetInfo>();
+
+        foreach (NPCSheetInfo NPCInfo in NPCSheets)
+        {
+            savedNPCInfo.list.Add(NPCInfo);
+        }
+
+        string json = JsonUtility.ToJson(savedNPCInfo);
+        File.WriteAllText(Application.dataPath + "/StreamingAssets/npcs.json", json);
+    }
+
+    public void LoadNPCsFromJSON()
+    {
+        if (!File.Exists(Application.dataPath + "/StreamingAssets/npcs.json")) { return; }
+
+        string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/npcs.json");
+        SerializableList<NPCSheetInfo> savedNPCInfo = JsonUtility.FromJson<SerializableList<NPCSheetInfo>>(jsonString);
+
+        foreach (NPCSheetInfo NPCInfo in savedNPCInfo.list)
+        {
+            AddNewNPCSheetInfo(NPCInfo);
+        }
+
+        uiManager.LoadSavedNPCs(NPCSheets);
     }
 
     #endregion
@@ -215,6 +272,7 @@ public class GameManager : NetworkBehaviour
             AddNewCharacterSheetInfo(CSInfo);
         }
     }
+
     #endregion
 
     #region levels
@@ -386,11 +444,19 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnTokenServerRpc(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
+    public void SpawnPlayerTokenServerRpc(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
     {
         if (!IsHost) { return; }
 
-        SpawnToken(ownerID, ownerName, avatarID, characterSheetInfo);
+        SpawnPlayerToken(ownerID, ownerName, avatarID, characterSheetInfo);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnNPCTokenServerRpc(ulong ownerID, string ownerName, int avatarID, NPCSheetInfo NPCSheetInfo)
+    {
+        if (!IsHost) { return; }
+
+        SpawnNPCToken(ownerID, ownerName, avatarID, NPCSheetInfo);
     }
 
     [ServerRpc (RequireOwnership = false)]
@@ -474,13 +540,13 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    void UpdateSheetListClientRpc(CharacterSheetInfo charInfo)
+    private void UpdateSheetListClientRpc(CharacterSheetInfo charInfo)
     {
         characterSheets.Add(charInfo);
     }
 
     [ClientRpc]
-    void SaveCharacterSheetChangesClientRpc(CharacterSheetInfo charInfo)
+    private void SaveCharacterSheetChangesClientRpc(CharacterSheetInfo charInfo)
     {
         characterSheets[charInfo.sheetID] = charInfo;
     }

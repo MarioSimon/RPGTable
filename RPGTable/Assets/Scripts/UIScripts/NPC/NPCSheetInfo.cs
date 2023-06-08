@@ -55,8 +55,63 @@ public class NPCSheetInfo : INetworkSerializable
     public string[] actionD2OtherBonus;
     public int[] actionD2Type;
     public int[] actionDC;
-    
+
     #endregion
+
+    public NPCSheetInfo GetCopy()
+    {
+        NPCSheetInfo copy = new NPCSheetInfo();
+
+        copy.sheetID = -1;
+        copy.avatarID = this.avatarID;
+        copy.animatorID = this.animatorID;
+
+        copy.NPCName = this.NPCName;
+        copy.NPCSize = this.NPCSize;
+        copy.NPCType = this.NPCType;
+        copy.NPCAlignement = this.NPCAlignement;
+
+        copy.armorClass = this.armorClass;
+        copy.healthPoints = this.healthPoints;
+        copy.speed = this.speed;
+
+        copy.strScore = this.strScore;
+        copy.dexScore = this.dexScore;
+        copy.conScore = this.conScore;
+        copy.intScore = this.intScore;
+        copy.wisScore = this.wisScore;
+        copy.chaScore = this.chaScore;
+
+        copy.skills = this.skills;
+        copy.damageVulnerabilites = this.damageVulnerabilites;
+        copy.damageResistances = this.damageResistances;
+        copy.damageInmunities = this.damageInmunities;
+        copy.conditionInmunities = this.conditionInmunities;
+        copy.senses = this.senses;
+        copy.languages = this.languages;
+        copy.challenge = this.challenge;
+
+        copy.actionCount = this.actionCount;
+        copy.actionName = this.actionName;
+        copy.actionType = this.actionType;
+        copy.actionWeapon = this.actionWeapon;
+        copy.actionAttackAbility = this.actionAttackAbility;
+        copy.actionAttackOtherBonus = this.actionAttackOtherBonus;
+        copy.actionAttackProficency = this.actionAttackProficency;
+        copy.actionD1NumDices = this.actionD1NumDices;
+        copy.actionD1DiceType = this.actionD1DiceType;
+        copy.actionD1Ability = this.actionD1Ability;
+        copy.actionD1OtherBonus = this.actionD1OtherBonus;
+        copy.actionD1Type = this.actionD1Type;
+        copy.actionD2NumDices = this.actionD2NumDices;
+        copy.actionD2DiceType = this.actionD2DiceType;
+        copy.actionD2Ability = this.actionD2Ability;
+        copy.actionD2OtherBonus = this.actionD2OtherBonus;
+        copy.actionD2Type = this.actionD2Type;
+        copy.actionDC = this.actionDC;
+
+        return copy;
+    }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {

@@ -6195,12 +6195,12 @@ GameObject:
   - component: {fileID: 181951717}
   - component: {fileID: 181951716}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: NPCListWindow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &181951715
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9918,6 +9918,8 @@ GameObject:
   - component: {fileID: 312544052}
   - component: {fileID: 312544054}
   - component: {fileID: 312544053}
+  - component: {fileID: 312544056}
+  - component: {fileID: 312544055}
   m_Layer: 5
   m_Name: DragBar
   m_TagString: Untagged
@@ -9982,6 +9984,49 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 312544051}
   m_CullTransparentMesh: 1
+--- !u!114 &312544055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312544051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 5
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 312544056}
+          m_TargetAssemblyTypeName: UIDrag, Assembly-CSharp
+          m_MethodName: DragHandler
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!114 &312544056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312544051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5925821fbc78fea4a8be6fd93dea32f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
+  UIPanel: {fileID: 181951714}
 --- !u!1 &313276945
 GameObject:
   m_ObjectHideFlags: 0
@@ -10417,7 +10462,8 @@ MonoBehaviour:
   deleteLevel: {fileID: 1172442811}
   library: {fileID: 52346423}
   closeLibrary: {fileID: 2070854326}
-  npcList: {fileID: 1101403611}
+  NPCListWindow: {fileID: 181951714}
+  NPCList: []
   closeNPCList: {fileID: 90315644}
 --- !u!4 &316338589
 Transform:
@@ -30770,7 +30816,6 @@ MonoBehaviour:
   - {fileID: 6908615707928747110, guid: 2121d08641220fa4784f737a3ca4afea, type: 3}
   - {fileID: 6908615707928747110, guid: 0c3548ed0b20a1b42b34b9bea5a8e17c, type: 3}
   - {fileID: 6908615707928747110, guid: e6644fbb359e69f4c89cbbe503e04f88, type: 3}
-  tokenShortcutPrefab: {fileID: 8641440178500542071, guid: 5ad2d8bbb1e07b64e84eaf5f2b6711d1, type: 3}
   playerAvatarPortrait:
   - {fileID: 21300000, guid: cc669ef1dcca95645849bbe9ab11ba35, type: 3}
   - {fileID: 21300000, guid: 309f6bfa7628c5841b092883cb6a6f90, type: 3}
@@ -30784,6 +30829,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 83a8bae7c270e8941a27db6f97de8762, type: 3}
   - {fileID: 21300000, guid: 2ec96c9d0857d8149ade1da9965875df, type: 3}
   - {fileID: 21300000, guid: 032ae1a2bd9f7ba47babbe044cde1866, type: 3}
+  NPCAvatarList:
+  - {fileID: 353186407617308433, guid: 029996c1f0069934ea27d7db87039f3f, type: 3}
+  tokenShortcutPrefab: {fileID: 8641440178500542071, guid: 5ad2d8bbb1e07b64e84eaf5f2b6711d1, type: 3}
   currentLevel: []
 --- !u!4 &1016826985
 Transform:
@@ -32615,7 +32663,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1101403612
 RectTransform:
   m_ObjectHideFlags: 0
@@ -45188,7 +45236,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 30}
+  m_SizeDelta: {x: 0, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1570660746
 MonoBehaviour:

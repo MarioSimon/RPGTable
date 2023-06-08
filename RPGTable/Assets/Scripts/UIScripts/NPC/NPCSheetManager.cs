@@ -13,7 +13,7 @@ public class NPCSheetManager : MonoBehaviour
     private DiceHandler diceHandler;
 
     [SerializeField] GameObject NPCSheet;
-    private TokenController NPCToken;
+    public TokenController NPCToken;
 
     public NPCSheetInfo NPCInfo;
 
@@ -90,6 +90,7 @@ public class NPCSheetManager : MonoBehaviour
         diceHandler = FindObjectOfType<DiceHandler>();
 
         closeNPCSheet.onClick.AddListener(() => CloseSheet());
+        spawnNPCToken.onClick.AddListener(() => SpawnToken(0, "", NPCInfo.avatarID, NPCInfo.GetCopy()));
 
         openCombatPage.onClick.AddListener(() => OpenCombatPage());
         openStatsPage.onClick.AddListener(() => OpenStatsPage());
@@ -290,6 +291,11 @@ public class NPCSheetManager : MonoBehaviour
         listOfActions.Add(action);
     }
 
+    void SpawnToken(ulong ownerID, string ownerName, int avatarID, NPCSheetInfo NPCSheetInfo)
+    {
+        gameManager.SpawnNPCToken(ownerID, ownerName, avatarID, NPCSheetInfo);
+    }
+
     #endregion
 
     #region Rolling methods
@@ -382,11 +388,15 @@ public class NPCSheetManager : MonoBehaviour
 
     void CloseSheet()
     {
-        if (NPCInfo.sheetID > -1)
+        SaveNPCInfo();
+        if (NPCInfo.sheetID >= 0)
         {
-            SaveNPCInfo();
             gameManager.SaveNPCSheetChanges(NPCInfo);
-        }      
+        }
+        else
+        {
+            NPCToken.NPCSheetInfo = NPCInfo;
+        }   
         Destroy(NPCSheet);
     }
 

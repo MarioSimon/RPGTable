@@ -117,7 +117,8 @@ public class UIManager : NetworkBehaviour
 
 
     [Header("NPC List")]
-    [SerializeField] GameObject npcList;
+    [SerializeField] GameObject NPCListWindow;
+    public List<GameObject> NPCList = new List<GameObject>();
     [SerializeField] Button closeNPCList;
     #endregion
 
@@ -174,6 +175,8 @@ public class UIManager : NetworkBehaviour
 
     #endregion
 
+    #region Player characters
+
     public void AddCharacterButton(int characterID, string characterName, int portraitID)
     {
         GameObject newCharacterButton = Instantiate(characterButtonPrefab);
@@ -200,10 +203,29 @@ public class UIManager : NetworkBehaviour
         characterList[newID].GetComponent<CharacterSelector>().charID = newID;
     }
 
+    #endregion
+
+    public void UpdateNPCButtonName(int NPC_ID, string newName)
+    {
+        NPCList[NPC_ID].GetComponent<NPCSelector>().NPCName.text = newName;
+    }
+
+    public void LoadSavedNPCs(List<NPCSheetInfo> savedNPCs)
+    {
+        NPCList _NPCList = FindObjectOfType<NPCList>();
+
+        foreach (NPCSheetInfo NPCInfo in savedNPCs)
+        {
+            _NPCList.LoadNPC(NPCInfo.sheetID, NPCInfo.NPCName);
+        }
+    }
+
     public GameObject GetActiveTokensParent()
     {
         return activeTokensParent;
     }
+
+    #region Levels
 
     private void SaveLevel()
     {
@@ -274,6 +296,10 @@ public class UIManager : NetworkBehaviour
             levelList.AddOptions(newLevels);
         }
     }
+
+    #endregion
+
+    #region Messages
 
     private void SendChatMessage()
     {
@@ -413,6 +439,10 @@ public class UIManager : NetworkBehaviour
         }
     }
 
+    #endregion
+
+    #region Dice rolls
+
     private void RollDice(DiceType type, string thrownBy, ClientRpcParams clientRpcParams)
     {
         string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
@@ -474,6 +504,8 @@ public class UIManager : NetworkBehaviour
 
         diceHandler.DeleteRoll(rollKey);
     }
+
+    #endregion
 
     void CheckInt(InputField inputField)
     {
@@ -739,8 +771,8 @@ public class UIManager : NetworkBehaviour
 
     private void ToggleNPCList()
     {
-        bool toggle = !npcList.activeInHierarchy;
-        npcList.SetActive(toggle);
+        bool toggle = !NPCListWindow.activeInHierarchy;
+        NPCListWindow.SetActive(toggle);
     }
 
     private void ToggleTextChat()
@@ -863,6 +895,7 @@ public class UIManager : NetworkBehaviour
 
         StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
         gameManager.LoadCharactersFromJSON();
+        gameManager.LoadNPCsFromJSON();
     }
 
     private void StartClient()

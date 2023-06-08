@@ -14,12 +14,15 @@ public class TokenController : NetworkBehaviour
     [SerializeField] GameObject tokenBase;
     [SerializeField] GameObject tokenMenu;
     [SerializeField] GameObject characterSheetPrefab;   
+    [SerializeField] GameObject NPCSheetPrefab;   
 
     [SerializeField] Animator animator;
     GameManager gameManager;
     Canvas canvas;
 
+    public tokenType tokenType;
     public CharacterSheetInfo characterSheetInfo;
+    public NPCSheetInfo NPCSheetInfo;
 
     public NetworkVariable<FixedString64Bytes> tokenName;
     public NetworkVariable<FixedString64Bytes> ownerName;
@@ -366,20 +369,40 @@ public class TokenController : NetworkBehaviour
         contextMenu.GetComponent<RectTransform>().SetParent(canvas.transform);
 
         ContextMenu contextMenuHandler = contextMenu.GetComponent<ContextMenu>();
-        contextMenuHandler.buttonList[0].onClick.AddListener(() => OpenCharacterSheet());
-        contextMenuHandler.buttonList[1].onClick.AddListener(() => OpenActionMenu());
-        contextMenuHandler.buttonList[2].onClick.AddListener(() => OpenGesturesMenu());
-        contextMenuHandler.buttonList[3].onClick.AddListener(() => DestroyToken());
-        contextMenuHandler.buttonList[4].onClick.AddListener(() => MoveUp());
-        contextMenuHandler.buttonList[5].onClick.AddListener(() => MoveDown());
-        //contextMenuHandler.buttonList[6].onClick.AddListener(() => );
-        //contextMenuHandler.buttonList[7].onClick.AddListener(() => );
-        contextMenuHandler.buttonList[8].onClick.AddListener(() => FallProne());
-        contextMenuHandler.buttonList[9].onClick.AddListener(() => GetUp());
-        contextMenuHandler.buttonList[10].onClick.AddListener(() => TauntGesture());
-        contextMenuHandler.buttonList[11].onClick.AddListener(() => LaughGesture());
-        contextMenuHandler.buttonList[12].onClick.AddListener(() => BattlecryGesture());
-        contextMenuHandler.buttonList[13].onClick.AddListener(() => ShrugGesture());
+
+        if (tokenType == tokenType.PC)
+        {
+            contextMenuHandler.buttonList[0].onClick.AddListener(() => OpenCharacterSheet());
+            contextMenuHandler.buttonList[1].onClick.AddListener(() => OpenActionMenu());
+            contextMenuHandler.buttonList[2].onClick.AddListener(() => OpenGesturesMenu());
+            contextMenuHandler.buttonList[3].onClick.AddListener(() => DestroyToken());
+            contextMenuHandler.buttonList[4].onClick.AddListener(() => MoveUp());
+            contextMenuHandler.buttonList[5].onClick.AddListener(() => MoveDown());
+            //contextMenuHandler.buttonList[6].onClick.AddListener(() => );
+            //contextMenuHandler.buttonList[7].onClick.AddListener(() => );
+            contextMenuHandler.buttonList[8].onClick.AddListener(() => FallProne());
+            contextMenuHandler.buttonList[9].onClick.AddListener(() => GetUp());
+            contextMenuHandler.buttonList[10].onClick.AddListener(() => TauntGesture());
+            contextMenuHandler.buttonList[11].onClick.AddListener(() => LaughGesture());
+            contextMenuHandler.buttonList[12].onClick.AddListener(() => BattlecryGesture());
+            contextMenuHandler.buttonList[13].onClick.AddListener(() => ShrugGesture());
+        } 
+        else if (tokenType == tokenType.NPC)
+        {
+            contextMenuHandler.buttonList[0].onClick.AddListener(() => OpenNPCSheet());
+            contextMenuHandler.buttonList[1].onClick.AddListener(() => OpenActionMenu());
+            //contextMenuHandler.buttonList[2].onClick.AddListener(() => OpenGesturesMenu());
+            contextMenuHandler.buttonList[3].onClick.AddListener(() => DestroyToken());
+            contextMenuHandler.buttonList[4].onClick.AddListener(() => MoveUp());
+            contextMenuHandler.buttonList[5].onClick.AddListener(() => MoveDown());
+            //contextMenuHandler.buttonList[6].onClick.AddListener(() => );
+            //contextMenuHandler.buttonList[7].onClick.AddListener(() => );
+            if (animator != null)
+            {
+                contextMenuHandler.buttonList[8].onClick.AddListener(() => FallProne());
+                contextMenuHandler.buttonList[9].onClick.AddListener(() => GetUp());
+            }
+        }
 
         tokenHP = tokenMenu.GetComponentInChildren<InputField>();
         tokenHP = tokenMenu.transform.GetChild(0).GetComponent<InputField>(); ;
@@ -392,6 +415,13 @@ public class TokenController : NetworkBehaviour
         Destroy(tokenMenuInstance);
 
         OpenCharacterSheetServerRpc();
+    }
+
+    private void OpenNPCSheet()
+    {
+        Destroy(tokenMenuInstance);
+
+        OpenNPCSheetServerRpc();
     }
 
     private void OpenActionMenu()
@@ -573,6 +603,17 @@ public class TokenController : NetworkBehaviour
 
         GameObject charSheet = Instantiate(characterSheetPrefab);
         charSheet.GetComponent<CharacterSheetManager>().CSInfo = characterSheetInfo;
+        charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void OpenNPCSheetServerRpc()
+    {
+        if (NPCSheetInfo == null) { return; }
+
+        GameObject charSheet = Instantiate(NPCSheetPrefab);
+        charSheet.GetComponent<NPCSheetManager>().NPCInfo = NPCSheetInfo;
+        charSheet.GetComponent<NPCSheetManager>().NPCToken = this;
         charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
     }
 
@@ -795,4 +836,10 @@ public class TokenController : NetworkBehaviour
     }
 
     #endregion
+}
+
+public enum tokenType 
+{ 
+    PC = 1,
+    NPC = 2
 }

@@ -10,7 +10,7 @@ public class NPCSelector : MonoBehaviour
     Canvas canvas;
 
     [SerializeField] Button openNPCSheet;
-    [SerializeField] Text NPCName;
+    public Text NPCName;
 
     public int NPC_ID;
 
