@@ -30831,6 +30831,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 032ae1a2bd9f7ba47babbe044cde1866, type: 3}
   NPCAvatarList:
   - {fileID: 353186407617308433, guid: 029996c1f0069934ea27d7db87039f3f, type: 3}
+  - {fileID: 6908615707928747110, guid: b45b868e2ccf3b7458746180313b0880, type: 3}
   tokenShortcutPrefab: {fileID: 8641440178500542071, guid: 5ad2d8bbb1e07b64e84eaf5f2b6711d1, type: 3}
   currentLevel: []
 --- !u!4 &1016826985
