@@ -92,6 +92,7 @@ public class GameManager : NetworkBehaviour
             _NPCSheetInfo.sheetID = -1;
             tokenController.tokenType = tokenType.NPC;
             tokenController.NPCSheetInfo = _NPCSheetInfo;
+            token.transform.localScale = GetTokenScale(_NPCSheetInfo.NPCSize);
             token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
         }
         else
@@ -105,6 +106,35 @@ public class GameManager : NetworkBehaviour
         yield return new WaitForSeconds(1);
 
         LoadActiveTokenShortcutsServerRpc();
+    }
+
+    Vector3 GetTokenScale(int tokenSize)
+    {
+        Vector3 tokenScale = Vector3.one;
+
+        switch (tokenSize)
+        {
+            case 0:
+                break;
+            case 1:
+                tokenScale *= 0.5f;
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                tokenScale *= 2f;
+                break;
+            case 5:
+                tokenScale *= 3f;
+                break;
+            case 6:
+                tokenScale *= 4f;
+                break;
+        }
+
+        return tokenScale;
     }
 
     #endregion
