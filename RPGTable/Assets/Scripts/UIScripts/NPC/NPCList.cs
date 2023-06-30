@@ -12,7 +12,6 @@ public class NPCList : MonoBehaviour
     [SerializeField] GameObject NPCSelectorPrefab;
 
     [SerializeField] Button addNPC;
-    
 
     [SerializeField] InputField searchBar;
 

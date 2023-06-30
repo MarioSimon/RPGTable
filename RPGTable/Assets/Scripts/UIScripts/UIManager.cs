@@ -175,7 +175,7 @@ public class UIManager : NetworkBehaviour
 
     #endregion
 
-    #region Player characters
+    #region player characters
 
     public void AddCharacterButton(int characterID, string characterName, int portraitID)
     {
@@ -205,6 +205,8 @@ public class UIManager : NetworkBehaviour
 
     #endregion
 
+    #region npc
+
     public void UpdateNPCButtonName(int NPC_ID, string newName)
     {
         NPCList[NPC_ID].GetComponent<NPCSelector>().NPCName.text = newName;
@@ -219,6 +221,18 @@ public class UIManager : NetworkBehaviour
             _NPCList.LoadNPC(NPCInfo.sheetID, NPCInfo.NPCName);
         }
     }
+
+    public void UpdateNPCButtonID(int newID)
+    {
+        NPCList[newID].GetComponent<NPCSelector>().NPC_ID = newID;
+    }
+
+    public void RemoveNPCButtonFromList(int NPC_ID)
+    {
+        NPCList.RemoveAt(NPC_ID);
+    }
+
+    #endregion
 
     public GameObject GetActiveTokensParent()
     {

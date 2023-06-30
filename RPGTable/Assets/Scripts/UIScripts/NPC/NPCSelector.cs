@@ -47,7 +47,10 @@ public class NPCSelector : MonoBehaviour
 
     void DeleteNPC()
     {
+        uIManager.RemoveNPCButtonFromList(NPC_ID);
+        gameManager.DeleteNPC(NPC_ID);
 
+        Destroy(this.gameObject);
     }
 
 }

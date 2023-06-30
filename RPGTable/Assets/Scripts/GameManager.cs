@@ -170,15 +170,21 @@ public class GameManager : NetworkBehaviour
 
     public void DeleteNPC(int NPC_ID)
     {
-        if (NPC_ID > characterSheets.Count || NPC_ID < 0) { return; }
+        if (NPC_ID > NPCSheets.Count || NPC_ID < 0) { return; }
 
         NPCSheets.RemoveAt(NPC_ID);
         UpdateNPCIDs();
+
+        SaveNPCsToJSON();
     }
 
     private void UpdateNPCIDs()
     {
-        
+        for (int i = 0; i < NPCSheets.Count; i++)
+        {
+            NPCSheets[i].sheetID = i;
+            uiManager.UpdateNPCButtonID(i);
+        }
     }
 
     public void SaveNPCsToJSON()
