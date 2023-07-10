@@ -118,7 +118,8 @@ public class UIManager : NetworkBehaviour
 
     [Header("NPC List")]
     [SerializeField] GameObject NPCListWindow;
-    public List<GameObject> NPCList = new List<GameObject>();
+    public List<GameObject> NPCSelectorList = new List<GameObject>();
+    public List<GameObject> NPCSearchSelectorList = new List<GameObject>();
     [SerializeField] Button closeNPCList;
     #endregion
 
@@ -209,7 +210,7 @@ public class UIManager : NetworkBehaviour
 
     public void UpdateNPCButtonName(int NPC_ID, string newName)
     {
-        NPCList[NPC_ID].GetComponent<NPCSelector>().NPCName.text = newName;
+        NPCSelectorList[NPC_ID].GetComponent<NPCSelector>().NPCName.text = newName;
     }
 
     public void LoadSavedNPCs(List<NPCSheetInfo> savedNPCs)
@@ -224,12 +225,12 @@ public class UIManager : NetworkBehaviour
 
     public void UpdateNPCButtonID(int newID)
     {
-        NPCList[newID].GetComponent<NPCSelector>().NPC_ID = newID;
+        NPCSelectorList[newID].GetComponent<NPCSelector>().NPC_ID = newID;
     }
 
     public void RemoveNPCButtonFromList(int NPC_ID)
     {
-        NPCList.RemoveAt(NPC_ID);
+        NPCSelectorList.RemoveAt(NPC_ID);
     }
 
     #endregion

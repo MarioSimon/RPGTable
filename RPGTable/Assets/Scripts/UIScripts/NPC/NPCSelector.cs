@@ -18,6 +18,15 @@ public class NPCSelector : MonoBehaviour
 
     [SerializeField] GameObject NPCSheetPrefab;
 
+    public NPCSelector GetCopy(NPCSelector original)
+    {
+        NPCSelector _NPCSelector = new NPCSelector();
+
+        //_NPCSelector.NPCName.text = 
+
+        return _NPCSelector;
+    }
+
     void Start()
     {
         uIManager = FindObjectOfType<UIManager>();
