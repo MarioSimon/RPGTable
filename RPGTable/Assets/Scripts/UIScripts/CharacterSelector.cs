@@ -12,11 +12,11 @@ public class CharacterSelector : MonoBehaviour
     Canvas canvas;
     
     [SerializeField] GameObject characterSheetPrefab;
-    [SerializeField] RightClickButton rightClickButton;
-
+    
     public int charID;
 
     [SerializeField] Button selectCharacter;
+    [SerializeField] RightClickButton rightClickButton;
     public Image characterPortrait;
     public Text characterName;
 

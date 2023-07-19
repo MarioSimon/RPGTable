@@ -1691,7 +1691,7 @@ public class CharacterSheetManager : MonoBehaviour
 
     void SpawnToken(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
     {
-        gameManager.SpawnToken(ownerID, ownerName, avatarID, characterSheetInfo);
+        gameManager.SpawnPlayerToken(ownerID, ownerName, avatarID, characterSheetInfo);
     }
 
     public void UpdateTokenHealthPoints(string tempHP, string currHP)

@@ -34,6 +34,7 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button toggleCharSelector;
     [SerializeField] Button toggleDiceBox;
     [SerializeField] Button toggleDmInventory;
+    [SerializeField] Button toggleNPCList;
 
     [SerializeField] GameObject activeTokensParent;
 
@@ -82,7 +83,7 @@ public class UIManager : NetworkBehaviour
     List<GameObject> characterList = new List<GameObject>();
     [SerializeField] float characterSpace;
     [SerializeField] GameObject characterButtonPrefab;
-    [SerializeField] Button buttonSpawnNewCharSheet;
+    [SerializeField] Button toggleCharacterCreator;
 
     [SerializeField] GameObject characterCreator;
     [SerializeField] Button closeCharacterCreator;
@@ -113,6 +114,13 @@ public class UIManager : NetworkBehaviour
     [Header("Library")]
     [SerializeField] GameObject library;
     [SerializeField] Button closeLibrary;
+
+
+    [Header("NPC List")]
+    [SerializeField] GameObject NPCListWindow;
+    public List<GameObject> NPCSelectorList = new List<GameObject>();
+    public List<GameObject> NPCSearchSelectorList = new List<GameObject>();
+    [SerializeField] Button closeNPCList;
     #endregion
 
     #region Unity Event Functions
@@ -132,11 +140,13 @@ public class UIManager : NetworkBehaviour
 
         toggleLibrary.onClick.AddListener(() => ToggleLibrary());
         closeLibrary.onClick.AddListener(() => ToggleLibrary());
-        buttonSpawnNewCharSheet.onClick.AddListener(() => ToggleCharacterCreator());
+        toggleCharacterCreator.onClick.AddListener(() => ToggleCharacterCreator());
         closeCharacterCreator.onClick.AddListener(() => ToggleCharacterCreator());
         toggleCharSelector.onClick.AddListener(() => ToggleCharacterSelector());
         closeCharacterSelector.onClick.AddListener(() => ToggleCharacterSelector());
         toggleDiceBox.onClick.AddListener(() => ToggleDiceBox());
+        toggleNPCList.onClick.AddListener(() => ToggleNPCList());
+        closeNPCList.onClick.AddListener(() => ToggleNPCList());
 
         minimizedBarOpenChat.onClick.AddListener(delegate { ToggleMinimizedBar(); ToggleTextChat(); });
         minimizedBarOpenRegistry.onClick.AddListener(delegate { ToggleMinimizedBar(); ToggleDiceRegistry(); });
@@ -166,13 +176,15 @@ public class UIManager : NetworkBehaviour
 
     #endregion
 
+    #region player characters
+
     public void AddCharacterButton(int characterID, string characterName, int portraitID)
     {
         GameObject newCharacterButton = Instantiate(characterButtonPrefab);
 
         newCharacterButton.GetComponent<CharacterSelector>().characterName.text = characterName;
         newCharacterButton.GetComponent<CharacterSelector>().charID = characterID;
-        newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.avatarPortrait[portraitID];
+        newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.playerAvatarPortrait[portraitID];
 
         newCharacterButton.GetComponent<RectTransform>().SetParent(characterListArea.transform);
 
@@ -192,10 +204,43 @@ public class UIManager : NetworkBehaviour
         characterList[newID].GetComponent<CharacterSelector>().charID = newID;
     }
 
+    #endregion
+
+    #region npc
+
+    public void UpdateNPCButtonName(int NPC_ID, string newName)
+    {
+        NPCSelectorList[NPC_ID].GetComponent<NPCSelector>().NPCName.text = newName;
+    }
+
+    public void LoadSavedNPCs(List<NPCSheetInfo> savedNPCs)
+    {
+        NPCList _NPCList = FindObjectOfType<NPCList>();
+
+        foreach (NPCSheetInfo NPCInfo in savedNPCs)
+        {
+            _NPCList.LoadNPC(NPCInfo.sheetID, NPCInfo.NPCName);
+        }
+    }
+
+    public void UpdateNPCButtonID(int newID)
+    {
+        NPCSelectorList[newID].GetComponent<NPCSelector>().NPC_ID = newID;
+    }
+
+    public void RemoveNPCButtonFromList(int NPC_ID)
+    {
+        NPCSelectorList.RemoveAt(NPC_ID);
+    }
+
+    #endregion
+
     public GameObject GetActiveTokensParent()
     {
         return activeTokensParent;
     }
+
+    #region Levels
 
     private void SaveLevel()
     {
@@ -266,6 +311,10 @@ public class UIManager : NetworkBehaviour
             levelList.AddOptions(newLevels);
         }
     }
+
+    #endregion
+
+    #region Messages
 
     private void SendChatMessage()
     {
@@ -405,6 +454,10 @@ public class UIManager : NetworkBehaviour
         }
     }
 
+    #endregion
+
+    #region Dice rolls
+
     private void RollDice(DiceType type, string thrownBy, ClientRpcParams clientRpcParams)
     {
         string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
@@ -466,6 +519,8 @@ public class UIManager : NetworkBehaviour
 
         diceHandler.DeleteRoll(rollKey);
     }
+
+    #endregion
 
     void CheckInt(InputField inputField)
     {
@@ -621,7 +676,7 @@ public class UIManager : NetworkBehaviour
 
         newCharacterButton.GetComponent<CharacterSelector>().characterName.text = characterName;
         newCharacterButton.GetComponent<CharacterSelector>().charID = characterID;
-        newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.avatarPortrait[portraitID];
+        newCharacterButton.GetComponent<CharacterSelector>().characterPortrait.sprite = gameManager.playerAvatarPortrait[portraitID];
 
         newCharacterButton.GetComponent<RectTransform>().SetParent(characterListArea.transform);
         newCharacterButton.GetComponent<RectTransform>().localPosition = position;
@@ -727,6 +782,12 @@ public class UIManager : NetworkBehaviour
     {
         bool toggle = !diceBox.activeInHierarchy;
         diceBox.SetActive(toggle);
+    }
+
+    private void ToggleNPCList()
+    {
+        bool toggle = !NPCListWindow.activeInHierarchy;
+        NPCListWindow.SetActive(toggle);
     }
 
     private void ToggleTextChat()
@@ -849,6 +910,7 @@ public class UIManager : NetworkBehaviour
 
         StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
         gameManager.LoadCharactersFromJSON();
+        gameManager.LoadNPCsFromJSON();
     }
 
     private void StartClient()
@@ -858,6 +920,7 @@ public class UIManager : NetworkBehaviour
         NetworkManager.Singleton.StartClient();
 
         Destroy(toggleDmInventory.transform.parent.gameObject);
+        Destroy(toggleNPCList.transform.parent.gameObject);
 
         DeactivateMainMenu();
         ActivateInGameHUD();
