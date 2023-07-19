@@ -18,15 +18,6 @@ public class NPCSelector : MonoBehaviour
 
     [SerializeField] GameObject NPCSheetPrefab;
 
-    public NPCSelector GetCopy(NPCSelector original)
-    {
-        NPCSelector _NPCSelector = new NPCSelector();
-
-        //_NPCSelector.NPCName.text = 
-
-        return _NPCSelector;
-    }
-
     void Start()
     {
         uIManager = FindObjectOfType<UIManager>();
@@ -56,9 +47,14 @@ public class NPCSelector : MonoBehaviour
 
     void DeleteNPC()
     {
+        GameObject selector = uIManager.NPCSelectorList[NPC_ID];
         uIManager.RemoveNPCButtonFromList(NPC_ID);
         gameManager.DeleteNPC(NPC_ID);
 
+        if (selector != this.gameObject)
+        {
+            Destroy(selector);
+        }
         Destroy(this.gameObject);
     }
 
