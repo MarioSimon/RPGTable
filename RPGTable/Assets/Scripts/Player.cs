@@ -5,6 +5,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Player : NetworkBehaviour
 {
@@ -17,6 +18,9 @@ public class Player : NetworkBehaviour
     private UIManager UIManager;
     private GameManager gameManager;
 
+    private LineRenderer lineRenderer;
+    private Text rulerDistance;
+    private const float METER_TO_FEET_RATIO = 3.281f;
     #endregion
 
     #region unity event functions
@@ -25,6 +29,8 @@ public class Player : NetworkBehaviour
     {
         UIManager = FindObjectOfType<UIManager>();
         gameManager = FindObjectOfType<GameManager>();
+        lineRenderer = GetComponent<LineRenderer>();
+        rulerDistance = UIManager.GetRulerDistanceText();
         NetworkManager.OnClientConnectedCallback += ConfigurePlayer;
     }
 
@@ -48,6 +54,7 @@ public class Player : NetworkBehaviour
         }
         InteractWithSelection();
         InteractWithMovement();
+        InteractWithRuler();
     }
 
     #endregion
@@ -75,6 +82,37 @@ public class Player : NetworkBehaviour
             gameManager.AddPlayerToListServerRpc(name, id);
         }
         
+    }
+
+    private void InteractWithRuler()
+    {
+        RaycastHit hit;
+        bool hasHit = Physics.Raycast(GetMouseRay(), out hit);
+
+        if (hasHit)
+        {
+            if (Input.GetKey(KeyCode.R) && Input.GetMouseButtonDown(0))
+            {
+                lineRenderer.SetPosition(0, hit.point);
+            }
+
+            if (Input.GetKey(KeyCode.R) && Input.GetMouseButton(0))
+            {
+                lineRenderer.SetPosition(1, hit.point);
+
+                float distanceValue = Vector3.Distance(lineRenderer.GetPosition(0), lineRenderer.GetPosition(1)) * METER_TO_FEET_RATIO;
+                rulerDistance.text = Mathf.RoundToInt(distanceValue).ToString();
+                rulerDistance.GetComponent<RectTransform>().position = Input.mousePosition + new Vector3(0, 25, 0);
+            }
+        }
+
+        if (!Input.GetKey(KeyCode.R) || !Input.GetMouseButton(0))
+        {
+            for(int i = 0; i < lineRenderer.positionCount; i++){
+                lineRenderer.SetPosition(i, Vector3.zero);
+            }
+            rulerDistance.text = "";
+        }
     }
 
     #endregion
