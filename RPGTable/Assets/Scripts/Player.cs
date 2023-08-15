@@ -93,16 +93,16 @@ public class Player : NetworkBehaviour
         {
             if (Input.GetKey(KeyCode.R) && Input.GetMouseButtonDown(0))
             {
-                lineRenderer.SetPosition(0, hit.point);
+                lineRenderer.SetPosition(0, hit.point + Vector3.up * 0.25f);
             }
 
             if (Input.GetKey(KeyCode.R) && Input.GetMouseButton(0))
             {
-                lineRenderer.SetPosition(1, hit.point);
+                lineRenderer.SetPosition(1, hit.point + Vector3.up * 0.25f);
 
-                float distanceValue = Vector3.Distance(lineRenderer.GetPosition(0), lineRenderer.GetPosition(1)) * METER_TO_FEET_RATIO;
+                float distanceValue = Vector3.Distance(lineRenderer.GetPosition(0) - Vector3.up * 0.25f, lineRenderer.GetPosition(1) - Vector3.up * 0.25f) * METER_TO_FEET_RATIO;
                 rulerDistance.text = Mathf.RoundToInt(distanceValue).ToString();
-                rulerDistance.GetComponent<RectTransform>().position = Input.mousePosition + new Vector3(0, 25, 0);
+                rulerDistance.GetComponent<RectTransform>().position = Input.mousePosition + new Vector3(0, 30, 0);
             }
         }
 
@@ -145,7 +145,7 @@ public class Player : NetworkBehaviour
             TokenController target = hit.transform.GetComponent<TokenController>();
             if (target == null) { continue; }
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.R))
             {
                 SelectToken(target);
             }
