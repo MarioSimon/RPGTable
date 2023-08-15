@@ -20,6 +20,7 @@ public class UIManager : NetworkBehaviour
     readonly ushort port = 7777;
 
     public Player localPlayer;
+    [SerializeField] Text rulerDistanceText;
 
     [Header("Main Menu")]
     [SerializeField] GameObject mainMenu;
@@ -537,6 +538,11 @@ public class UIManager : NetworkBehaviour
         {
             inputField.text = "99";
         }
+    }
+
+    public Text GetRulerDistanceText()
+    {
+        return rulerDistanceText;
     }
 
     #region ServerRpc
