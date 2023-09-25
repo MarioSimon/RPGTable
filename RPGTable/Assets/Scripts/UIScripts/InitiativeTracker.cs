@@ -13,11 +13,12 @@ public class InitiativeTracker : MonoBehaviour
 
     [SerializeField] GameObject initiativeItemPrefab;
 
-    public void AddToTracker(int ID, string name)
+    public void AddToTracker(string name)
     {
+        if (Tracking(name)) { return; }
+
         GameObject newItem = Instantiate(initiativeItemPrefab);
 
-        newItem.GetComponent<InitiativeItem>().tokenID = ID;
         newItem.GetComponent<InitiativeItem>().tokenName.text = name;
         newItem.GetComponent<RectTransform>().SetParent(orderListParent.GetComponent<RectTransform>());
 
@@ -36,7 +37,24 @@ public class InitiativeTracker : MonoBehaviour
             if (item.GetComponent<InitiativeItem>().tokenName.text == name)
             {
                 item.GetComponent<InitiativeItem>().tokenInitiative.text = newInitiative.ToString();
+                break;
             }
         }
+    }
+
+    private bool Tracking(string characterName)
+    {
+        bool tracking = false;
+
+        foreach (GameObject item in initiativeList)
+        {
+            if (item.GetComponent<InitiativeItem>().tokenName.text == characterName)
+            {
+                tracking = true;
+                break;
+            }
+        }
+
+        return tracking;
     }
 }

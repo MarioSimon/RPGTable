@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class InitiativeItem : MonoBehaviour, IComparable
 {
-    public int tokenID;
     public Text tokenName;
     public InputField tokenInitiative;
 

@@ -293,6 +293,7 @@ public class DiceHandler : NetworkBehaviour
         result += modifier;
 
         uiManager.NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
+        uiManager.AddToInitiativeTracker(roll.playerName);
         uiManager.SetInitiative(roll.playerName, result);
 
         DeleteRoll(rollKey);

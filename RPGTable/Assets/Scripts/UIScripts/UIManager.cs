@@ -252,9 +252,9 @@ public class UIManager : NetworkBehaviour
         return activeTokensParent;
     }
 
-    public void AddToInitiativeTracker(int sheetID, string name)
+    public void AddToInitiativeTracker(string name)
     {
-        initiativeTracker.AddToTracker(sheetID, name);
+        initiativeTracker.AddToTracker(name);
     }
 
     public void SetInitiative(string characterName, int initiative)

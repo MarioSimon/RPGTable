@@ -74,7 +74,7 @@ public class GameManager : NetworkBehaviour
             token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
 
             SpawnTokenShortcutClientRpc(characterSheetInfo);
-            AddToInitiativeTracker(characterSheetInfo.sheetID, characterSheetInfo.characterName);
+            AddToInitiativeTracker(characterSheetInfo.characterName);
         }
         else
         {
@@ -82,9 +82,9 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    private void AddToInitiativeTracker(int sheetID, string name)
+    private void AddToInitiativeTracker(string name)
     {
-        uiManager.AddToInitiativeTracker(sheetID, name);
+        uiManager.AddToInitiativeTracker(name);
     }
 
     public void SpawnNPCToken(ulong ownerID, string ownerName, int avatarID, NPCSheetInfo _NPCSheetInfo)
@@ -101,7 +101,7 @@ public class GameManager : NetworkBehaviour
             token.transform.localScale = GetTokenScale(_NPCSheetInfo.NPCSize);
             token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
 
-            AddToInitiativeTracker(-1, _NPCSheetInfo.NPCName);
+            AddToInitiativeTracker(_NPCSheetInfo.NPCName);
         }
         else
         {
