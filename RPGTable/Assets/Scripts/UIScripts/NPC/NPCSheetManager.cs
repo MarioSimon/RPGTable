@@ -330,7 +330,7 @@ public class NPCSheetManager : MonoBehaviour
             dexModifier.text = "0";
         }
 
-        diceHandler.RollCheck(NPCName.text, "Initiative", int.Parse(dexModifier.text));
+        diceHandler.RollInitiative(NPCName.text, int.Parse(dexModifier.text));
     }
 
     void RollStrengthSave()

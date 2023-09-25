@@ -1953,7 +1953,7 @@ public class CharacterSheetManager : MonoBehaviour
             initiativeBonus.text = "0";
         }
 
-        diceHandler.RollCheck(characterName.text, "Initiative", int.Parse(initiativeBonus.text));
+        diceHandler.RollInitiative(characterName.text, int.Parse(initiativeBonus.text));
     }
 
     // ability saving throws

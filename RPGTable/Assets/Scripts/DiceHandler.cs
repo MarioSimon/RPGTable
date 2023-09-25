@@ -229,6 +229,11 @@ public class DiceHandler : NetworkBehaviour
         RollCheckServerRpc(characterName, abilitySkill, modifier);
     }
 
+    public void RollInitiative(string characterName, int modifier)
+    {
+        RollInitiativeServerRpc(characterName, modifier);
+    }
+
     public void RollAbilitySave(string characterName, string ability, int modifier)
     {
         RollSaveServerRpc(characterName, ability, modifier);
@@ -254,79 +259,9 @@ public class DiceHandler : NetworkBehaviour
         RollActionDamageServerRpc(attackRollInfo);
     }
 
-    [ServerRpc]
-    private void RollAttackActionServerRpc(AttackRollInfo attackRollInfo, ServerRpcParams serverRpcParams = default)
-    {
-        string rollKey = GetNewRollKey(attackRollInfo.characterName + "-");
-        string message = "";
+    #endregion
 
-        if (attackRollInfo.toHitModifier >= 0)
-        {
-            message = " [" + attackRollInfo.actionName + " (+" + attackRollInfo.toHitModifier + ")]: ";
-        }
-        else
-        {
-            message = " [" + attackRollInfo.actionName + " (" + attackRollInfo.toHitModifier + ")]: ";
-        }
-
-        AddRoll(rollKey, attackRollInfo.characterName, 1, message);
-
-        var clientId = serverRpcParams.Receive.SenderClientId;
-
-        ClientRpcParams clientRpcParams = new ClientRpcParams
-        {
-            Send = new ClientRpcSendParams
-            {
-                TargetClientIds = new ulong[] { clientId }
-            }
-        };
-
-        StartCoroutine(RollDice(rollKey, DiceType.d20, attackRollInfo.toHitModifier, clientRpcParams, ResolveCheckOrSave));
-    }
-
-    [ServerRpc]
-    private void RollActionDamageServerRpc(AttackRollInfo attackRollInfo, ServerRpcParams serverRpcParams = default)
-    {
-        string rollKey = GetNewRollKey(attackRollInfo.characterName + "-");
-        string message = "";
-
-        if (attackRollInfo.damage2NumberOfDices == 0 && attackRollInfo.damage2Modifier == 0)
-        {
-            message = " [" + attackRollInfo.actionName + " damage]: {0} " + attackRollInfo.damage1Type;
-        }
-        else
-        {
-            message = " [" + attackRollInfo.actionName + " damage]: {0} " + attackRollInfo.damage1Type + " +  {1} " + attackRollInfo.damage2Type;
-        }
-
-        int numDices = attackRollInfo.damage1NumberOfDices + attackRollInfo.damage2NumberOfDices;
-
-        DiceType[] dicetypes = { attackRollInfo.damage1Dice, attackRollInfo.damage2Dice };
-
-        if (numDices > 0)
-            AddRoll(rollKey, attackRollInfo.characterName, numDices, message, dicetypes);
-
-        var clientId = serverRpcParams.Receive.SenderClientId;
-
-        ClientRpcParams clientRpcParams = new ClientRpcParams
-        {
-            Send = new ClientRpcSendParams
-            {
-                TargetClientIds = new ulong[] { clientId }
-            }
-        };
-
-        for (int i = 0; i < attackRollInfo.damage1NumberOfDices; i++)
-        {
-            StartCoroutine(RollDice(rollKey, attackRollInfo.damage1Dice, attackRollInfo.damage1Modifier, clientRpcParams, ResolveDamageRoll));
-        }
-
-        for (int i = 0; i < attackRollInfo.damage2NumberOfDices; i++)
-        {
-            StartCoroutine(RollDice(rollKey, attackRollInfo.damage2Dice, attackRollInfo.damage1Modifier, clientRpcParams, ResolveDamageRoll));
-        }
-    }
-
+    #region resolve roll methods
 
     void ResolveCheckOrSave(string rollKey, int modifier, ClientRpcParams clientRpcParams = default, int sheetID = -1)
     {
@@ -341,6 +276,24 @@ public class DiceHandler : NetworkBehaviour
         result += modifier;
 
         uiManager.NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
+
+        DeleteRoll(rollKey);
+    }
+
+    void ResolveInitiativeRoll(string rollKey, int modifier, ClientRpcParams clientRpcParams = default, int sheetID = -1)
+    {
+        DiceRollInfo roll = GetRollInfo(rollKey);
+        int result = 0;
+
+        foreach (DiceResult diceScore in roll.diceScores)
+        {
+            result += diceScore.result;
+        }
+
+        result += modifier;
+
+        uiManager.NotifyDiceScoreClientRpc(roll.playerName + roll.message + result.ToString());
+        uiManager.SetInitiative(roll.playerName, result);
 
         DeleteRoll(rollKey);
     }
@@ -447,6 +400,36 @@ public class DiceHandler : NetworkBehaviour
         StartCoroutine(RollDice(rollKey, DiceType.d20, modifier, clientRpcParams, ResolveCheckOrSave));
     }
 
+    [ServerRpc (RequireOwnership = false)]
+    void RollInitiativeServerRpc(string characterName, int modifier, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = GetNewRollKey(characterName + "-");
+        string message = " [Initiative (";
+
+        if (modifier >= 0)
+        {
+            message += "+" + modifier + ")]: ";
+        }
+        else
+        {
+            message += modifier + ")]: ";
+        }
+
+        AddRoll(rollKey, characterName, 1, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(RollDice(rollKey, DiceType.d20, modifier, clientRpcParams, ResolveInitiativeRoll));
+    }
+
     [ServerRpc(RequireOwnership = false)]
     void RollSaveServerRpc(string characterName, string abilitySkill, int modifier, ServerRpcParams serverRpcParams = default)
     {
@@ -512,6 +495,79 @@ public class DiceHandler : NetworkBehaviour
         ClientRpcParams clientRpcParams = new ClientRpcParams();
 
         StartCoroutine(RollDice(rollKey, DiceType.d20, 0, clientRpcParams, ResolveDeathSavingThrow, sheetID));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollAttackActionServerRpc(AttackRollInfo attackRollInfo, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = GetNewRollKey(attackRollInfo.characterName + "-");
+        string message = "";
+
+        if (attackRollInfo.toHitModifier >= 0)
+        {
+            message = " [" + attackRollInfo.actionName + " (+" + attackRollInfo.toHitModifier + ")]: ";
+        }
+        else
+        {
+            message = " [" + attackRollInfo.actionName + " (" + attackRollInfo.toHitModifier + ")]: ";
+        }
+
+        AddRoll(rollKey, attackRollInfo.characterName, 1, message);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartCoroutine(RollDice(rollKey, DiceType.d20, attackRollInfo.toHitModifier, clientRpcParams, ResolveCheckOrSave));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RollActionDamageServerRpc(AttackRollInfo attackRollInfo, ServerRpcParams serverRpcParams = default)
+    {
+        string rollKey = GetNewRollKey(attackRollInfo.characterName + "-");
+        string message = "";
+
+        if (attackRollInfo.damage2NumberOfDices == 0 && attackRollInfo.damage2Modifier == 0)
+        {
+            message = " [" + attackRollInfo.actionName + " damage]: {0} " + attackRollInfo.damage1Type;
+        }
+        else
+        {
+            message = " [" + attackRollInfo.actionName + " damage]: {0} " + attackRollInfo.damage1Type + " +  {1} " + attackRollInfo.damage2Type;
+        }
+
+        int numDices = attackRollInfo.damage1NumberOfDices + attackRollInfo.damage2NumberOfDices;
+
+        DiceType[] dicetypes = { attackRollInfo.damage1Dice, attackRollInfo.damage2Dice };
+
+        if (numDices > 0)
+            AddRoll(rollKey, attackRollInfo.characterName, numDices, message, dicetypes);
+
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        for (int i = 0; i < attackRollInfo.damage1NumberOfDices; i++)
+        {
+            StartCoroutine(RollDice(rollKey, attackRollInfo.damage1Dice, attackRollInfo.damage1Modifier, clientRpcParams, ResolveDamageRoll));
+        }
+
+        for (int i = 0; i < attackRollInfo.damage2NumberOfDices; i++)
+        {
+            StartCoroutine(RollDice(rollKey, attackRollInfo.damage2Dice, attackRollInfo.damage1Modifier, clientRpcParams, ResolveDamageRoll));
+        }
     }
 
     #endregion
