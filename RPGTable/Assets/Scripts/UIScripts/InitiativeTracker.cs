@@ -57,4 +57,17 @@ public class InitiativeTracker : MonoBehaviour
 
         return tracking;
     }
+
+    public void RemoveFromTracker(string characterName)
+    {
+        foreach (GameObject item in initiativeList)
+        {
+            if (item.GetComponent<InitiativeItem>().tokenName.text == characterName)
+            {
+                initiativeList.Remove(item);
+                Destroy(item);
+                break;
+            }
+        }
+    }
 }

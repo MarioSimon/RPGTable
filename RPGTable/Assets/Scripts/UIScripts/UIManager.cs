@@ -262,6 +262,11 @@ public class UIManager : NetworkBehaviour
         initiativeTracker.SetInitiative(characterName, initiative);
     }
 
+    public void RemoveFromInitiativeTracker(string characterName)
+    {
+        initiativeTracker.RemoveFromTracker(characterName);
+    }
+
     #region Levels
 
     private void SaveLevel()
@@ -960,6 +965,7 @@ public class UIManager : NetworkBehaviour
 
         StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
         StartCoroutine(gameManager.LoadActiveTokenShortcut());
+        StartCoroutine(gameManager.LoadCurrentInitiativeOrder());
     }
 
     private bool SetIPAndPort()

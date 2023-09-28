@@ -17,6 +17,7 @@ public class NPCSelector : MonoBehaviour
     public int NPC_ID;
 
     [SerializeField] GameObject NPCSheetPrefab;
+    private int NPCCounter;
 
     void Start()
     {
@@ -42,6 +43,9 @@ public class NPCSelector : MonoBehaviour
 
     void SpawnToken(ulong ownerID, string ownerName, int avatarID, NPCSheetInfo _NPCSheetInfo)
     {
+        NPCCounter++;
+        _NPCSheetInfo.NPCName += " " + NPCCounter;
+
         gameManager.SpawnNPCToken(ownerID, ownerName, avatarID, _NPCSheetInfo);
     }
 
@@ -58,4 +62,9 @@ public class NPCSelector : MonoBehaviour
         Destroy(this.gameObject);
     }
 
+    public void ReduceNPCCounter()
+    {
+        if (NPCCounter <= 0) { return; }
+        NPCCounter--;
+    }
 }
