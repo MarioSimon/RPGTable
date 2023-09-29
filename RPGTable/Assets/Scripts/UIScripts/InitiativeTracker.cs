@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class InitiativeTracker : MonoBehaviour
 {
     [SerializeField] GameManager gameManager;
-    [SerializeField] UIManager uIManager;
 
     [SerializeField] GameObject orderListParent;
     public List<GameObject> initiativeList = new List<GameObject>();

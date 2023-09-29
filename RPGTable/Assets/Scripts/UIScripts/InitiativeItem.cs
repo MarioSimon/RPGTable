@@ -6,12 +6,21 @@ using UnityEngine.UI;
 
 public class InitiativeItem : MonoBehaviour, IComparable
 {
+    [SerializeField] GameManager gameManager;
+
+    [SerializeField] Button deleteItem;
     public Text tokenName;
     public InputField tokenInitiative;
+
+    private void Awake()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+    }
 
     private void Start()
     {
         tokenInitiative.onValueChanged.AddListener(delegate { CheckInitiativeInt(); });
+        deleteItem.onClick.AddListener(delegate { gameManager.RemoveFromInitiativeTracker(tokenName.text); });
     }
 
     private void CheckInitiativeInt()

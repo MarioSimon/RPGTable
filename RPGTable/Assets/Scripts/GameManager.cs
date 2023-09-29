@@ -149,7 +149,7 @@ public class GameManager : NetworkBehaviour
 
     public void RemoveFromInitiativeTracker(string characterName)
     {
-        uiManager.RemoveFromInitiativeTracker(characterName);
+        RemoveFromInitiativeTrackerClientRpc(characterName);
     }
 
     #endregion
@@ -662,6 +662,12 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+
+    [ClientRpc]
+    private void RemoveFromInitiativeTrackerClientRpc(string characterName)
+    {
+        uiManager.RemoveFromInitiativeTracker(characterName);
+    }
     #endregion
 }
 
