@@ -152,6 +152,18 @@ public class GameManager : NetworkBehaviour
         RemoveFromInitiativeTrackerClientRpc(characterName);
     }
 
+    public void SetInitiative(string name, int value)
+    {
+        if (IsHost)
+        {
+            SetInitiativeClientRpc(name, value);
+        }
+        else
+        {
+            SetInitiativeServerRpc(name, value);
+        }
+    }
+
     #endregion
 
     #region NPC sheets
@@ -605,6 +617,12 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    private void SetInitiativeServerRpc(string name, int value)
+    {
+        SetInitiative(name, value);
+    }
+
     #endregion
 
     #region ClientRpc
@@ -668,6 +686,13 @@ public class GameManager : NetworkBehaviour
     {
         uiManager.RemoveFromInitiativeTracker(characterName);
     }
+    
+    [ClientRpc]
+    private void SetInitiativeClientRpc(string name, int value)
+    {
+        uiManager.SetInitiative(name, value);
+    }
+    
     #endregion
 }
 

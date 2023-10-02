@@ -19,7 +19,7 @@ public class InitiativeItem : MonoBehaviour, IComparable
 
     private void Start()
     {
-        tokenInitiative.onValueChanged.AddListener(delegate { CheckInitiativeInt(); });
+        tokenInitiative.onValueChanged.AddListener(delegate { CheckInitiativeInt(); gameManager.SetInitiative(tokenName.text, int.Parse(tokenInitiative.text)); });
         deleteItem.onClick.AddListener(delegate { gameManager.RemoveFromInitiativeTracker(tokenName.text); });
     }
 
@@ -43,7 +43,7 @@ public class InitiativeItem : MonoBehaviour, IComparable
             int initiative = GetIntInitiative(tokenInitiative);
             int otherInitiative = GetIntInitiative(otherInitiativeItem.tokenInitiative);
 
-            return initiative.CompareTo(otherInitiative);
+            return initiative.CompareTo(otherInitiative) *-1;
         }
         else
         {

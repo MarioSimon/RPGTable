@@ -8,7 +8,7 @@ public class InitiativeTracker : MonoBehaviour
     [SerializeField] GameManager gameManager;
 
     [SerializeField] GameObject orderListParent;
-    public List<GameObject> initiativeList = new List<GameObject>();
+    public List<InitiativeItem> initiativeList = new List<InitiativeItem>();
 
     [SerializeField] GameObject initiativeItemPrefab;
 
@@ -21,33 +21,40 @@ public class InitiativeTracker : MonoBehaviour
         newItem.GetComponent<InitiativeItem>().tokenName.text = name;
         newItem.GetComponent<RectTransform>().SetParent(orderListParent.GetComponent<RectTransform>());
 
-        initiativeList.Add(newItem);
+        initiativeList.Add(newItem.GetComponent<InitiativeItem>());
     }
 
     public void SortInitiative()
     {
         initiativeList.Sort();
+
+        foreach (InitiativeItem item in initiativeList)
+        {
+            item.gameObject.transform.SetAsLastSibling();
+        }
     }
 
     public void SetInitiative(string name, int newInitiative)
     {
-        foreach (GameObject item in initiativeList)
+        foreach (InitiativeItem item in initiativeList)
         {
-            if (item.GetComponent<InitiativeItem>().tokenName.text == name)
+            if (item.tokenName.text == name)
             {
-                item.GetComponent<InitiativeItem>().tokenInitiative.text = newInitiative.ToString();
+                item.tokenInitiative.text = newInitiative.ToString();
                 break;
             }
         }
+
+        SortInitiative();
     }
 
     private bool Tracking(string characterName)
     {
         bool tracking = false;
 
-        foreach (GameObject item in initiativeList)
+        foreach (InitiativeItem item in initiativeList)
         {
-            if (item.GetComponent<InitiativeItem>().tokenName.text == characterName)
+            if (item.tokenName.text == characterName)
             {
                 tracking = true;
                 break;
@@ -59,12 +66,12 @@ public class InitiativeTracker : MonoBehaviour
 
     public void RemoveFromTracker(string characterName)
     {
-        foreach (GameObject item in initiativeList)
+        foreach (InitiativeItem item in initiativeList)
         {
-            if (item.GetComponent<InitiativeItem>().tokenName.text == characterName)
+            if (item.tokenName.text == characterName)
             {
                 initiativeList.Remove(item);
-                Destroy(item);
+                Destroy(item.gameObject);
                 break;
             }
         }
