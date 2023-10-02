@@ -267,11 +267,6 @@ public class UIManager : NetworkBehaviour
         initiativeTracker.RemoveFromTracker(characterName);
     }
 
-    public void SortInitiativeTracker()
-    {
-        initiativeTracker.SortInitiative();
-    }
-
     #region Levels
 
     private void SaveLevel()
