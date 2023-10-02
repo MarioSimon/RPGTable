@@ -113,7 +113,7 @@ public class TokenController : NetworkBehaviour
         }
     }
 
-    #region character sheet
+    #region Character sheet
 
     private int ToInt(string textValue) 
     {
@@ -293,6 +293,29 @@ public class TokenController : NetworkBehaviour
         else
         {
             TriggerCaCAnimationServerRpc();
+        }
+    }
+
+    private void ReduceNPCCounter()
+    {
+        if (!IsHost) { return; }
+
+        NPCSelector[] selectors = FindObjectsOfType<NPCSelector>();
+        string[] nameSplit = NPCSheetInfo.NPCName.Split(' ');
+        string name = nameSplit[0];
+
+        for (int i = 1; i < nameSplit.Length - 1; i++)
+        {
+            name += " " + nameSplit[i];
+        }
+
+        foreach (NPCSelector selector in selectors)
+        {
+            if (name == selector.NPCName.text)
+            {
+                selector.ReduceNPCCounter();
+                break;
+            }
         }
     }
 
@@ -644,10 +667,20 @@ public class TokenController : NetworkBehaviour
     [ServerRpc]
     private void DestroyTokenServerRpc()
     {
-        DestroyShortcutsClientRpc(characterSheetInfo.sheetID);
+        if (characterSheetInfo != null)
+        {
+            DestroyShortcutsClientRpc(characterSheetInfo.sheetID);
+            gameManager.RemoveFromInitiativeTracker(characterSheetInfo.characterName);
+        }
+
+        if (NPCSheetInfo != null)
+        {
+            ReduceNPCCounter();
+            gameManager.RemoveFromInitiativeTracker(NPCSheetInfo.NPCName);
+        }   
 
         this.gameObject.GetComponent<NetworkObject>().Despawn();
-    }
+    }    
 
     [ServerRpc]
     private void MoveUpServerRpc()

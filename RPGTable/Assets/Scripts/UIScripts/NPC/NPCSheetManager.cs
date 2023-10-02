@@ -79,7 +79,7 @@ public class NPCSheetManager : MonoBehaviour
     List<GameObject> actionList = new List<GameObject>();
 
     [SerializeField] Button openStatsPage;
- 
+    [SerializeField] Button rollInitiative;
     #endregion
     
     void Start()
@@ -112,6 +112,8 @@ public class NPCSheetManager : MonoBehaviour
         wisSave.onClick.AddListener(() => RollWisdomSave());
         chaCheck.onClick.AddListener(() => RollCharismaCheck());
         chaSave.onClick.AddListener(() => RollCharismaSave());
+
+        rollInitiative.onClick.AddListener(() => RollInitiativeCheck());
 
         LoadNPCInfo();
     }
@@ -330,7 +332,7 @@ public class NPCSheetManager : MonoBehaviour
             dexModifier.text = "0";
         }
 
-        diceHandler.RollCheck(NPCName.text, "Initiative", int.Parse(dexModifier.text));
+        diceHandler.RollInitiative(NPCName.text, int.Parse(dexModifier.text));
     }
 
     void RollStrengthSave()

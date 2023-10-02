@@ -74,6 +74,7 @@ public class GameManager : NetworkBehaviour
             token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
 
             SpawnTokenShortcutClientRpc(characterSheetInfo);
+            AddToInitiativeTrackerClientRpc(characterSheetInfo.characterName);
         }
         else
         {
@@ -94,6 +95,8 @@ public class GameManager : NetworkBehaviour
             tokenController.NPCSheetInfo = _NPCSheetInfo;
             token.transform.localScale = GetTokenScale(_NPCSheetInfo.NPCSize);
             token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
+
+            AddToInitiativeTrackerClientRpc(_NPCSheetInfo.NPCName);
         }
         else
         {
@@ -106,6 +109,13 @@ public class GameManager : NetworkBehaviour
         yield return new WaitForSeconds(1);
 
         LoadActiveTokenShortcutsServerRpc();
+    }
+
+    public IEnumerator LoadCurrentInitiativeOrder()
+    {
+        yield return new WaitForSeconds(1);
+
+        LoadCurrentInitiativeOrderServerRpc();
     }
 
     Vector3 GetTokenScale(int tokenSize)
@@ -135,6 +145,23 @@ public class GameManager : NetworkBehaviour
         }
 
         return tokenScale;
+    }
+
+    public void RemoveFromInitiativeTracker(string characterName)
+    {
+        RemoveFromInitiativeTrackerClientRpc(characterName);
+    }
+
+    public void SetInitiative(string name, int value)
+    {
+        if (IsHost)
+        {
+            SetInitiativeClientRpc(name, value);
+        }
+        else
+        {
+            SetInitiativeServerRpc(name, value);
+        }
     }
 
     #endregion
@@ -562,6 +589,40 @@ public class GameManager : NetworkBehaviour
             }
         }
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void LoadCurrentInitiativeOrderServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+        }
+
+        InitiativeItem[] initiativeItems = FindObjectsOfType<InitiativeItem>();
+
+        foreach (InitiativeItem item in initiativeItems)
+        {
+            int initiative = 0;
+            int.TryParse(item.tokenInitiative.text, out initiative);
+
+            AddToInitiativeTrackerClientRpc(item.tokenName.text, initiative);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetInitiativeServerRpc(string name, int value)
+    {
+        SetInitiative(name, value);
+    }
+
     #endregion
 
     #region ClientRpc
@@ -608,6 +669,30 @@ public class GameManager : NetworkBehaviour
         tokenShortcut.GetComponent<RectTransform>().SetParent(uiManager.GetActiveTokensParent().GetComponent<RectTransform>());
     }
 
+    [ClientRpc]
+    public void AddToInitiativeTrackerClientRpc(string name, int initiative = 0, ClientRpcParams clientRpcParams = default)
+    {
+        uiManager.AddToInitiativeTracker(name);
+
+        if (initiative > 0)
+        {
+            uiManager.SetInitiative(name, initiative);
+        }
+    }
+
+
+    [ClientRpc]
+    private void RemoveFromInitiativeTrackerClientRpc(string characterName)
+    {
+        uiManager.RemoveFromInitiativeTracker(characterName);
+    }
+    
+    [ClientRpc]
+    private void SetInitiativeClientRpc(string name, int value)
+    {
+        uiManager.SetInitiative(name, value);
+    }
+    
     #endregion
 }
 

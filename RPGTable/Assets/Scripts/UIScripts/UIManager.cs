@@ -36,6 +36,7 @@ public class UIManager : NetworkBehaviour
     [SerializeField] Button toggleDiceBox;
     [SerializeField] Button toggleDmInventory;
     [SerializeField] Button toggleNPCList;
+    [SerializeField] Button toggleInitiativeTracker;
 
     [SerializeField] GameObject activeTokensParent;
 
@@ -122,6 +123,13 @@ public class UIManager : NetworkBehaviour
     public List<GameObject> NPCSelectorList = new List<GameObject>();
     public List<GameObject> NPCSearchSelectorList = new List<GameObject>();
     [SerializeField] Button closeNPCList;
+
+    [Header("Initiative Tracker")]
+    [SerializeField] InitiativeTracker initiativeTracker;
+    [SerializeField] GameObject initiativeTrackerWindow;
+    public List<GameObject> initiativeList = new List<GameObject>();
+    [SerializeField] Button closeInitiativeTracker;
+
     #endregion
 
     #region Unity Event Functions
@@ -148,6 +156,9 @@ public class UIManager : NetworkBehaviour
         toggleDiceBox.onClick.AddListener(() => ToggleDiceBox());
         toggleNPCList.onClick.AddListener(() => ToggleNPCList());
         closeNPCList.onClick.AddListener(() => ToggleNPCList());
+
+        toggleInitiativeTracker.onClick.AddListener(() => ToggleInitiativeTracker());
+        closeInitiativeTracker.onClick.AddListener(() => ToggleInitiativeTracker());
 
         minimizedBarOpenChat.onClick.AddListener(delegate { ToggleMinimizedBar(); ToggleTextChat(); });
         minimizedBarOpenRegistry.onClick.AddListener(delegate { ToggleMinimizedBar(); ToggleDiceRegistry(); });
@@ -239,6 +250,21 @@ public class UIManager : NetworkBehaviour
     public GameObject GetActiveTokensParent()
     {
         return activeTokensParent;
+    }
+
+    public void AddToInitiativeTracker(string name)
+    {
+        initiativeTracker.AddToTracker(name);
+    }
+
+    public void SetInitiative(string characterName, int initiative)
+    {
+        initiativeTracker.SetInitiative(characterName, initiative);
+    }
+
+    public void RemoveFromInitiativeTracker(string characterName)
+    {
+        initiativeTracker.RemoveFromTracker(characterName);
     }
 
     #region Levels
@@ -884,6 +910,12 @@ public class UIManager : NetworkBehaviour
         diceCamRender.SetActive(toggle);
     }
 
+    private void ToggleInitiativeTracker()
+    {
+        bool toggle = !initiativeTrackerWindow.activeInHierarchy;
+        initiativeTrackerWindow.SetActive(toggle);
+    }
+
     #endregion
 
     #region Netcode Related Methods
@@ -933,6 +965,7 @@ public class UIManager : NetworkBehaviour
 
         StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
         StartCoroutine(gameManager.LoadActiveTokenShortcut());
+        StartCoroutine(gameManager.LoadCurrentInitiativeOrder());
     }
 
     private bool SetIPAndPort()
