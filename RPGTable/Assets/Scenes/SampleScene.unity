@@ -30374,7 +30374,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c54b39f40f785454eabab88d37b59644, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9c0cb16246d0c72498e54b2f51b9beb7, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -35971,8 +35971,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d8919d4048dcac469054d31a89cebcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1016826984}
-  uIManager: {fileID: 316338588}
   orderListParent: {fileID: 659407233}
   initiativeList: []
   initiativeItemPrefab: {fileID: 1301570763897375903, guid: 987bf65fb107e5f4ba3c21c3ef962681, type: 3}
@@ -50102,7 +50100,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 73c02b7603729d4408d1f71b54336e3f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: aabd2e6952923ad4ba5813bd1208659f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

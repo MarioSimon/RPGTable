@@ -254,7 +254,7 @@ public class UIManager : NetworkBehaviour
 
     public void AddToInitiativeTracker(string name)
     {
-        initiativeTracker.AddToTracker(name);
+        initiativeTracker.AddToTracker(name, IsHost);
     }
 
     public void SetInitiative(string characterName, int initiative)
