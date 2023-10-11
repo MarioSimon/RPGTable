@@ -114,6 +114,7 @@ public class NPCSheetManager : MonoBehaviour
         chaSave.onClick.AddListener(() => RollCharismaSave());
 
         rollInitiative.onClick.AddListener(() => RollInitiativeCheck());
+        addTrait.onClick.AddListener(() => AddNewTrait(traitList, traitsParent));
 
         LoadNPCInfo();
     }
@@ -280,6 +281,31 @@ public class NPCSheetManager : MonoBehaviour
         mod += abilityScore / 2;
 
         return mod;
+    }
+
+    private void AddNewTrait(List<GameObject> listOfTraits, GameObject traitsParent)
+    {
+        GameObject trait = Instantiate(traitsPrefab);
+        trait.GetComponent<CharaterTrait>().repositionListener += RepositionTraits;
+
+        traitsParent.GetComponent<RectTransform>().sizeDelta += new Vector2(0, 62);
+        trait.GetComponent<RectTransform>().SetParent(traitsParent.transform);
+        listOfTraits.Add(trait);
+    }
+
+    private void RepositionTraits()
+    {
+        for(int i = 0; i < traitList.Count; i++)
+        {
+            if (i == 0)
+            {
+                traitList[0].GetComponent<RectTransform>().localPosition = new Vector3(0, 2, 0);
+                continue;
+            }
+
+            Vector3 newPosition = traitList[i - 1].GetComponent<RectTransform>().localPosition + new Vector3(0, traitList[i - 1].GetComponent<RectTransform>().sizeDelta.y + 2, 0);
+            traitList[i].GetComponent<CharaterTrait>().Reposition(newPosition);
+        }
     }
 
     private void AddNewAction(List<GameObject> listOfActions, GameObject actionsParent)
