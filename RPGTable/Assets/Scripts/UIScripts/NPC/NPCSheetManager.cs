@@ -287,6 +287,7 @@ public class NPCSheetManager : MonoBehaviour
     {
         GameObject trait = Instantiate(traitsPrefab);
         trait.GetComponent<CharaterTrait>().repositionListener += RepositionTraits;
+        trait.GetComponent<CharaterTrait>().removeListener += RemoveTrait;
 
         traitsParent.GetComponent<RectTransform>().sizeDelta += new Vector2(0, 62);
         trait.GetComponent<RectTransform>().SetParent(traitsParent.transform);
@@ -306,6 +307,24 @@ public class NPCSheetManager : MonoBehaviour
             Vector3 newPosition = traitList[i - 1].GetComponent<RectTransform>().localPosition + new Vector3(0, traitList[i - 1].GetComponent<RectTransform>().sizeDelta.y + 2, 0);
             traitList[i].GetComponent<CharaterTrait>().Reposition(newPosition);
         }
+    }
+
+    private void RemoveTrait(GameObject trait)
+    {
+        foreach (GameObject traitOfList in traitList)
+        {
+            if (traitOfList == trait)
+            {
+                traitsParent.GetComponent<RectTransform>().sizeDelta -= new Vector2(0, trait.GetComponent<RectTransform>().sizeDelta.y);
+
+                traitList.Remove(trait);
+                Destroy(trait);
+
+                break;
+            }
+        }
+
+        RepositionTraits();
     }
 
     private void AddNewAction(List<GameObject> listOfActions, GameObject actionsParent)

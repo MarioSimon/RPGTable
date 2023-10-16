@@ -13,6 +13,7 @@ public class CharaterTrait : MonoBehaviour
 
     private float lastSize;
     public Action repositionListener;
+    public Action<GameObject> removeListener;
 
     // Start is called before the first frame update
     void Start()
@@ -20,7 +21,7 @@ public class CharaterTrait : MonoBehaviour
         lastSize = traitDescription.GetComponent<LayoutElement>().minHeight;
 
         traitDescriptionInput.onValueChanged.AddListener(delegate { UpdateDescriptionAndSize(); });
-
+        removeTrait.onClick.AddListener(RemoveTrait);
     }
 
     private void UpdateDescriptionAndSize()
@@ -35,11 +36,15 @@ public class CharaterTrait : MonoBehaviour
 
             repositionListener();
         }
-            
     }
 
     public void Reposition(Vector3 positionDelta)
     {
         GetComponent<RectTransform>().localPosition += positionDelta;
+    }
+
+    private void RemoveTrait()
+    {
+        removeListener(this.gameObject);
     }
 }
