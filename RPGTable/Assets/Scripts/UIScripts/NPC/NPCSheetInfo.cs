@@ -37,6 +37,10 @@ public class NPCSheetInfo : INetworkSerializable
     public string challenge = "";
 
     // NPC combat
+    public int traitCount = 0;
+    public string[] traitName;
+    public string[] traitDescription;
+
     public int actionCount = 0;
     public string[] actionName;
     public int[] actionType;
@@ -91,6 +95,10 @@ public class NPCSheetInfo : INetworkSerializable
         copy.languages = this.languages;
         copy.challenge = this.challenge;
 
+        copy.traitCount = this.traitCount;
+        copy.traitName = this.traitName;
+        copy.traitDescription = this.traitDescription;
+
         copy.actionCount = this.actionCount;
         copy.actionName = this.actionName;
         copy.actionType = this.actionType;
@@ -142,6 +150,27 @@ public class NPCSheetInfo : INetworkSerializable
         serializer.SerializeValue(ref languages);
         serializer.SerializeValue(ref challenge);
 
+        serializer.SerializeValue(ref traitCount);
+        if (serializer.IsReader)
+        {
+            traitName = new string[traitCount];
+            traitDescription = new string[traitCount];
+        }
+
+        for (int i = 0; i < traitCount; i++)
+        {
+            if (traitName[i] == null)
+            {
+                traitName[i] = "";
+            }
+            serializer.SerializeValue(ref traitName[i]);
+
+            if (traitDescription[i] == null)
+            {
+                traitDescription[i] = "";
+            }
+            serializer.SerializeValue(ref traitDescription[i]);
+        }
 
         serializer.SerializeValue(ref actionCount);
         if (serializer.IsReader)

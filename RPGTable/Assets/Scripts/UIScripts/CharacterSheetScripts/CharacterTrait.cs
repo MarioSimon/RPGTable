@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CharaterTrait : MonoBehaviour
+public class CharacterTrait : MonoBehaviour
 {
     [SerializeField] Button removeTrait;
-    [SerializeField] InputField traitName;
+    public InputField traitName;
     [SerializeField] Text traitDescription;
-    [SerializeField] InputField traitDescriptionInput;
+    public InputField traitDescriptionInput;
 
     private float lastSize;
     public Action repositionListener;
@@ -24,7 +24,7 @@ public class CharaterTrait : MonoBehaviour
         removeTrait.onClick.AddListener(RemoveTrait);
     }
 
-    private void UpdateDescriptionAndSize()
+    public void UpdateDescriptionAndSize()
     {
         traitDescription.text = traitDescriptionInput.text;
 

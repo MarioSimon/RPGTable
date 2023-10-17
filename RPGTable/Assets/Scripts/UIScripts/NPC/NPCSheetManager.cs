@@ -148,6 +148,16 @@ public class NPCSheetManager : MonoBehaviour
         languages.text = NPCInfo.languages;
         challenge.text = NPCInfo.challenge;
 
+        for (int i = 0; i < NPCInfo.traitCount; i++)
+        {
+            AddNewTrait(traitList, traitsParent);
+            CharacterTrait trait = traitList[i].GetComponent<CharacterTrait>();
+
+            trait.traitName.text = NPCInfo.traitName[i];
+            trait.traitDescriptionInput.text = NPCInfo.traitDescription[i];
+            trait.UpdateDescriptionAndSize();
+        }
+
         for (int i = 0; i < NPCInfo.actionCount; i++)
         {
             AddNewAction(actionList, actionsParent);
@@ -205,6 +215,18 @@ public class NPCSheetManager : MonoBehaviour
         NPCInfo.senses = senses.text;
         NPCInfo.languages = languages.text;
         NPCInfo.challenge = challenge.text;
+
+        NPCInfo.traitCount = traitList.Count;
+        NPCInfo.traitName = new string[NPCInfo.traitCount];
+        NPCInfo.traitDescription = new string[NPCInfo.traitCount];
+
+        for (int i = 0; i < NPCInfo.traitCount; i++)
+        {
+            CharacterTrait trait = traitList[i].GetComponent<CharacterTrait>();
+
+            NPCInfo.traitName[i] = trait.traitName.text;
+            NPCInfo.traitDescription[i] = trait.traitDescriptionInput.text;
+        }
 
         NPCInfo.actionCount = actionList.Count;
         NPCInfo.actionName = new string[NPCInfo.actionCount];
@@ -286,8 +308,8 @@ public class NPCSheetManager : MonoBehaviour
     private void AddNewTrait(List<GameObject> listOfTraits, GameObject traitsParent)
     {
         GameObject trait = Instantiate(traitsPrefab);
-        trait.GetComponent<CharaterTrait>().repositionListener += RepositionTraits;
-        trait.GetComponent<CharaterTrait>().removeListener += RemoveTrait;
+        trait.GetComponent<CharacterTrait>().repositionListener += RepositionTraits;
+        trait.GetComponent<CharacterTrait>().removeListener += RemoveTrait;
 
         traitsParent.GetComponent<RectTransform>().sizeDelta += new Vector2(0, 62);
         trait.GetComponent<RectTransform>().SetParent(traitsParent.transform);
@@ -305,7 +327,7 @@ public class NPCSheetManager : MonoBehaviour
             }
 
             Vector3 newPosition = traitList[i - 1].GetComponent<RectTransform>().localPosition + new Vector3(0, traitList[i - 1].GetComponent<RectTransform>().sizeDelta.y + 2, 0);
-            traitList[i].GetComponent<CharaterTrait>().Reposition(newPosition);
+            traitList[i].GetComponent<CharacterTrait>().Reposition(newPosition);
         }
     }
 
