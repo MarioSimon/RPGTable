@@ -126,6 +126,12 @@ public class CharacterSheetManager : MonoBehaviour
 
     [Header("Features")]
     [SerializeField] GameObject features;
+
+    [SerializeField] Button addFeature;
+    [SerializeField] GameObject featuresParent;
+    [SerializeField] GameObject traitsPrefab;
+    private List<GameObject> traitList = new List<GameObject>();
+
     [SerializeField] InputField featuresAndTraits;
     [SerializeField] InputField proficencies;
 
@@ -348,6 +354,9 @@ public class CharacterSheetManager : MonoBehaviour
             skill.skillCheck.onClick.AddListener(() => RollSkillCheck(skill.skillName, skill.skillTotalBonus.text));
         }
 
+        // features related events
+        addFeature.onClick.AddListener(() => AddNewTrait(traitList, featuresParent));
+
         // inventory related events
         addItem.onClick.AddListener(() => AddItemToInventory());
         maxWeight.onValueChanged.AddListener(delegate { CheckInt(maxWeight); });
@@ -551,6 +560,15 @@ public class CharacterSheetManager : MonoBehaviour
         proficencyBonus.text = CSInfo.proficencyBonus;
 
         featuresAndTraits.text = CSInfo.featuresAndTraits;
+        for (int i = 0; i < CSInfo.traitCount; i++)
+        {
+            AddNewTrait(traitList, featuresParent);
+            CharacterTrait trait = traitList[i].GetComponent<CharacterTrait>();
+
+            trait.traitName.text = CSInfo.traitName[i];
+            trait.traitDescriptionInput.text = CSInfo.traitDescription[i];
+            trait.UpdateDescriptionAndSize();
+        }
         proficencies.text = CSInfo.proficencies;
 
         for (int i = 0; i < CSInfo.itemCount; i++)
@@ -886,6 +904,17 @@ public class CharacterSheetManager : MonoBehaviour
         }
 
         CSInfo.featuresAndTraits = featuresAndTraits.text;
+
+        CSInfo.traitCount = traitList.Count;
+        CSInfo.traitName = new string[CSInfo.traitCount];
+        CSInfo.traitDescription = new string[CSInfo.traitCount];
+        for (int i = 0; i < CSInfo.traitCount; i++)
+        {
+            CharacterTrait trait = traitList[i].GetComponent<CharacterTrait>();
+
+            CSInfo.traitName[i] = trait.traitName.text;
+            CSInfo.traitDescription[i] = trait.traitDescriptionInput.text;
+        }
         CSInfo.proficencies = proficencies.text;
 
         CSInfo.itemCount = itemList.Count;
@@ -1521,6 +1550,53 @@ public class CharacterSheetManager : MonoBehaviour
     public int GetProficencyBonus()
     {
         return int.Parse(proficencyBonus.text);
+    }
+
+    // features methods
+
+    private void AddNewTrait(List<GameObject> listOfTraits, GameObject traitsParent)
+    {
+        GameObject trait = Instantiate(traitsPrefab);
+        trait.GetComponent<RectTransform>().sizeDelta *= 0.83f;
+        trait.GetComponent<CharacterTrait>().repositionListener += RepositionTraits;
+        trait.GetComponent<CharacterTrait>().removeListener += RemoveTrait;
+
+        traitsParent.GetComponent<RectTransform>().sizeDelta += new Vector2(0, 62);
+        trait.GetComponent<RectTransform>().SetParent(traitsParent.transform);
+        listOfTraits.Add(trait);
+    }
+
+    private void RepositionTraits()
+    {
+        for (int i = 0; i < traitList.Count; i++)
+        {
+            if (i == 0)
+            {
+                traitList[0].GetComponent<RectTransform>().localPosition = new Vector3(0, 2, 0);
+                continue;
+            }
+
+            Vector3 newPosition = traitList[i - 1].GetComponent<RectTransform>().localPosition + new Vector3(0, traitList[i - 1].GetComponent<RectTransform>().sizeDelta.y + 2, 0);
+            traitList[i].GetComponent<CharacterTrait>().Reposition(newPosition);
+        }
+    }
+
+    private void RemoveTrait(GameObject trait)
+    {
+        foreach (GameObject traitOfList in traitList)
+        {
+            if (traitOfList == trait)
+            {
+                featuresParent.GetComponent<RectTransform>().sizeDelta -= new Vector2(0, trait.GetComponent<RectTransform>().sizeDelta.y);
+
+                traitList.Remove(trait);
+                Destroy(trait);
+
+                break;
+            }
+        }
+
+        RepositionTraits();
     }
 
     // inventory methods

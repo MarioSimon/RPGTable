@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CharacterTrait : MonoBehaviour
 {
-    [SerializeField] Button removeTrait;
+    public Button removeTrait;
     public InputField traitName;
     [SerializeField] Text traitDescription;
     public InputField traitDescriptionInput;

@@ -480,19 +480,38 @@ public class CharacterCreator : NetworkBehaviour
 
             List<string> classTraits = libraryManager.classes[classID - 1].startingClassTraits.list;
 
-            foreach (string trait in classTraits)
-            {
-                newCharacterSheet.featuresAndTraits += trait + "\n";
-            }
-
             if (subclasses.isActiveAndEnabled && subclassID > 0)
             {
                 newCharacterSheet.subclass = libraryManager.classes[classID - 1].subclasses.list[subclassID - 1].subclassName;
 
                 List<string> subclassTraits = libraryManager.classes[classID - 1].subclasses.list[subclassID - 1].startingSubclassTraits.list;
-                foreach (string trait in subclassTraits)
+
+                newCharacterSheet.traitCount = classTraits.Count + subclassTraits.Count;
+                newCharacterSheet.traitName = new string[newCharacterSheet.traitCount];
+                newCharacterSheet.traitDescription = new string[newCharacterSheet.traitCount];
+
+                for(int i = 0; i < classTraits.Count; i++)
                 {
-                    newCharacterSheet.featuresAndTraits += trait + "\n";
+                    newCharacterSheet.traitName[i] = classTraits[i];
+                    newCharacterSheet.traitDescription[i] = "";
+                }
+                for(int i = classTraits.Count; i < newCharacterSheet.traitCount; i++)
+                {
+                    newCharacterSheet.traitName[i] = subclassTraits[i - classTraits.Count];
+                    newCharacterSheet.traitDescription[i] = "";
+                }
+            }
+
+            else
+            {
+                newCharacterSheet.traitCount = classTraits.Count;
+                newCharacterSheet.traitName = new string[newCharacterSheet.traitCount];
+                newCharacterSheet.traitDescription = new string[newCharacterSheet.traitCount];
+
+                for (int i = 0; i < classTraits.Count; i++)
+                {
+                    newCharacterSheet.traitName[i] = classTraits[i];
+                    newCharacterSheet.traitDescription[i] = "";
                 }
             }
         }
