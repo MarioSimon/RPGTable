@@ -574,7 +574,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0.99999106}
+  m_AnchorMax: {x: 1, y: 0.99888426}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2302,19 +2302,14 @@ MonoBehaviour:
     actionCount: 0
     actionName: []
     actionType: 
-    actionWeapon: 
-    actionAttackAbility: 
-    actionAttackOtherBonus: []
-    actionAttackProficency: 
+    actionAttackModifier: []
     actionD1NumDices: []
     actionD1DiceType: 
-    actionD1Ability: 
-    actionD1OtherBonus: []
+    actionD1FlatDamage: []
     actionD1Type: 
     actionD2NumDices: []
     actionD2DiceType: 
-    actionD2Ability: 
-    actionD2OtherBonus: []
+    actionD2FlatDamage: []
     actionD2Type: 
     actionDC: 
   closeNPCSheet: {fileID: 1664923737742480492}
@@ -2364,7 +2359,7 @@ MonoBehaviour:
   traitsPrefab: {fileID: 6289147816460218922, guid: a2418191b48f6a44bb37526f2f45ada9, type: 3}
   addTrait: {fileID: 551222207028770155}
   actionsParent: {fileID: 3526376484297556053}
-  actionsPrefab: {fileID: 3292938581148944135, guid: 65f59ad5706de53489ab82de61ee0ffd, type: 3}
+  actionsPrefab: {fileID: 3292938581148944135, guid: ecd9eb9fa70471e4cab47f2730891834, type: 3}
   addAction: {fileID: 2566494761824833115}
   openStatsPage: {fileID: 540510792233270378}
   rollInitiative: {fileID: 2385595633925215221}
@@ -11802,7 +11797,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2499129187559970667}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99999106
+  m_Size: 0.99888426
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11915,7 +11910,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0.99991995}
+  m_AnchorMax: {x: 1, y: 0.98995703}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -12878,7 +12873,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.00014699672}
   m_SizeDelta: {x: 0, y: 2}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &3098996144940540154
@@ -13139,7 +13134,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000060200284}
+  m_AnchoredPosition: {x: 0, y: 0.001942407}
   m_SizeDelta: {x: 0, y: 30}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &6269083204163397928
@@ -13170,11 +13165,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding:
     m_Left: 5
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
+    m_Right: 2
+    m_Top: 2
+    m_Bottom: 2
   m_ChildAlignment: 0
-  m_Spacing: 30
+  m_Spacing: 35
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -16312,7 +16307,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 3136750090881756828}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99991995
+  m_Size: 0.98995703
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

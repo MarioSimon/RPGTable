@@ -741,7 +741,7 @@ public class CharacterSheetManager : MonoBehaviour
         for (int i = 0; i < CSInfo.actionCount; i++)
         {
             AddNewAction(actionList, actionsParent);
-            ActionInfo action = actionList[i].GetComponent<ActionInfo>();
+            PCActionInfo action = actionList[i].GetComponent<PCActionInfo>();
 
             action.actionName.text = CSInfo.actionName[i];
             action.actionType.value = CSInfo.actionType[i];
@@ -771,7 +771,7 @@ public class CharacterSheetManager : MonoBehaviour
         for (int i = 0; i < CSInfo.bonusActionCount; i++)
         {
             AddNewAction(bonusActionList, bonusActionsParent);
-            ActionInfo action = bonusActionList[i].GetComponent<ActionInfo>();
+            PCActionInfo action = bonusActionList[i].GetComponent<PCActionInfo>();
 
             action.actionName.text = CSInfo.bonusActionName[i];
             action.actionType.value = CSInfo.bonusActionType[i];
@@ -801,7 +801,7 @@ public class CharacterSheetManager : MonoBehaviour
         for (int i = 0; i < CSInfo.reactionCount; i++)
         {
             AddNewAction(reactionList, reactionsParent);
-            ActionInfo action = reactionList[i].GetComponent<ActionInfo>();
+            PCActionInfo action = reactionList[i].GetComponent<PCActionInfo>();
 
             action.actionName.text = CSInfo.reactionName[i];
             action.actionType.value = CSInfo.reactionType[i];
@@ -1203,7 +1203,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         for (int i = 0; i < CSInfo.actionCount; i++)
         {
-            ActionInfo action = actionList[i].GetComponent<ActionInfo>();
+            PCActionInfo action = actionList[i].GetComponent<PCActionInfo>();
 
             CSInfo.actionName[i] = action.actionName.text;
             CSInfo.actionType[i] = action.actionType.value;
@@ -1253,7 +1253,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         for (int i = 0; i < CSInfo.bonusActionCount; i++)
         {
-            ActionInfo action = bonusActionList[i].GetComponent<ActionInfo>();
+            PCActionInfo action = bonusActionList[i].GetComponent<PCActionInfo>();
 
             CSInfo.bonusActionName[i] = action.actionName.text;
             CSInfo.bonusActionType[i] = action.actionType.value;
@@ -1303,7 +1303,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         for (int i = 0; i < CSInfo.reactionCount; i++)
         {
-            ActionInfo action = reactionList[i].GetComponent<ActionInfo>();
+            PCActionInfo action = reactionList[i].GetComponent<PCActionInfo>();
 
             CSInfo.reactionName[i] = action.actionName.text;
             CSInfo.reactionType[i] = action.actionType.value;
@@ -1757,8 +1757,8 @@ public class CharacterSheetManager : MonoBehaviour
     private void AddNewAction(List<GameObject> listOfActions, GameObject actionsParent)
     {
         GameObject action = Instantiate(actionsPrefab);
-        GameObject actionItem = action.GetComponent<ActionInfo>().actionItem;
-        action.GetComponent<ActionInfo>().sheetManager = this;
+        GameObject actionItem = action.GetComponent<PCActionInfo>().actionItem;
+        action.GetComponent<PCActionInfo>().sheetManager = this;
         actionItem.GetComponent<RectTransform>().SetParent(actionsParent.transform);
         listOfActions.Add(action);
     }

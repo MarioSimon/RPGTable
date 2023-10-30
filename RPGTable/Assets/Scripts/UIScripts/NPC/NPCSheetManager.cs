@@ -115,6 +115,7 @@ public class NPCSheetManager : MonoBehaviour
 
         rollInitiative.onClick.AddListener(() => RollInitiativeCheck());
         addTrait.onClick.AddListener(() => AddNewTrait(traitList, traitsParent));
+        addAction.onClick.AddListener(() => AddNewAction(actionList, actionsParent));
 
         LoadNPCInfo();
     }
@@ -161,26 +162,21 @@ public class NPCSheetManager : MonoBehaviour
         for (int i = 0; i < NPCInfo.actionCount; i++)
         {
             AddNewAction(actionList, actionsParent);
-            ActionInfo action = actionList[i].GetComponent<ActionInfo>();
+            NPCActionInfo action = actionList[i].GetComponent<NPCActionInfo>();
 
             action.actionName.text = NPCInfo.actionName[i];
             action.actionType.value = NPCInfo.actionType[i];
-            action.weaponTemplate.value = NPCInfo.actionWeapon[i];
 
-            action.wpnAttackAbility.value = NPCInfo.actionAttackAbility[i];
-            action.wpnOtherAttackBonus.text = NPCInfo.actionAttackOtherBonus[i];
-            action.wpnAttackProficency.isOn = NPCInfo.actionAttackProficency[i];
+            action.wpnAttackModifier.text = NPCInfo.actionAttackModifier[i];
 
             action.wpnDamage1NumberOfDices.text = NPCInfo.actionD1NumDices[i];
             action.wpnDamage1DiceType.value = NPCInfo.actionD1DiceType[i];
-            action.wpnDamage1Ability.value = NPCInfo.actionD1Ability[i];
-            action.wpnDamage1OtherBonus.text = NPCInfo.actionD1OtherBonus[i];
+            action.wpnDamage1OtherBonus.text = NPCInfo.actionD1FlatDamage[i];
             action.wpnDamage1DamageType.value = NPCInfo.actionD1Type[i];
 
             action.wpnDamage2NumberOfDices.text = NPCInfo.actionD2NumDices[i];
             action.wpnDamage2DiceType.value = NPCInfo.actionD2DiceType[i];
-            action.wpnDamage2Ability.value = NPCInfo.actionD2Ability[i];
-            action.wpnDamage2OtherBonus.text = NPCInfo.actionD2OtherBonus[i];
+            action.wpnDamage2OtherBonus.text = NPCInfo.actionD2FlatDamage[i];
             action.wpnDamage2DamageType.value = NPCInfo.actionD2Type[i];
 
             action.saveDC = NPCInfo.actionDC[i];
@@ -231,50 +227,40 @@ public class NPCSheetManager : MonoBehaviour
         NPCInfo.actionCount = actionList.Count;
         NPCInfo.actionName = new string[NPCInfo.actionCount];
         NPCInfo.actionType = new int[NPCInfo.actionCount];
-        NPCInfo.actionWeapon = new int[NPCInfo.actionCount];
-
-        NPCInfo.actionAttackAbility = new int[NPCInfo.actionCount];
-        NPCInfo.actionAttackOtherBonus = new string[NPCInfo.actionCount];
-        NPCInfo.actionAttackProficency = new bool[NPCInfo.actionCount];
-
+        
+        NPCInfo.actionAttackModifier = new string[NPCInfo.actionCount];
+        
         NPCInfo.actionD1NumDices = new string[NPCInfo.actionCount];
         NPCInfo.actionD1DiceType = new int[NPCInfo.actionCount];
-        NPCInfo.actionD1Ability = new int[NPCInfo.actionCount];
-        NPCInfo.actionD1OtherBonus = new string[NPCInfo.actionCount];
+        NPCInfo.actionD1FlatDamage = new string[NPCInfo.actionCount];
         NPCInfo.actionD1Type = new int[NPCInfo.actionCount];
-
+        
         NPCInfo.actionD2NumDices = new string[NPCInfo.actionCount];
         NPCInfo.actionD2DiceType = new int[NPCInfo.actionCount];
-        NPCInfo.actionD2Ability = new int[NPCInfo.actionCount];
-        NPCInfo.actionD2OtherBonus = new string[NPCInfo.actionCount];
+        NPCInfo.actionD2FlatDamage = new string[NPCInfo.actionCount];
         NPCInfo.actionD2Type = new int[NPCInfo.actionCount];
-
+        
         NPCInfo.actionDC = new int[NPCInfo.actionCount];
-
+        
         for (int i = 0; i < NPCInfo.actionCount; i++)
         {
-            ActionInfo action = actionList[i].GetComponent<ActionInfo>();
-
+            NPCActionInfo action = actionList[i].GetComponent<NPCActionInfo>();
+        
             NPCInfo.actionName[i] = action.actionName.text;
             NPCInfo.actionType[i] = action.actionType.value;
-            NPCInfo.actionWeapon[i] = action.weaponTemplate.value;
-
-            NPCInfo.actionAttackAbility[i] = action.wpnAttackAbility.value;
-            NPCInfo.actionAttackOtherBonus[i] = action.wpnOtherAttackBonus.text;
-            NPCInfo.actionAttackProficency[i] = action.wpnAttackProficency.isOn;
-
+        
+            NPCInfo.actionAttackModifier[i] = action.wpnAttackModifier.text;
+        
             NPCInfo.actionD1NumDices[i] = action.wpnDamage1NumberOfDices.text;
             NPCInfo.actionD1DiceType[i] = action.wpnDamage1DiceType.value;
-            NPCInfo.actionD1Ability[i] = action.wpnDamage1Ability.value;
-            NPCInfo.actionD1OtherBonus[i] = action.wpnDamage1OtherBonus.text;
+            NPCInfo.actionD1FlatDamage[i] = action.wpnDamage1OtherBonus.text;
             NPCInfo.actionD1Type[i] = action.wpnDamage1DamageType.value;
-
+        
             NPCInfo.actionD2NumDices[i] = action.wpnDamage2NumberOfDices.text;
             NPCInfo.actionD2DiceType[i] = action.wpnDamage2DiceType.value;
-            NPCInfo.actionD2Ability[i] = action.wpnDamage2Ability.value;
-            NPCInfo.actionD2OtherBonus[i] = action.wpnDamage2OtherBonus.text;
+            NPCInfo.actionD2FlatDamage[i] = action.wpnDamage2OtherBonus.text;
             NPCInfo.actionD2Type[i] = action.wpnDamage2DamageType.value;
-
+        
             NPCInfo.actionDC[i] = action.saveDC;
         }
     }
@@ -303,6 +289,36 @@ public class NPCSheetManager : MonoBehaviour
         mod += abilityScore / 2;
 
         return mod;
+    }
+
+    public int GetStrMod()
+    {
+        return int.Parse(strModifier.text);
+    }
+
+    public int GetDexMod()
+    {
+        return int.Parse(dexModifier.text);
+    }
+
+    public int GetConMod()
+    {
+        return int.Parse(conModifier.text);
+    }
+
+    public int GetIntMod()
+    {
+        return int.Parse(intModifier.text);
+    }
+
+    public int GetWisMod()
+    {
+        return int.Parse(wisModifier.text);
+    }
+
+    public int GetChaMod()
+    {
+        return int.Parse(chaModifier.text);
     }
 
     private void AddNewTrait(List<GameObject> listOfTraits, GameObject traitsParent)
@@ -352,9 +368,9 @@ public class NPCSheetManager : MonoBehaviour
     private void AddNewAction(List<GameObject> listOfActions, GameObject actionsParent)
     {
         GameObject action = Instantiate(actionsPrefab);
-        GameObject actionItem = action.GetComponent<ActionInfo>().actionItem;
-        //action.GetComponent<ActionInfo>().sheetManager = this;
-        actionItem.GetComponent<RectTransform>().SetParent(actionsParent.transform);
+        GameObject actionItem = action.GetComponent<NPCActionInfo>().actionItem;
+        action.GetComponent<NPCActionInfo>().npcSheetManager = this;
+        action.GetComponent<RectTransform>().SetParent(actionsParent.transform);
         listOfActions.Add(action);
     }
 

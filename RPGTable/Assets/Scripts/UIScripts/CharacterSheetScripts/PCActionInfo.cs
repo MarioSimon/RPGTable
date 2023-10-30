@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ActionInfo : MonoBehaviour
+public class PCActionInfo : MonoBehaviour
 {
     Canvas canvas;
     DiceHandler diceHandler;
@@ -102,10 +102,13 @@ public class ActionInfo : MonoBehaviour
 
         AttackRollInfo attackRollInfo = new AttackRollInfo();
 
-        attackRollInfo.sheetID = sheetManager.CSInfo.sheetID;
+        if (sheetManager != null)
+        {
+            attackRollInfo.sheetID = sheetManager.CSInfo.sheetID;
+            attackRollInfo.characterName = sheetManager.CSInfo.characterName;
+        }
 
         attackRollInfo.actionName = actionName.text;
-        attackRollInfo.characterName = sheetManager.CSInfo.characterName;
 
         attackRollInfo.toHitModifier = attackMod;
 
@@ -126,10 +129,13 @@ public class ActionInfo : MonoBehaviour
     {
         AttackRollInfo attackRollInfo = new AttackRollInfo();
 
-        attackRollInfo.sheetID = sheetManager.CSInfo.sheetID;
+        if (sheetManager != null)
+        {
+            attackRollInfo.sheetID = sheetManager.CSInfo.sheetID;
+            attackRollInfo.characterName = sheetManager.CSInfo.characterName;
+        }
 
         attackRollInfo.actionName = actionName.text;
-        attackRollInfo.characterName = sheetManager.CSInfo.characterName;
 
         attackRollInfo.toHitModifier = attackMod;
 
@@ -173,46 +179,61 @@ public class ActionInfo : MonoBehaviour
     private void SetAttackModifier(Dropdown attackAbility, InputField attackBonus, Toggle proficency, Text totalModifier)
     {
         int abilityBonus = 0;
+        int otherBonus = 0;
+        int proficencyBonus = 0;
 
-        switch (attackAbility.value)
+        if (sheetManager != null)
         {
-            case 0:
-                abilityBonus = sheetManager.GetStrMod();
-                break;
-            case 1:
-                abilityBonus = sheetManager.GetDexMod();
-                break;
-            case 2:
-                abilityBonus = sheetManager.GetConMod();
-                break;
-            case 3:
-                abilityBonus = sheetManager.GetIntMod();
-                break;
-            case 4:
-                abilityBonus = sheetManager.GetWisMod();
-                break;
-            case 5:
-                abilityBonus = sheetManager.GetChaMod();
-                break;
+            abilityBonus = GetPCAbilityBonus(attackAbility);        
+            proficencyBonus = GetPCProficencyBonus(proficency);
         }
 
-        int otherBonus = 0;
+        otherBonus = GetOtherBonus(attackBonus);
 
+        attackMod = abilityBonus + otherBonus + proficencyBonus;
+        totalModifier.text = attackMod.ToString();
+    }
+
+    private int GetPCProficencyBonus(Toggle proficency)
+    {
+        if (proficency.isOn)
+        {
+           return sheetManager.GetProficencyBonus();
+        }
+
+        return 0;
+    }
+
+    private int GetOtherBonus(InputField attackBonus)
+    {
+        int otherBonus;
         if (!int.TryParse(attackBonus.text, out otherBonus))
         {
             attackBonus.text = "0";
             otherBonus = 0;
         }
 
-        int proficencyBonus = 0;
+        return otherBonus;
+    }
 
-        if (proficency.isOn)
+    private int GetPCAbilityBonus(Dropdown attackAbility)
+    {
+        switch (attackAbility.value)
         {
-            proficencyBonus = sheetManager.GetProficencyBonus();
+            case 0:
+                return sheetManager.GetStrMod();
+            case 1:
+                return sheetManager.GetDexMod();
+            case 2:
+                return sheetManager.GetConMod();
+            case 3:
+                return sheetManager.GetIntMod();
+            case 4:
+                return sheetManager.GetWisMod();
+            case 5:
+                return sheetManager.GetChaMod();
         }
-
-        attackMod = abilityBonus + otherBonus + proficencyBonus;
-        totalModifier.text = attackMod.ToString();
+        return 0;
     }
 
     private void SetDamage1NDices(InputField diceNumber)
