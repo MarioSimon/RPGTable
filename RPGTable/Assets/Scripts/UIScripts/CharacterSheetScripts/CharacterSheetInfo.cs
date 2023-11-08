@@ -342,7 +342,7 @@ public class CharacterSheetInfo : INetworkSerializable
             serializer.SerializeValue(ref skillCharacteristic[i]);
             if (skillBonus[i] == null)
             {
-                skillBonus[i] = "";
+                skillBonus[i] = "0";
             }
             serializer.SerializeValue(ref skillBonus[i]);
             if (skillTotal[i] == null)

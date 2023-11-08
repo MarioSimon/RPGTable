@@ -93,12 +93,12 @@ public class NPCSheetManager : MonoBehaviour
         openCombatPage.onClick.AddListener(() => OpenCombatPage());
         openStatsPage.onClick.AddListener(() => OpenStatsPage());
 
-        strScore.onValueChanged.AddListener(delegate { CheckInt(strScore); CalculateAbilityModifier(strScore, strModifier); });
-        dexScore.onValueChanged.AddListener(delegate { CheckInt(dexScore); CalculateAbilityModifier(dexScore, dexModifier); });
-        conScore.onValueChanged.AddListener(delegate { CheckInt(conScore); CalculateAbilityModifier(conScore, conModifier); });
-        intScore.onValueChanged.AddListener(delegate { CheckInt(intScore); CalculateAbilityModifier(intScore, intModifier); });
-        wisScore.onValueChanged.AddListener(delegate { CheckInt(wisScore); CalculateAbilityModifier(wisScore, wisModifier); });
-        chaScore.onValueChanged.AddListener(delegate { CheckInt(chaScore); CalculateAbilityModifier(chaScore, chaModifier); });
+        strScore.onValueChanged.AddListener(delegate { CalculateAbilityModifier(strScore, strModifier); });
+        dexScore.onValueChanged.AddListener(delegate { CalculateAbilityModifier(dexScore, dexModifier); });
+        conScore.onValueChanged.AddListener(delegate { CalculateAbilityModifier(conScore, conModifier); });
+        intScore.onValueChanged.AddListener(delegate { CalculateAbilityModifier(intScore, intModifier); });
+        wisScore.onValueChanged.AddListener(delegate { CalculateAbilityModifier(wisScore, wisModifier); });
+        chaScore.onValueChanged.AddListener(delegate { CalculateAbilityModifier(chaScore, chaModifier); });
 
         strCheck.onClick.AddListener(() => RollStrenghtCheck());
         strSave.onClick.AddListener(() => RollStrengthSave());
@@ -265,15 +265,6 @@ public class NPCSheetManager : MonoBehaviour
         }
     }
 
-    private void CheckInt(InputField inputField)
-    {
-        int value;
-        if (!int.TryParse(inputField.text, out value))
-        {
-            inputField.text = "0";
-        }
-    }
-
     private void CalculateAbilityModifier(InputField score, Text modifier)
     {
         int abilityScore = int.Parse(score.text);
@@ -289,36 +280,6 @@ public class NPCSheetManager : MonoBehaviour
         mod += abilityScore / 2;
 
         return mod;
-    }
-
-    public int GetStrMod()
-    {
-        return int.Parse(strModifier.text);
-    }
-
-    public int GetDexMod()
-    {
-        return int.Parse(dexModifier.text);
-    }
-
-    public int GetConMod()
-    {
-        return int.Parse(conModifier.text);
-    }
-
-    public int GetIntMod()
-    {
-        return int.Parse(intModifier.text);
-    }
-
-    public int GetWisMod()
-    {
-        return int.Parse(wisModifier.text);
-    }
-
-    public int GetChaMod()
-    {
-        return int.Parse(chaModifier.text);
     }
 
     private void AddNewTrait(List<GameObject> listOfTraits, GameObject traitsParent)
@@ -368,7 +329,7 @@ public class NPCSheetManager : MonoBehaviour
     private void AddNewAction(List<GameObject> listOfActions, GameObject actionsParent)
     {
         GameObject action = Instantiate(actionsPrefab);
-        GameObject actionItem = action.GetComponent<NPCActionInfo>().actionItem;
+        //GameObject actionItem = action.GetComponent<NPCActionInfo>().actionItem;
         action.GetComponent<NPCActionInfo>().npcSheetManager = this;
         action.GetComponent<RectTransform>().SetParent(actionsParent.transform);
         listOfActions.Add(action);

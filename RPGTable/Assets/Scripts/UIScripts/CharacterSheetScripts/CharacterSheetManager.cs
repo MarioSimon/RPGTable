@@ -296,12 +296,12 @@ public class CharacterSheetManager : MonoBehaviour
         characterName.onValueChanged.AddListener(delegate { uiManager.UpdateCharacterButtonNameClientRpc(CSInfo.sheetID, characterName.text); });
 
         // ability score related logic events
-        strScore.onValueChanged.AddListener(delegate { CheckStrScore(); CalculateMaxWeight(); });
-        dexScore.onValueChanged.AddListener(delegate { CheckDexScore(); });
-        conScore.onValueChanged.AddListener(delegate { CheckConScore(); });
-        intScore.onValueChanged.AddListener(delegate { CheckIntScore(); });
-        wisScore.onValueChanged.AddListener(delegate { CheckWisScore(); });
-        chaScore.onValueChanged.AddListener(delegate { CheckChaScore(); });
+        strScore.onValueChanged.AddListener(delegate { CheckAbilityScore(strScore, strModifier); CalculateMaxWeight(); });
+        dexScore.onValueChanged.AddListener(delegate { CheckAbilityScore(dexScore, dexModifier); });
+        conScore.onValueChanged.AddListener(delegate { CheckAbilityScore(conScore, conModifier); });
+        intScore.onValueChanged.AddListener(delegate { CheckAbilityScore(intScore, intModifier); });
+        wisScore.onValueChanged.AddListener(delegate { CheckAbilityScore(wisScore, wisModifier); });
+        chaScore.onValueChanged.AddListener(delegate { CheckAbilityScore(chaScore, chaModifier); });
 
         // ability related roll events
         strCheck.onClick.AddListener(() => RollStrenghtCheck());
@@ -319,12 +319,8 @@ public class CharacterSheetManager : MonoBehaviour
         chaSave.onClick.AddListener(() => RollCharismaSave());
 
         // character stats related events
-        maxHealthPoints.onValueChanged.AddListener(delegate { CheckInt(maxHealthPoints); });
-        currHealthPoints.onValueChanged.AddListener(delegate { CheckInt(currHealthPoints); UpdateTokenHealthPoints(tempHealthPoints.text, currHealthPoints.text); });
-        tempHealthPoints.onValueChanged.AddListener(delegate { CheckInt(tempHealthPoints); UpdateTokenHealthPoints(tempHealthPoints.text, currHealthPoints.text); });
-
-        armorClass.onValueChanged.AddListener(delegate { CheckInt(armorClass); });
-        initiativeBonus.onValueChanged.AddListener(delegate { CheckInt(initiativeBonus); });
+        currHealthPoints.onValueChanged.AddListener(delegate { UpdateTokenHealthPoints(tempHealthPoints.text, currHealthPoints.text); });
+        tempHealthPoints.onValueChanged.AddListener(delegate { UpdateTokenHealthPoints(tempHealthPoints.text, currHealthPoints.text); });
 
         rollHitDice.onClick.AddListener(() => RollHitDice());
         rollInitiative.onClick.AddListener(() => RollInitiativeCheck());
@@ -359,19 +355,9 @@ public class CharacterSheetManager : MonoBehaviour
 
         // inventory related events
         addItem.onClick.AddListener(() => AddItemToInventory());
-        maxWeight.onValueChanged.AddListener(delegate { CheckInt(maxWeight); });
-        totalWeight.onValueChanged.AddListener(delegate { CheckInt(totalWeight); });
-
-        copperPieces.onValueChanged.AddListener(delegate { CheckInt(copperPieces); });
-        silverPieces.onValueChanged.AddListener(delegate { CheckInt(silverPieces); });
-        electrumPieces.onValueChanged.AddListener(delegate { CheckInt(electrumPieces); });
-        goldPieces.onValueChanged.AddListener(delegate { CheckInt(goldPieces); });
-        platinumPieces.onValueChanged.AddListener(delegate { CheckInt(platinumPieces); });
 
         // spell related events
         spellModifier.onValueChanged.AddListener(delegate { UpdateSpellAbilityMod(); });
-        spellSaveDc.onValueChanged.AddListener(delegate { CheckInt(spellSaveDc); });
-        spellAttackMod.onValueChanged.AddListener(delegate { CheckInt(spellAttackMod); });
 
         spellLevelSelector.onValueChanged.AddListener(delegate { SwitchSpellLevelList(); });
         addSpell.onClick.AddListener(() => AddSpell());
@@ -1336,112 +1322,18 @@ public class CharacterSheetManager : MonoBehaviour
 
     // ability score methods
 
-    void CheckStrScore()
+    private void CheckAbilityScore(InputField abilityScore, Text abilityModifier)
     {
-        int score;
-        if (!int.TryParse(strScore.text, out score))
+        int score = int.Parse(abilityScore.text);
+        if (score < 1)
         {
-            strScore.text = "";
-        } 
-        else if (score < 1)
-        {
-            strScore.text = "1";
+            abilityScore.text = "1";
         }
         else if (score > 30)
         {
-            strScore.text = "30";
+            abilityScore.text = "30";
         }
-        UpdateAbilityModifier(int.Parse(strScore.text), strModifier);
-    }
-
-    void CheckDexScore()
-    {
-        int score;
-        if (!int.TryParse(dexScore.text, out score))
-        {
-            dexScore.text = "";
-        }
-        else if (score < 1)
-        {
-            dexScore.text = "1";
-        }
-        else if (score > 30)
-        {
-            dexScore.text = "30";
-        }
-        UpdateAbilityModifier(int.Parse(dexScore.text), dexModifier);
-    }
-
-    void CheckConScore()
-    {
-        int score;
-        if (!int.TryParse(conScore.text, out score))
-        {
-            conScore.text = "";
-        }
-        else if (score < 1)
-        {
-            conScore.text = "1";
-        }
-        else if (score > 30)
-        {
-            conScore.text = "30";
-        }
-        UpdateAbilityModifier(int.Parse(conScore.text), conModifier);
-    }
-
-    void CheckIntScore()
-    {
-        int score;
-        if (!int.TryParse(intScore.text, out score))
-        {
-            intScore.text = "";
-        }
-        else if (score < 1)
-        {
-            intScore.text = "1";
-        }
-        else if (score > 30)
-        {
-            intScore.text = "30";
-        }
-        UpdateAbilityModifier(int.Parse(intScore.text), intModifier);
-    }
-
-    void CheckWisScore()
-    {
-        int score;
-        if (!int.TryParse(wisScore.text, out score))
-        {
-            wisScore.text = "";
-        }
-        else if (score < 1)
-        {
-            wisScore.text = "1";
-        }
-        else if (score > 30)
-        {
-            wisScore.text = "30";
-        }
-        UpdateAbilityModifier(int.Parse(wisScore.text), wisModifier);
-    }
-
-    void CheckChaScore()
-    {
-        int score;
-        if (!int.TryParse(chaScore.text, out score))
-        {
-            chaScore.text = "";
-        }
-        else if (score < 1)
-        {
-            chaScore.text = "1";
-        }
-        else if (score > 30)
-        {
-            chaScore.text = "30";
-        }
-        UpdateAbilityModifier(int.Parse(chaScore.text), chaModifier);
+        UpdateAbilityModifier(int.Parse(abilityScore.text), abilityModifier);
     }
 
     public int GetStrMod()
@@ -1514,12 +1406,8 @@ public class CharacterSheetManager : MonoBehaviour
 
     void CheckProficencyBonus()
     {
-        int bonus;
-        if (!int.TryParse(proficencyBonus.text, out bonus))
-        {
-            proficencyBonus.text = "";
-        }
-        else if (bonus < 2)
+        int bonus = int.Parse(proficencyBonus.text);
+        if (bonus < 2)
         {
             proficencyBonus.text = "2";
         }
@@ -1534,14 +1422,14 @@ public class CharacterSheetManager : MonoBehaviour
         int bonusMod;
         int profMod = GetSkillProficencyBonus(prof);
         int charMod = GetSkillCharacteristicBonus(skill);
-        int totalBonus = 0;
+        int totalBonus;
         if (int.TryParse(bonus.text, out bonusMod))
         {
             totalBonus = profMod + charMod + bonusMod;
         }
         else
         {
-            bonus.text = "";
+            bonus.text = "0";
             totalBonus = profMod + charMod;
         }
         total.text = totalBonus.ToString();
@@ -1813,15 +1701,6 @@ public class CharacterSheetManager : MonoBehaviour
         }
     }
 
-    void CheckInt(InputField inputField)
-    {
-        int value;
-        if (!int.TryParse(inputField.text, out value))
-        {
-            inputField.text = "";
-        }
-    }
-
     DiceType GetHitDice(int diceSelector)
     {
         switch (diceSelector)
@@ -1864,42 +1743,25 @@ public class CharacterSheetManager : MonoBehaviour
 
     int GetSkillProficencyBonus(Dropdown profType)
     {
+        int profBonus = int.Parse(CSInfo.proficencyBonus);
+        int skillBonus;
+
         switch (profType.value)
         {
-            case 0: 
-                return 0;
             case 1:
-                int profBonus;
-                if (int.TryParse(proficencyBonus.text, out profBonus))
-                {
-                    return profBonus;
-                }
-                else
-                {
-                    return 0;
-                }
+                skillBonus = profBonus;
+                break;
             case 2:
-                int halfBonus;
-                if (int.TryParse(proficencyBonus.text, out halfBonus))
-                {
-                    return halfBonus / 2;
-                }
-                else
-                {
-                    return 0;
-                }
+                skillBonus = profBonus / 2;
+                break;
             case 3:
-                int doubleBonus;
-                if (int.TryParse(proficencyBonus.text, out doubleBonus))
-                {
-                    return doubleBonus * 2;
-                }
-                else
-                {
-                    return 0;
-                }
+                skillBonus = profBonus * 2;
+                break;
+            default:
+                skillBonus = 0;
+                break;
         }
-        return -1;
+        return skillBonus;
     }
 
     int GetSkillCharacteristicBonus(Dropdown characteristic)

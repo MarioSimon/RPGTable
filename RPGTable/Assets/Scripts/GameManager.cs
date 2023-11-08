@@ -680,7 +680,6 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-
     [ClientRpc]
     private void RemoveFromInitiativeTrackerClientRpc(string characterName)
     {

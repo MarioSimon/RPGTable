@@ -179,7 +179,7 @@ public class PCActionInfo : MonoBehaviour
     private void SetAttackModifier(Dropdown attackAbility, InputField attackBonus, Toggle proficency, Text totalModifier)
     {
         int abilityBonus = 0;
-        int otherBonus = 0;
+        int otherBonus;
         int proficencyBonus = 0;
 
         if (sheetManager != null)
@@ -206,14 +206,15 @@ public class PCActionInfo : MonoBehaviour
 
     private int GetOtherBonus(InputField attackBonus)
     {
-        int otherBonus;
-        if (!int.TryParse(attackBonus.text, out otherBonus))
+        if (attackBonus.text == null)
         {
             attackBonus.text = "0";
-            otherBonus = 0;
+            return 0;
         }
-
-        return otherBonus;
+        else
+        {
+            return int.Parse(attackBonus.text);
+        }
     }
 
     private int GetPCAbilityBonus(Dropdown attackAbility)
@@ -238,16 +239,14 @@ public class PCActionInfo : MonoBehaviour
 
     private void SetDamage1NDices(InputField diceNumber)
     {
-        int nDices;
-
-        if (int.TryParse(diceNumber.text, out nDices))
-        {
-            damage1NumDices = nDices;
-        }
-        else
+        if (diceNumber.text == null)
         {
             diceNumber.text = "0";
             damage1NumDices = 0;
+        }
+        else
+        {
+            damage1NumDices = int.Parse(diceNumber.text);
         }
     }
 
@@ -275,7 +274,7 @@ public class PCActionInfo : MonoBehaviour
 
     private void SetDamage1FlatDamage(Dropdown damageAbility, InputField damageBonus)
     {
-        int abilityDamage = 0;
+        int abilityDamage;
 
         switch (damageAbility.value)
         {
@@ -360,16 +359,14 @@ public class PCActionInfo : MonoBehaviour
 
     private void SetDamage2NDices(InputField diceNumber)
     {
-        int nDices;
-
-        if (int.TryParse(diceNumber.text, out nDices))
-        {
-            damage2NumDices = nDices;
-        }
-        else
+        if (diceNumber.text == null)
         {
             diceNumber.text = "0";
             damage2NumDices = 0;
+        }
+        else
+        {
+            damage2NumDices = int.Parse(diceNumber.text);
         }
     }
 
@@ -397,7 +394,7 @@ public class PCActionInfo : MonoBehaviour
 
     private void SetDamage2FlatDamage(Dropdown damageAbility, InputField damageBonus)
     {
-        int abilityDamage = 0;
+        int abilityDamage;
 
         switch (damageAbility.value)
         {

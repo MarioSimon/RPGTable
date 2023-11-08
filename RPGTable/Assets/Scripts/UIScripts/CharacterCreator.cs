@@ -171,12 +171,12 @@ public class CharacterCreator : NetworkBehaviour
         scoresMenuBack.onClick.AddListener(delegate { OpenBackgroundSelector(); });
         scoresMenuNext.onClick.AddListener(delegate { WriteScores(); OpenResume(); });
         scoreType.onValueChanged.AddListener(delegate { SwitchScoringType(); });
-        strScore.onValueChanged.AddListener(delegate { CheckInt(strScore); UpdateTotalAbilityScoreAndModifier(strScore, strRacialBonus, strTotalScore, strModifier, ref passingStrenght); });
-        dexScore.onValueChanged.AddListener(delegate { CheckInt(dexScore); UpdateTotalAbilityScoreAndModifier(dexScore, dexRacialBonus, dexTotalScore, dexModifier, ref passingDexterity); });
-        conScore.onValueChanged.AddListener(delegate { CheckInt(conScore); UpdateTotalAbilityScoreAndModifier(conScore, conRacialBonus, conTotalScore, conModifier, ref passingConstitution); });
-        intScore.onValueChanged.AddListener(delegate { CheckInt(intScore); UpdateTotalAbilityScoreAndModifier(intScore, intRacialBonus, intTotalScore, intModifier, ref passingIntelligence); });
-        wisScore.onValueChanged.AddListener(delegate { CheckInt(wisScore); UpdateTotalAbilityScoreAndModifier(wisScore, wisRacialBonus, wisTotalScore, wisModifier, ref passingWisdom); });
-        chaScore.onValueChanged.AddListener(delegate { CheckInt(chaScore); UpdateTotalAbilityScoreAndModifier(chaScore, chaRacialBonus, chaTotalScore, chaModifier, ref passingCharisma); });
+        strScore.onValueChanged.AddListener(delegate { UpdateTotalAbilityScoreAndModifier(strScore, strRacialBonus, strTotalScore, strModifier, ref passingStrenght); });
+        dexScore.onValueChanged.AddListener(delegate { UpdateTotalAbilityScoreAndModifier(dexScore, dexRacialBonus, dexTotalScore, dexModifier, ref passingDexterity); });
+        conScore.onValueChanged.AddListener(delegate { UpdateTotalAbilityScoreAndModifier(conScore, conRacialBonus, conTotalScore, conModifier, ref passingConstitution); });
+        intScore.onValueChanged.AddListener(delegate { UpdateTotalAbilityScoreAndModifier(intScore, intRacialBonus, intTotalScore, intModifier, ref passingIntelligence); });
+        wisScore.onValueChanged.AddListener(delegate { UpdateTotalAbilityScoreAndModifier(wisScore, wisRacialBonus, wisTotalScore, wisModifier, ref passingWisdom); });
+        chaScore.onValueChanged.AddListener(delegate { UpdateTotalAbilityScoreAndModifier(chaScore, chaRacialBonus, chaTotalScore, chaModifier, ref passingCharisma); });
         addStrenght.onClick.AddListener(() => Add1(ref pointBuyStrenght, strScore));
         takeStrenght.onClick.AddListener(() => Take1(ref pointBuyStrenght, strScore));
         addDexterity.onClick.AddListener(() => Add1(ref pointBuyDexterity, dexScore));
@@ -1120,15 +1120,6 @@ public class CharacterCreator : NetworkBehaviour
         scoreNumber = total;
         totalScore.text = total.ToString();
         modifier.text = CalculateAbilityModifier(total).ToString();
-    }
-
-    private void CheckInt(InputField inputField)
-    {
-        int value;
-        if (!int.TryParse(inputField.text, out value))
-        {
-            inputField.text = "0";
-        }
     }
 
     private int CalculateAbilityModifier(int abilityScore)

@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class NPCActionInfo : MonoBehaviour
 {
+    #region variables
+
     Canvas canvas;
     DiceHandler diceHandler;
 
@@ -44,6 +46,7 @@ public class NPCActionInfo : MonoBehaviour
     public InputField wpnDamage2OtherBonus;
     public Dropdown wpnDamage2DamageType;
 
+    #endregion
 
     private void Start()
     {
@@ -173,16 +176,14 @@ public class NPCActionInfo : MonoBehaviour
 
     private void SetDamage1NDices(InputField diceNumber)
     {
-        int nDices;
-
-        if (int.TryParse(diceNumber.text, out nDices))
-        {
-            damage1NumDices = nDices;
-        }
-        else
+        if (diceNumber.text == null)
         {
             diceNumber.text = "0";
             damage1NumDices = 0;
+        }
+        else
+        {
+            damage1NumDices = int.Parse(diceNumber.text);
         }
     }
 
@@ -210,16 +211,14 @@ public class NPCActionInfo : MonoBehaviour
 
     private void SetDamage1FlatDamage(InputField damageBonus)
     {
-        int abilityDamage;
-
-        if (int.TryParse(damageBonus.text, out abilityDamage))
-        {
-            damage1FlatDamage = abilityDamage;
-        }
-        else
+        if (damageBonus.text == null)
         {
             damageBonus.text = "0";
             damage1FlatDamage = 0;
+        }
+        else
+        {
+            damage1FlatDamage = int.Parse(damageBonus.text);
         }
     }
 
@@ -268,16 +267,14 @@ public class NPCActionInfo : MonoBehaviour
 
     private void SetDamage2NDices(InputField diceNumber)
     {
-        int nDices;
-
-        if (int.TryParse(diceNumber.text, out nDices))
-        {
-            damage2NumDices = nDices;
-        }
-        else
+        if (diceNumber.text == null)
         {
             diceNumber.text = "0";
             damage2NumDices = 0;
+        }
+        else
+        {
+            damage2NumDices = int.Parse(diceNumber.text);
         }
     }
 
@@ -305,17 +302,14 @@ public class NPCActionInfo : MonoBehaviour
 
     private void SetDamage2FlatDamage(InputField damageBonus)
     {
-        int abilityDamage;
-
-
-        if (int.TryParse(damageBonus.text, out abilityDamage))
-        {
-            damage2FlatDamage = abilityDamage;
-        }
-        else
+        if (damageBonus.text == null)
         {
             damageBonus.text = "0";
             damage2FlatDamage = 0;
+        }
+        else
+        {
+            damage2FlatDamage = int.Parse(damageBonus.text);
         }
     }
 

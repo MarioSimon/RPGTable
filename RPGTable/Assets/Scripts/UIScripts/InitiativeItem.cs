@@ -19,17 +19,8 @@ public class InitiativeItem : MonoBehaviour, IComparable
 
     private void Start()
     {
-        tokenInitiative.onValueChanged.AddListener(delegate { CheckInitiativeInt(); gameManager.SetInitiative(tokenName.text, int.Parse(tokenInitiative.text)); });
+        tokenInitiative.onValueChanged.AddListener(delegate { gameManager.SetInitiative(tokenName.text, int.Parse(tokenInitiative.text)); });
         deleteItem.onClick.AddListener(delegate { gameManager.RemoveFromInitiativeTracker(tokenName.text); });
-    }
-
-    private void CheckInitiativeInt()
-    {
-        int value;
-        if (!int.TryParse(tokenInitiative.text, out value))
-        {
-            tokenInitiative.text = "0";
-        }
     }
 
     public int CompareTo(object other)
@@ -63,6 +54,5 @@ public class InitiativeItem : MonoBehaviour, IComparable
         {
             return 0;
         }
-
     }
 }
