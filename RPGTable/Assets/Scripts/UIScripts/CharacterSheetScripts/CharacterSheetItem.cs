@@ -13,28 +13,28 @@ public class CharacterSheetItem : MonoBehaviour
 
     public int GetItemWeight()
     {
-        int weight;
-
-        if (int.TryParse(itemWeight.text, out weight))
+        if (itemWeight.text == null)
         {
-            return weight;
+            itemWeight.text = "0";
+            return 0;
         }
-        itemWeight.text = "0";
-
-        return 0;
+        else
+        {
+            return int.Parse(itemWeight.text);
+        }
     }
 
     public int GetItemAmount()
     {
-        int count;
-
-        if (int.TryParse(itemAmount.text, out count))
+        if (itemAmount.text == null)
         {
-            return count;
+            itemAmount.text = "0";
+            return 0;
         }
-        itemAmount.text = "0";
-
-        return 0;
+        else
+        {
+            return int.Parse(itemAmount.text);
+        }
     }
 
     public void DestroyItem()

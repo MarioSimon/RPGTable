@@ -5158,7 +5158,7 @@ GameObject:
   - component: {fileID: 7531071520417033505}
   - component: {fileID: 1999653876270478173}
   m_Layer: 5
-  m_Name: Action
+  m_Name: PCAction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5352,13 +5352,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 625477065473271608}
   m_TextComponent: {fileID: 6599929883921762505}
   m_Placeholder: {fileID: 2349431338895494249}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 1
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -7925,13 +7925,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5034039082259535713}
   m_TextComponent: {fileID: 1375472626910319246}
   m_Placeholder: {fileID: 2954678006507633911}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 1
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -8301,13 +8301,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6044767162398949846}
   m_TextComponent: {fileID: 8621322878896531514}
   m_Placeholder: {fileID: 8284454588014140734}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 1
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -10296,13 +10296,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5876709702447342183}
   m_TextComponent: {fileID: 7167275077560589419}
   m_Placeholder: {fileID: 5344054254859192267}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 1
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -12585,13 +12585,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3638028718171353267}
   m_TextComponent: {fileID: 3659610526043709375}
   m_Placeholder: {fileID: 8791347245567359005}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 1
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:

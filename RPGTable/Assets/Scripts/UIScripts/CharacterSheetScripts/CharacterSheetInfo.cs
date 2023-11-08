@@ -69,6 +69,9 @@ public class CharacterSheetInfo : INetworkSerializable
 
     // features
     public string featuresAndTraits = "";
+    public int traitCount = 0;
+    public string[] traitName;
+    public string[] traitDescription;
     public string proficencies = "";
 
     // inventory
@@ -339,7 +342,7 @@ public class CharacterSheetInfo : INetworkSerializable
             serializer.SerializeValue(ref skillCharacteristic[i]);
             if (skillBonus[i] == null)
             {
-                skillBonus[i] = "";
+                skillBonus[i] = "0";
             }
             serializer.SerializeValue(ref skillBonus[i]);
             if (skillTotal[i] == null)
@@ -350,6 +353,28 @@ public class CharacterSheetInfo : INetworkSerializable
         }
 
         serializer.SerializeValue(ref featuresAndTraits);
+        serializer.SerializeValue(ref traitCount);
+        if (serializer.IsReader)
+        {
+            traitName = new string[traitCount];
+            traitDescription = new string[traitCount];
+        }
+
+        for (int i = 0; i < traitCount; i++)
+        {
+            if (traitName[i] == null)
+            {
+                traitName[i] = "";
+            }
+            serializer.SerializeValue(ref traitName[i]);
+
+            if (traitDescription[i] == null)
+            {
+                traitDescription[i] = "";
+            }
+            serializer.SerializeValue(ref traitDescription[i]);
+        }
+
         serializer.SerializeValue(ref proficencies);
 
         serializer.SerializeValue(ref itemCount);

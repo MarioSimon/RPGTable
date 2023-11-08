@@ -174,7 +174,7 @@ public class UIManager : NetworkBehaviour
         buttonThrowD12.onClick.AddListener(() => RollDiceServerRpc(DiceType.d12, localPlayer.playerName));
         buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(DiceType.d20, localPlayer.playerName));
         buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(DiceType.pd, localPlayer.playerName));
-        diceNumber.onValueChanged.AddListener(delegate { CheckInt(diceNumber); });
+        diceNumber.onValueChanged.AddListener(delegate { CheckRange(diceNumber); });
         minimizeDiceCam.onClick.AddListener(() => ToggleDiceCam());
     }
 
@@ -254,7 +254,7 @@ public class UIManager : NetworkBehaviour
 
     public void AddToInitiativeTracker(string name)
     {
-        initiativeTracker.AddToTracker(name);
+        initiativeTracker.AddToTracker(name, IsHost);
     }
 
     public void SetInitiative(string characterName, int initiative)
@@ -547,16 +547,14 @@ public class UIManager : NetworkBehaviour
         diceHandler.DeleteRoll(rollKey);
     }
 
-    #endregion
-
-    void CheckInt(InputField inputField)
+    void CheckRange(InputField inputField)
     {
         int value;
         if (!int.TryParse(inputField.text, out value))
         {
             inputField.text = "1";
         }
-        if(value < 1)
+        if (value < 1)
         {
             inputField.text = "1";
         }
@@ -565,6 +563,8 @@ public class UIManager : NetworkBehaviour
             inputField.text = "99";
         }
     }
+
+    #endregion
 
     public Text GetRulerDistanceText()
     {

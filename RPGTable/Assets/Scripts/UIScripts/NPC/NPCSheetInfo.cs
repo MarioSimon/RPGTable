@@ -37,22 +37,21 @@ public class NPCSheetInfo : INetworkSerializable
     public string challenge = "";
 
     // NPC combat
+    public int traitCount = 0;
+    public string[] traitName;
+    public string[] traitDescription;
+
     public int actionCount = 0;
     public string[] actionName;
     public int[] actionType;
-    public int[] actionWeapon;
-    public int[] actionAttackAbility;
-    public string[] actionAttackOtherBonus;
-    public bool[] actionAttackProficency;
+    public string[] actionAttackModifier;
     public string[] actionD1NumDices;
     public int[] actionD1DiceType;
-    public int[] actionD1Ability;
-    public string[] actionD1OtherBonus;
+    public string[] actionD1FlatDamage;
     public int[] actionD1Type;
     public string[] actionD2NumDices;
     public int[] actionD2DiceType;
-    public int[] actionD2Ability;
-    public string[] actionD2OtherBonus;
+    public string[] actionD2FlatDamage;
     public int[] actionD2Type;
     public int[] actionDC;
 
@@ -91,22 +90,21 @@ public class NPCSheetInfo : INetworkSerializable
         copy.languages = this.languages;
         copy.challenge = this.challenge;
 
+        copy.traitCount = this.traitCount;
+        copy.traitName = this.traitName;
+        copy.traitDescription = this.traitDescription;
+
         copy.actionCount = this.actionCount;
         copy.actionName = this.actionName;
         copy.actionType = this.actionType;
-        copy.actionWeapon = this.actionWeapon;
-        copy.actionAttackAbility = this.actionAttackAbility;
-        copy.actionAttackOtherBonus = this.actionAttackOtherBonus;
-        copy.actionAttackProficency = this.actionAttackProficency;
+        copy.actionAttackModifier = this.actionAttackModifier;
         copy.actionD1NumDices = this.actionD1NumDices;
         copy.actionD1DiceType = this.actionD1DiceType;
-        copy.actionD1Ability = this.actionD1Ability;
-        copy.actionD1OtherBonus = this.actionD1OtherBonus;
+        copy.actionD1FlatDamage = this.actionD1FlatDamage;
         copy.actionD1Type = this.actionD1Type;
         copy.actionD2NumDices = this.actionD2NumDices;
         copy.actionD2DiceType = this.actionD2DiceType;
-        copy.actionD2Ability = this.actionD2Ability;
-        copy.actionD2OtherBonus = this.actionD2OtherBonus;
+        copy.actionD2FlatDamage = this.actionD2FlatDamage;
         copy.actionD2Type = this.actionD2Type;
         copy.actionDC = this.actionDC;
 
@@ -142,28 +140,44 @@ public class NPCSheetInfo : INetworkSerializable
         serializer.SerializeValue(ref languages);
         serializer.SerializeValue(ref challenge);
 
+        serializer.SerializeValue(ref traitCount);
+        if (serializer.IsReader)
+        {
+            traitName = new string[traitCount];
+            traitDescription = new string[traitCount];
+        }
+
+        for (int i = 0; i < traitCount; i++)
+        {
+            if (traitName[i] == null)
+            {
+                traitName[i] = "";
+            }
+            serializer.SerializeValue(ref traitName[i]);
+
+            if (traitDescription[i] == null)
+            {
+                traitDescription[i] = "";
+            }
+            serializer.SerializeValue(ref traitDescription[i]);
+        }
 
         serializer.SerializeValue(ref actionCount);
         if (serializer.IsReader)
         {
             actionName = new string[actionCount];
             actionType = new int[actionCount];
-            actionWeapon = new int[actionCount];
 
-            actionAttackAbility = new int[actionCount];
-            actionAttackOtherBonus = new string[actionCount];
-            actionAttackProficency = new bool[actionCount];
+            actionAttackModifier = new string[actionCount];
 
             actionD1NumDices = new string[actionCount];
             actionD1DiceType = new int[actionCount];
-            actionD1Ability = new int[actionCount];
-            actionD1OtherBonus = new string[actionCount];
+            actionD1FlatDamage = new string[actionCount];
             actionD1Type = new int[actionCount];
 
             actionD2NumDices = new string[actionCount];
             actionD2DiceType = new int[actionCount];
-            actionD2Ability = new int[actionCount];
-            actionD2OtherBonus = new string[actionCount];
+            actionD2FlatDamage = new string[actionCount];
             actionD2Type = new int[actionCount];
 
             actionDC = new int[actionCount];
@@ -177,15 +191,12 @@ public class NPCSheetInfo : INetworkSerializable
             }
             serializer.SerializeValue(ref actionName[i]);
             serializer.SerializeValue(ref actionType[i]);
-            serializer.SerializeValue(ref actionWeapon[i]);
 
-            serializer.SerializeValue(ref actionAttackAbility[i]);
-            if (actionAttackOtherBonus[i] == null)
+            if (actionAttackModifier[i] == null)
             {
-                actionAttackOtherBonus[i] = "";
+                actionAttackModifier[i] = "";
             }
-            serializer.SerializeValue(ref actionAttackOtherBonus[i]);
-            serializer.SerializeValue(ref actionAttackProficency[i]);
+            serializer.SerializeValue(ref actionAttackModifier[i]);
 
             if (actionD1NumDices[i] == null)
             {
@@ -193,12 +204,11 @@ public class NPCSheetInfo : INetworkSerializable
             }
             serializer.SerializeValue(ref actionD1NumDices[i]);
             serializer.SerializeValue(ref actionD1DiceType[i]);
-            serializer.SerializeValue(ref actionD1Ability[i]);
-            if (actionD1OtherBonus[i] == null)
+            if (actionD1FlatDamage[i] == null)
             {
-                actionD1OtherBonus[i] = "";
+                actionD1FlatDamage[i] = "";
             }
-            serializer.SerializeValue(ref actionD1OtherBonus[i]);
+            serializer.SerializeValue(ref actionD1FlatDamage[i]);
             serializer.SerializeValue(ref actionD1Type[i]);
 
             if (actionD2NumDices[i] == null)
@@ -207,12 +217,11 @@ public class NPCSheetInfo : INetworkSerializable
             }
             serializer.SerializeValue(ref actionD2NumDices[i]);
             serializer.SerializeValue(ref actionD2DiceType[i]);
-            serializer.SerializeValue(ref actionD2Ability[i]);
-            if (actionD2OtherBonus[i] == null)
+            if (actionD2FlatDamage[i] == null)
             {
-                actionD2OtherBonus[i] = "";
+                actionD2FlatDamage[i] = "";
             }
-            serializer.SerializeValue(ref actionD2OtherBonus[i]);
+            serializer.SerializeValue(ref actionD2FlatDamage[i]);
             serializer.SerializeValue(ref actionD2Type[i]);
 
             serializer.SerializeValue(ref actionDC[i]);

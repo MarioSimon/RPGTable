@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ActionInfo : MonoBehaviour
+public class NPCActionInfo : MonoBehaviour
 {
+    #region variables
+
     Canvas canvas;
     DiceHandler diceHandler;
 
-    public CharacterSheetManager sheetManager;
+    public NPCSheetManager npcSheetManager;
 
     public GameObject actionItem;
 
@@ -34,22 +36,17 @@ public class ActionInfo : MonoBehaviour
 
     public GameObject weaponAttackConfiguration;
     public Button closeWeaponAttackPanel;
-    public Dropdown weaponTemplate;
-    public Dropdown wpnAttackAbility;
-    public InputField wpnOtherAttackBonus;
-    public Toggle wpnAttackProficency;
-    public Text wpnTotalAttackModifier;
+    public InputField wpnAttackModifier;
     public InputField wpnDamage1NumberOfDices;
     public Dropdown wpnDamage1DiceType;
-    public Dropdown wpnDamage1Ability;
     public InputField wpnDamage1OtherBonus;
     public Dropdown wpnDamage1DamageType;
     public InputField wpnDamage2NumberOfDices;
     public Dropdown wpnDamage2DiceType;
-    public Dropdown wpnDamage2Ability;
     public InputField wpnDamage2OtherBonus;
     public Dropdown wpnDamage2DamageType;
 
+    #endregion
 
     private void Start()
     {
@@ -61,20 +58,16 @@ public class ActionInfo : MonoBehaviour
         openConfiguration.onClick.AddListener(() => ShowConfigurationPanel());
         closeWeaponAttackPanel.onClick.AddListener(() => CloseWeaponConfigurationPanel());
 
-        wpnAttackAbility.onValueChanged.AddListener(delegate { SetAttackModifier(wpnAttackAbility, wpnOtherAttackBonus, wpnAttackProficency, wpnTotalAttackModifier); });
-        wpnOtherAttackBonus.onValueChanged.AddListener(delegate { SetAttackModifier(wpnAttackAbility, wpnOtherAttackBonus, wpnAttackProficency, wpnTotalAttackModifier); });
-        wpnAttackProficency.onValueChanged.AddListener(delegate { SetAttackModifier(wpnAttackAbility, wpnOtherAttackBonus, wpnAttackProficency, wpnTotalAttackModifier); });
+        wpnAttackModifier.onValueChanged.AddListener(delegate { SetAttackModifier(wpnAttackModifier); });
 
         wpnDamage1NumberOfDices.onValueChanged.AddListener(delegate { SetDamage1NDices(wpnDamage1NumberOfDices); });
         wpnDamage1DiceType.onValueChanged.AddListener(delegate { SetDamage1Dice(wpnDamage1DiceType); });
-        wpnDamage1Ability.onValueChanged.AddListener(delegate { SetDamage1FlatDamage(wpnDamage1Ability, wpnDamage1OtherBonus); });
-        wpnDamage1OtherBonus.onValueChanged.AddListener(delegate { SetDamage1FlatDamage(wpnDamage1Ability, wpnDamage1OtherBonus); });
+        wpnDamage1OtherBonus.onValueChanged.AddListener(delegate { SetDamage1FlatDamage(wpnDamage1OtherBonus); });
         wpnDamage1DamageType.onValueChanged.AddListener(delegate { SetDamage1Type(wpnDamage1DamageType); });
 
         wpnDamage2NumberOfDices.onValueChanged.AddListener(delegate { SetDamage2NDices(wpnDamage2NumberOfDices); });
         wpnDamage2DiceType.onValueChanged.AddListener(delegate { SetDamage2Dice(wpnDamage2DiceType); });
-        wpnDamage2Ability.onValueChanged.AddListener(delegate { SetDamage2FlatDamage(wpnDamage2Ability, wpnDamage2OtherBonus); });
-        wpnDamage2OtherBonus.onValueChanged.AddListener(delegate { SetDamage2FlatDamage(wpnDamage2Ability, wpnDamage2OtherBonus); });
+        wpnDamage2OtherBonus.onValueChanged.AddListener(delegate { SetDamage2FlatDamage(wpnDamage2OtherBonus); });
         wpnDamage2DamageType.onValueChanged.AddListener(delegate { SetDamage2Type(wpnDamage2DamageType); });
 
         weaponAttackConfiguration.GetComponent<RectTransform>().SetParent(canvas.transform);
@@ -83,16 +76,16 @@ public class ActionInfo : MonoBehaviour
 
     public void SetActionConfig()
     {
-        SetAttackModifier(wpnAttackAbility, wpnOtherAttackBonus, wpnAttackProficency, wpnTotalAttackModifier);
+        SetAttackModifier(wpnAttackModifier);
 
         SetDamage1NDices(wpnDamage1NumberOfDices);
         SetDamage1Dice(wpnDamage1DiceType);
-        SetDamage1FlatDamage(wpnDamage1Ability, wpnDamage1OtherBonus);
+        SetDamage1FlatDamage(wpnDamage1OtherBonus);
         SetDamage1Type(wpnDamage1DamageType);
 
         SetDamage2NDices(wpnDamage2NumberOfDices);
         SetDamage2Dice(wpnDamage2DiceType);
-        SetDamage2FlatDamage(wpnDamage1Ability, wpnDamage2OtherBonus);
+        SetDamage2FlatDamage(wpnDamage2OtherBonus);
         SetDamage2Type(wpnDamage2DamageType);
     }
 
@@ -102,10 +95,13 @@ public class ActionInfo : MonoBehaviour
 
         AttackRollInfo attackRollInfo = new AttackRollInfo();
 
-        attackRollInfo.sheetID = sheetManager.CSInfo.sheetID;
+        if (npcSheetManager != null)
+        {
+            attackRollInfo.sheetID = npcSheetManager.NPCInfo.sheetID;
+            attackRollInfo.characterName = npcSheetManager.NPCInfo.NPCName;
+        }
 
         attackRollInfo.actionName = actionName.text;
-        attackRollInfo.characterName = sheetManager.CSInfo.characterName;
 
         attackRollInfo.toHitModifier = attackMod;
 
@@ -126,10 +122,13 @@ public class ActionInfo : MonoBehaviour
     {
         AttackRollInfo attackRollInfo = new AttackRollInfo();
 
-        attackRollInfo.sheetID = sheetManager.CSInfo.sheetID;
+        if (npcSheetManager != null)
+        {
+            attackRollInfo.sheetID = npcSheetManager.NPCInfo.sheetID;
+            attackRollInfo.characterName = npcSheetManager.NPCInfo.NPCName;
+        }
 
         attackRollInfo.actionName = actionName.text;
-        attackRollInfo.characterName = sheetManager.CSInfo.characterName;
 
         attackRollInfo.toHitModifier = attackMod;
 
@@ -170,63 +169,21 @@ public class ActionInfo : MonoBehaviour
         weaponAttackConfiguration.SetActive(false);
     }
 
-    private void SetAttackModifier(Dropdown attackAbility, InputField attackBonus, Toggle proficency, Text totalModifier)
+    private void SetAttackModifier(InputField attackBonus)
     {
-        int abilityBonus = 0;
-
-        switch (attackAbility.value)
-        {
-            case 0:
-                abilityBonus = sheetManager.GetStrMod();
-                break;
-            case 1:
-                abilityBonus = sheetManager.GetDexMod();
-                break;
-            case 2:
-                abilityBonus = sheetManager.GetConMod();
-                break;
-            case 3:
-                abilityBonus = sheetManager.GetIntMod();
-                break;
-            case 4:
-                abilityBonus = sheetManager.GetWisMod();
-                break;
-            case 5:
-                abilityBonus = sheetManager.GetChaMod();
-                break;
-        }
-
-        int otherBonus = 0;
-
-        if (!int.TryParse(attackBonus.text, out otherBonus))
-        {
-            attackBonus.text = "0";
-            otherBonus = 0;
-        }
-
-        int proficencyBonus = 0;
-
-        if (proficency.isOn)
-        {
-            proficencyBonus = sheetManager.GetProficencyBonus();
-        }
-
-        attackMod = abilityBonus + otherBonus + proficencyBonus;
-        totalModifier.text = attackMod.ToString();
+        attackMod = int.Parse(attackBonus.text);
     }
 
     private void SetDamage1NDices(InputField diceNumber)
     {
-        int nDices;
-
-        if (int.TryParse(diceNumber.text, out nDices))
-        {
-            damage1NumDices = nDices;
-        }
-        else
+        if (diceNumber.text == null)
         {
             diceNumber.text = "0";
             damage1NumDices = 0;
+        }
+        else
+        {
+            damage1NumDices = int.Parse(diceNumber.text);
         }
     }
 
@@ -252,45 +209,16 @@ public class ActionInfo : MonoBehaviour
         }
     }
 
-    private void SetDamage1FlatDamage(Dropdown damageAbility, InputField damageBonus)
+    private void SetDamage1FlatDamage(InputField damageBonus)
     {
-        int abilityDamage = 0;
-
-        switch (damageAbility.value)
+        if (damageBonus.text == null)
         {
-            case 1:
-                abilityDamage = sheetManager.GetStrMod();
-                break;
-            case 2:
-                abilityDamage = sheetManager.GetDexMod();
-                break;
-            case 3:
-                abilityDamage = sheetManager.GetConMod();
-                break;
-            case 4:
-                abilityDamage = sheetManager.GetIntMod();
-                break;
-            case 5:
-                abilityDamage = sheetManager.GetWisMod();
-                break;
-            case 6:
-                abilityDamage = sheetManager.GetChaMod();
-                break;
-            default:
-                abilityDamage = 0;
-                break;
-        }
-
-        int bonusDamage;
-
-        if (int.TryParse(damageBonus.text, out bonusDamage))
-        {
-            damage1FlatDamage = abilityDamage + bonusDamage;
+            damageBonus.text = "0";
+            damage1FlatDamage = 0;
         }
         else
         {
-            damageBonus.text = "0";
-            damage1FlatDamage = abilityDamage;
+            damage1FlatDamage = int.Parse(damageBonus.text);
         }
     }
 
@@ -339,16 +267,14 @@ public class ActionInfo : MonoBehaviour
 
     private void SetDamage2NDices(InputField diceNumber)
     {
-        int nDices;
-
-        if (int.TryParse(diceNumber.text, out nDices))
-        {
-            damage2NumDices = nDices;
-        }
-        else
+        if (diceNumber.text == null)
         {
             diceNumber.text = "0";
             damage2NumDices = 0;
+        }
+        else
+        {
+            damage2NumDices = int.Parse(diceNumber.text);
         }
     }
 
@@ -374,45 +300,16 @@ public class ActionInfo : MonoBehaviour
         }
     }
 
-    private void SetDamage2FlatDamage(Dropdown damageAbility, InputField damageBonus)
+    private void SetDamage2FlatDamage(InputField damageBonus)
     {
-        int abilityDamage = 0;
-
-        switch (damageAbility.value)
+        if (damageBonus.text == null)
         {
-            case 1:
-                abilityDamage = sheetManager.GetStrMod();
-                break;
-            case 2:
-                abilityDamage = sheetManager.GetDexMod();
-                break;
-            case 3:
-                abilityDamage = sheetManager.GetConMod();
-                break;
-            case 4:
-                abilityDamage = sheetManager.GetIntMod();
-                break;
-            case 5:
-                abilityDamage = sheetManager.GetWisMod();
-                break;
-            case 6:
-                abilityDamage = sheetManager.GetChaMod();
-                break;
-            default:
-                abilityDamage = 0;
-                break;
-        }
-
-        int bonusDamage;
-
-        if (int.TryParse(damageBonus.text, out bonusDamage))
-        {
-            damage2FlatDamage = abilityDamage + bonusDamage;
+            damageBonus.text = "0";
+            damage2FlatDamage = 0;
         }
         else
         {
-            damageBonus.text = "0";
-            damage2FlatDamage = abilityDamage;
+            damage2FlatDamage = int.Parse(damageBonus.text);
         }
     }
 

@@ -29,7 +29,14 @@ public class NPCSelector : MonoBehaviour
 
         openNPCSheet.onClick.AddListener(() => OpenNPCSheet());
         spawnNPCToken.onClick.AddListener(() => SpawnToken(0, "", NPCInfo.avatarID, NPCInfo.GetCopy()));
-        deleteNPC.onClick.AddListener(() => DeleteNPC());
+        if (gameManager.GetNPCSheetInfo(NPC_ID).avatarID > 0)
+        {
+            deleteNPC.enabled = false;
+        }
+        else
+        {
+            deleteNPC.onClick.AddListener(() => DeleteNPC());
+        }   
     }
 
     void OpenNPCSheet()

@@ -5,14 +5,12 @@ using UnityEngine.UI;
 
 public class InitiativeTracker : MonoBehaviour
 {
-    [SerializeField] GameManager gameManager;
-
     [SerializeField] GameObject orderListParent;
     public List<InitiativeItem> initiativeList = new List<InitiativeItem>();
 
     [SerializeField] GameObject initiativeItemPrefab;
 
-    public void AddToTracker(string name)
+    public void AddToTracker(string name, bool isHost)
     {
         if (Tracking(name)) { return; }
 
@@ -20,6 +18,11 @@ public class InitiativeTracker : MonoBehaviour
 
         newItem.GetComponent<InitiativeItem>().tokenName.text = name;
         newItem.GetComponent<RectTransform>().SetParent(orderListParent.GetComponent<RectTransform>());
+
+        if (!isHost)
+        {
+            newItem.GetComponent<InitiativeItem>().tokenInitiative.interactable = false;
+        }
 
         initiativeList.Add(newItem.GetComponent<InitiativeItem>());
     }
