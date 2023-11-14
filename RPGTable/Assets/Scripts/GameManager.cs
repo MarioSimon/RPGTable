@@ -229,19 +229,24 @@ public class GameManager : NetworkBehaviour
         File.WriteAllText(Application.dataPath + "/StreamingAssets/npcs.json", json);
     }
 
-    public void LoadNPCsFromJSON()
+    public IEnumerator LoadNPCsFromJSON()
     {
-        if (!File.Exists(Application.dataPath + "/StreamingAssets/npcs.json")) { return; }
+        yield return new WaitForSeconds(1);
 
-        string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/npcs.json");
-        SerializableList<NPCSheetInfo> savedNPCInfo = JsonUtility.FromJson<SerializableList<NPCSheetInfo>>(jsonString);
 
-        foreach (NPCSheetInfo NPCInfo in savedNPCInfo.list)
-        {
-            AddNewNPCSheetInfo(NPCInfo);
+        if (File.Exists(Application.dataPath + "/StreamingAssets/npcs.json")) 
+        { 
+
+            string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/npcs.json");
+            SerializableList<NPCSheetInfo> savedNPCInfo = JsonUtility.FromJson<SerializableList<NPCSheetInfo>>(jsonString);
+
+            foreach (NPCSheetInfo NPCInfo in savedNPCInfo.list)
+            {
+                AddNewNPCSheetInfo(NPCInfo);
+            }
+
+            uiManager.LoadSavedNPCs(NPCSheets);
         }
-
-        uiManager.LoadSavedNPCs(NPCSheets);
     }
 
     #endregion
@@ -323,17 +328,20 @@ public class GameManager : NetworkBehaviour
         File.WriteAllText(Application.dataPath + "/StreamingAssets/player characters.json", json);
     }
 
-    public void LoadCharactersFromJSON()
+    public IEnumerator LoadCharactersFromJSON()
     {
-        if (!File.Exists(Application.dataPath + "/StreamingAssets/player characters.json")) { return; }
+        yield return new WaitForSeconds(1);
 
-        string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/player characters.json");
-        SerializableList<CharacterSheetInfo> savedCharactersInfo = JsonUtility.FromJson<SerializableList<CharacterSheetInfo>>(jsonString);
-
-        foreach (CharacterSheetInfo CSInfo in savedCharactersInfo.list)
+        if (File.Exists(Application.dataPath + "/StreamingAssets/player characters.json"))
         {
-            AddNewCharacterSheetInfo(CSInfo);
-        }
+            string jsonString = File.ReadAllText(Application.dataPath + "/StreamingAssets/player characters.json");
+            SerializableList<CharacterSheetInfo> savedCharactersInfo = JsonUtility.FromJson<SerializableList<CharacterSheetInfo>>(jsonString);
+
+            foreach (CharacterSheetInfo CSInfo in savedCharactersInfo.list)
+            {
+                AddNewCharacterSheetInfo(CSInfo);
+            }
+        }     
     }
 
     #endregion
