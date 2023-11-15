@@ -14,8 +14,8 @@ public class CameraController : MonoBehaviour
     Quaternion newRotation;
     Vector3 newZoom;
 
-    [SerializeField] float rotationSpeed = 1.0f;
-    [SerializeField] float movementSpeed = 0.1f;
+    [SerializeField] float rotationSpeed = 5.0f;
+    [SerializeField] float movementSpeed = 1.0f;
     [SerializeField] Vector3 zoomSpeed = new Vector3(0,-1.0f,1.0f);
 
 
@@ -45,37 +45,37 @@ public class CameraController : MonoBehaviour
     {
         if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && transform.position.z < 22.5f)
         {
-            newPosition += transform.forward * movementSpeed;
+            newPosition += transform.forward * movementSpeed * Time.deltaTime;
         }
         if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && transform.position.x > -22.5f)
         {
-            newPosition -= transform.right * movementSpeed;
+            newPosition -= transform.right * movementSpeed * Time.deltaTime;
         }
         if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && transform.position.z > -22.5f)
         {
-            newPosition -= transform.forward * movementSpeed;
+            newPosition -= transform.forward * movementSpeed * Time.deltaTime;
         }
         if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && transform.position.x < 22.5f)
         {
-            newPosition += transform.right * movementSpeed;
+            newPosition += transform.right * movementSpeed * Time.deltaTime;
         }
 
         if (Input.GetKey(KeyCode.Q))
         {
-            newRotation *= Quaternion.Euler(Vector3.up * rotationSpeed);
+            newRotation *= Quaternion.Euler(Vector3.up * rotationSpeed * Time.deltaTime);
         }
         if (Input.GetKey(KeyCode.E))
         {
-            newRotation *= Quaternion.Euler(Vector3.up * -rotationSpeed);
+            newRotation *= Quaternion.Euler(Vector3.up * -rotationSpeed * Time.deltaTime);
         }
 
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
-            newZoom += zoomSpeed;
+            newZoom += zoomSpeed * Time.deltaTime;
         }
         if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
-            newZoom -= zoomSpeed;
+            newZoom -= zoomSpeed * Time.deltaTime;
         }
 
         transform.position = newPosition;
