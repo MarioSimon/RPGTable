@@ -16,8 +16,9 @@ public class UIManager : NetworkBehaviour
     [SerializeField] NetworkManager networkManager;
     [SerializeField] GameManager gameManager;
     [SerializeField] DiceHandler diceHandler;
-    UnityTransport transport;
-    readonly ushort port = 7777;
+    [SerializeField] Relay relay;
+    //UnityTransport transport;
+    //readonly ushort port = 7777;
 
     public Player localPlayer;
     [SerializeField] Text rulerDistanceText;
@@ -25,7 +26,7 @@ public class UIManager : NetworkBehaviour
     [Header("Main Menu")]
     [SerializeField] GameObject mainMenu;
     [SerializeField] public InputField inputFieldName;
-    [SerializeField] InputField inputFieldIP;
+    [SerializeField] InputField joinCode;
     [SerializeField] Button buttonHost;
     [SerializeField] Button buttonClient;
 
@@ -130,18 +131,17 @@ public class UIManager : NetworkBehaviour
     public List<GameObject> initiativeList = new List<GameObject>();
     [SerializeField] Button closeInitiativeTracker;
 
+    [Header("Exit Menu")]
+    [SerializeField] GameObject exitMenu;
+    [SerializeField] Button exitApp;
+    [SerializeField] Button closeExitMenu;
+
     #endregion
 
     #region Unity Event Functions
 
-    private void Awake()
-    {
-        transport = (UnityTransport)networkManager.NetworkConfig.NetworkTransport;
-    }
-
     private void Start()
     {
-        inputFieldIP.text = "127.0.0.1";
         diceNumber.text = "1";
 
         buttonHost.onClick.AddListener(() => StartHost());
@@ -176,6 +176,17 @@ public class UIManager : NetworkBehaviour
         buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(DiceType.pd, localPlayer.playerName));
         diceNumber.onValueChanged.AddListener(delegate { CheckRange(diceNumber); });
         minimizeDiceCam.onClick.AddListener(() => ToggleDiceCam());
+
+        exitApp.onClick.AddListener(() => ExitAplication());
+        closeExitMenu.onClick.AddListener(() => ToggleExitMenu());
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ToggleExitMenu();
+        }
     }
 
     private void LateUpdate()
@@ -571,6 +582,12 @@ public class UIManager : NetworkBehaviour
         return rulerDistanceText;
     }
 
+    private void ExitAplication()
+    {
+        NetworkManager.Singleton.Shutdown();
+        Application.Quit();
+    }
+
     #region ServerRpc
 
     [ServerRpc(RequireOwnership = false)]
@@ -916,16 +933,24 @@ public class UIManager : NetworkBehaviour
         initiativeTrackerWindow.SetActive(toggle);
     }
 
+    private void ToggleExitMenu()
+    {
+        bool toggle = !exitMenu.activeInHierarchy;
+        exitMenu.SetActive(toggle);
+    }
+
     #endregion
 
     #region Netcode Related Methods
 
     private void StartHost()
     {
-        if (!SetIPAndPort()) { return; }
+        relay.StartGame();
+        InitializeHost();
+    }
 
-        NetworkManager.Singleton.StartHost();
-
+    public void InitializeHost()
+    {
         toggleDmInventory.onClick.AddListener(() => ToggleDmInventory());
         closeDmInventory.onClick.AddListener(() => ToggleDmInventory());
         itemType.onValueChanged.AddListener(delegate { SwitchItemType(itemType.value); });
@@ -947,16 +972,40 @@ public class UIManager : NetworkBehaviour
         ActivateInGameHUD();
 
         StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
-        gameManager.LoadCharactersFromJSON();
-        gameManager.LoadNPCsFromJSON();
+        StartCoroutine(gameManager.LoadCharactersFromJSON());
+        StartCoroutine(gameManager.LoadNPCsFromJSON());
+        StartCoroutine(PostJoinCodeOnChat());
+
+    }
+
+    private IEnumerator PostJoinCodeOnChat()
+    {
+        yield return new WaitForSeconds(1);
+
+        GameObject message = Instantiate(messagePrefab);
+
+        message.GetComponent<Text>().text = "SYSTEM: Room join code: " + relay.joinCode;
+        message.GetComponent<Text>().color = Color.blue;
+
+        message.GetComponent<RectTransform>().SetParent(textChatContent.GetComponent<RectTransform>());
+        message.GetComponent<RectTransform>().SetAsLastSibling();
+
+        if (!textChat.activeInHierarchy)
+        {
+            diceRegistryChatNotification.SetActive(true);
+            minimizedBarChatNotification.SetActive(true);
+        }
     }
 
     private void StartClient()
     {
-        if (!SetIPAndPort()) { return; }
+        relay.JoinGame(joinCode.text);
 
-        NetworkManager.Singleton.StartClient();
+        InitializeClient();
+    }
 
+    private void InitializeClient()
+    {
         Destroy(toggleDmInventory.transform.parent.gameObject);
         Destroy(toggleNPCList.transform.parent.gameObject);
 
@@ -966,20 +1015,6 @@ public class UIManager : NetworkBehaviour
         StartCoroutine(FindObjectOfType<CharacterCreator>().LoadCharacterCreationOptions());
         StartCoroutine(gameManager.LoadActiveTokenShortcut());
         StartCoroutine(gameManager.LoadCurrentInitiativeOrder());
-    }
-
-    private bool SetIPAndPort()
-    {
-        bool success = false;
-        var ip = inputFieldIP.text;
-
-        if (!string.IsNullOrEmpty(ip))
-        {
-            transport.SetConnectionData(ip, port);
-            success = true;
-        }
-
-        return success;
     }
 
     #endregion
