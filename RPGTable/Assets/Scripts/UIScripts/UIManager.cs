@@ -131,14 +131,14 @@ public class UIManager : NetworkBehaviour
     public List<GameObject> initiativeList = new List<GameObject>();
     [SerializeField] Button closeInitiativeTracker;
 
+    [Header("Exit Menu")]
+    [SerializeField] GameObject exitMenu;
+    [SerializeField] Button exitApp;
+    [SerializeField] Button closeExitMenu;
+
     #endregion
 
     #region Unity Event Functions
-
-    private void Awake()
-    {
-        //transport = (UnityTransport)networkManager.NetworkConfig.NetworkTransport;
-    }
 
     private void Start()
     {
@@ -176,6 +176,17 @@ public class UIManager : NetworkBehaviour
         buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(DiceType.pd, localPlayer.playerName));
         diceNumber.onValueChanged.AddListener(delegate { CheckRange(diceNumber); });
         minimizeDiceCam.onClick.AddListener(() => ToggleDiceCam());
+
+        exitApp.onClick.AddListener(() => ExitAplication());
+        closeExitMenu.onClick.AddListener(() => ToggleExitMenu());
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ToggleExitMenu();
+        }
     }
 
     private void LateUpdate()
@@ -571,6 +582,12 @@ public class UIManager : NetworkBehaviour
         return rulerDistanceText;
     }
 
+    private void ExitAplication()
+    {
+        NetworkManager.Singleton.Shutdown();
+        Application.Quit();
+    }
+
     #region ServerRpc
 
     [ServerRpc(RequireOwnership = false)]
@@ -916,6 +933,12 @@ public class UIManager : NetworkBehaviour
         initiativeTrackerWindow.SetActive(toggle);
     }
 
+    private void ToggleExitMenu()
+    {
+        bool toggle = !exitMenu.activeInHierarchy;
+        exitMenu.SetActive(toggle);
+    }
+
     #endregion
 
     #region Netcode Related Methods
@@ -928,8 +951,6 @@ public class UIManager : NetworkBehaviour
 
     public void InitializeHost()
     {
-        
-
         toggleDmInventory.onClick.AddListener(() => ToggleDmInventory());
         closeDmInventory.onClick.AddListener(() => ToggleDmInventory());
         itemType.onValueChanged.AddListener(delegate { SwitchItemType(itemType.value); });
