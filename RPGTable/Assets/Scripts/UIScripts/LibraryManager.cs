@@ -52,8 +52,8 @@ public class LibraryManager : NetworkBehaviour
         showBackgrounds.onClick.AddListener(() => OpenBackgrounds());
         backgroundsList.onValueChanged.AddListener(delegate { ShowBackground(); });
 
-       //showFeats.onClick.AddListener(() => OpenFeats());
-       //featList.onValueChanged.AddListener(delegate { ShowFeat(); });
+       showFeats.onClick.AddListener(() => OpenFeats());
+       featList.onValueChanged.AddListener(delegate { ShowFeat(); });
        //
        //showSpells.onClick.AddListener(() => OpenSpells());
        //spellLevelList.onValueChanged.AddListener(delegate { ShowSpellList(); });
@@ -67,6 +67,7 @@ public class LibraryManager : NetworkBehaviour
         LoadRacesFromJSON();
         LoadClassesFromJSON();
         LoadBackgroundsFromJSON();
+        LoadFeatsFromJSON();
         loadedData = true;
     }
 
@@ -307,7 +308,7 @@ public class LibraryManager : NetworkBehaviour
 
     void ShowFeat()
     {
-        int featID = backgroundsList.value;
+        int featID = featList.value;
 
         if (featID == 0)
         {
@@ -490,7 +491,7 @@ public class LibraryManager : NetworkBehaviour
         {
             featNames.Add(feat.featName);
         }
-        backgroundsList.AddOptions(featNames);
+        featList.AddOptions(featNames);
 
         //Debug.Log("LOADED FEATS FROM " + Application.dataPath + "/StreamingAssets/feats.json");
     }
