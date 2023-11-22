@@ -66,12 +66,9 @@ public class GameManager : NetworkBehaviour
         if (IsHost)
         {
             GameObject token = Instantiate(playerAvatarList[avatarID], Vector3.zero, Quaternion.identity);
-
-            TokenController tokenController = token.GetComponent<TokenController>();
-            tokenController.ownerName.Value = new FixedString64Bytes(ownerName);
-            tokenController.tokenType = tokenType.PC;
-            tokenController.characterSheetInfo = characterSheetInfo;
+            token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
             token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
+            SetTokenInfoClientRpc(ownerName, characterSheetInfo);
 
             SpawnTokenShortcutClientRpc(characterSheetInfo);
             AddToInitiativeTrackerClientRpc(characterSheetInfo.characterName);
@@ -80,6 +77,21 @@ public class GameManager : NetworkBehaviour
         {
             SpawnPlayerTokenServerRpc(ownerID, ownerName, avatarID, characterSheetInfo);
         }
+    }
+
+    [ClientRpc]
+    private void SetTokenInfoClientRpc(string ownerName, CharacterSheetInfo characterSheetInfo)
+    {
+
+        int tokenIndex = 0;
+        TokenController[] tokenControllers = FindObjectsOfType<TokenController>();
+        while (tokenControllers[tokenIndex].characterSheetInfo.sheetID < -1)
+        {
+            tokenIndex++;
+        }
+
+        tokenControllers[tokenIndex].tokenType = tokenType.PC;
+        tokenControllers[tokenIndex].characterSheetInfo = characterSheetInfo;
     }
 
     public void SpawnNPCToken(ulong ownerID, string ownerName, int avatarID, NPCSheetInfo _NPCSheetInfo)

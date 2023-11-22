@@ -437,7 +437,11 @@ public class TokenController : NetworkBehaviour
     {
         Destroy(tokenMenuInstance);
 
-        OpenCharacterSheetServerRpc();
+        GameObject charSheet = Instantiate(characterSheetPrefab);
+        charSheet.GetComponent<CharacterSheetManager>().CSInfo = characterSheetInfo;
+        charSheet.GetComponent<RectTransform>().SetParent(canvas.transform, false);
+
+        //OpenCharacterSheetServerRpc();
     }
 
     private void OpenNPCSheet()
