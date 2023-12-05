@@ -167,13 +167,13 @@ public class UIManager : NetworkBehaviour
         diceRegistryOpenChat.onClick.AddListener(delegate { ToggleDiceRegistry(); ToggleTextChat(); });
         diceRegistryCloseRegistry.onClick.AddListener(delegate { ToggleDiceRegistry(); ToggleMinimizedBar(); });
 
-        buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(DiceType.d4, localPlayer.playerName));
-        buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(DiceType.d6, localPlayer.playerName));
-        buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(DiceType.d8, localPlayer.playerName));
-        buttonThrowD10.onClick.AddListener(() => RollDiceServerRpc(DiceType.d10, localPlayer.playerName));
-        buttonThrowD12.onClick.AddListener(() => RollDiceServerRpc(DiceType.d12, localPlayer.playerName));
-        buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(DiceType.d20, localPlayer.playerName));
-        buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(DiceType.pd, localPlayer.playerName));
+        buttonThrowD4.onClick.AddListener(() => RollDiceServerRpc(int.Parse(diceNumber.text), DiceType.d4, localPlayer.playerName));
+        buttonThrowD6.onClick.AddListener(() => RollDiceServerRpc(int.Parse(diceNumber.text), DiceType.d6, localPlayer.playerName));
+        buttonThrowD8.onClick.AddListener(() => RollDiceServerRpc(int.Parse(diceNumber.text), DiceType.d8, localPlayer.playerName));
+        buttonThrowD10.onClick.AddListener(() => RollDiceServerRpc(int.Parse(diceNumber.text), DiceType.d10, localPlayer.playerName));
+        buttonThrowD12.onClick.AddListener(() => RollDiceServerRpc(int.Parse(diceNumber.text), DiceType.d12, localPlayer.playerName));
+        buttonThrowD20.onClick.AddListener(() => RollDiceServerRpc(int.Parse(diceNumber.text), DiceType.d20, localPlayer.playerName));
+        buttonThrowD100.onClick.AddListener(() => RollDiceServerRpc(1, DiceType.pd, localPlayer.playerName));
         diceNumber.onValueChanged.AddListener(delegate { CheckRange(diceNumber); });
         minimizeDiceCam.onClick.AddListener(() => ToggleDiceCam());
 
@@ -496,11 +496,10 @@ public class UIManager : NetworkBehaviour
 
     #region Dice rolls
 
-    private void RollDice(DiceType type, string thrownBy, ClientRpcParams clientRpcParams)
+    private void RollDice(int numberOfDices, DiceType type, string thrownBy, ClientRpcParams clientRpcParams)
     {
         string rollKey = diceHandler.GetNewRollKey(thrownBy + "-");
         string message = "";
-        int numberOfDices = int.Parse(diceNumber.text);
 
         switch (type)
         {
@@ -524,9 +523,9 @@ public class UIManager : NetworkBehaviour
                 break;
         }
 
-        diceHandler.AddRoll(rollKey, thrownBy, int.Parse(diceNumber.text), message);
+        diceHandler.AddRoll(rollKey, thrownBy, numberOfDices, message);
 
-        for (int i = 0; i < int.Parse(diceNumber.text); i ++)
+        for (int i = 0; i < numberOfDices; i ++)
         {
             StartCoroutine(diceHandler.RollDice(rollKey, type, 0, clientRpcParams, ResolveSimpleRoll));
         }  
@@ -591,7 +590,7 @@ public class UIManager : NetworkBehaviour
     #region ServerRpc
 
     [ServerRpc(RequireOwnership = false)]
-    private void RollDiceServerRpc(DiceType type, string thrownBy, ServerRpcParams serverRpcParams = default)
+    private void RollDiceServerRpc(int numberOfDices, DiceType type, string thrownBy, ServerRpcParams serverRpcParams = default)
     {
 
         var clientId = serverRpcParams.Receive.SenderClientId;
@@ -607,7 +606,7 @@ public class UIManager : NetworkBehaviour
 
         if (type != DiceType.pd)
         {
-            RollDice(type,thrownBy, clientRpcParams);
+            RollDice(numberOfDices, type,thrownBy, clientRpcParams);
         }
         else
         {
@@ -980,7 +979,7 @@ public class UIManager : NetworkBehaviour
 
     private IEnumerator PostJoinCodeOnChat()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.5f);
 
         GameObject message = Instantiate(messagePrefab);
 

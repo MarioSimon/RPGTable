@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6750090896570783859}
   - component: {fileID: 6049272269166617968}
   - component: {fileID: 6100720092841656220}
-  - component: {fileID: 3061151705556045153}
   - component: {fileID: 2084262219631998374}
   m_Layer: 0
   m_Name: Stone_Floor_A
@@ -90,20 +89,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a6f429cfa6883742ae0d47be3e8108a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelEditorWindow: {fileID: 0}
   itemMenu: {fileID: 1878711165183701654, guid: f2ae9da069cf31e4aa370ecf88678252, type: 3}
   id: 2
---- !u!114 &3061151705556045153
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3166844284863223880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90bbea09dc059934f89744c8d52e14ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2084262219631998374
 MonoBehaviour:
   m_ObjectHideFlags: 0

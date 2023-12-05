@@ -90,7 +90,7 @@ public class CameraController : MonoBehaviour
 
     private bool OutOfBounds()
     {
-        return newPosition.z < -22.5f || newPosition.z > 22.5f || newPosition.x < -22.5f || newPosition.x > 22.5f; 
+        return newPosition.z < -25f || newPosition.z > 25f || newPosition.x < -25f || newPosition.x > 25f; 
     }
 
     #endregion
