@@ -206,7 +206,7 @@ public class PCActionInfo : MonoBehaviour
 
     private int GetOtherBonus(InputField attackBonus)
     {
-        if (attackBonus.text == null)
+        if (attackBonus.text == null || attackBonus.text == "")
         {
             attackBonus.text = "0";
             return 0;
@@ -239,7 +239,7 @@ public class PCActionInfo : MonoBehaviour
 
     private void SetDamage1NDices(InputField diceNumber)
     {
-        if (diceNumber.text == null)
+        if (diceNumber.text == null || diceNumber.text == "")
         {
             diceNumber.text = "0";
             damage1NumDices = 0;
@@ -359,7 +359,7 @@ public class PCActionInfo : MonoBehaviour
 
     private void SetDamage2NDices(InputField diceNumber)
     {
-        if (diceNumber.text == null)
+        if (diceNumber.text == null || diceNumber.text == "")
         {
             diceNumber.text = "0";
             damage2NumDices = 0;
