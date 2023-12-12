@@ -24942,7 +24942,7 @@ MonoBehaviour:
   cameraTransform: {fileID: 1699353995}
   rotationSpeed: 75
   movementSpeed: 50
-  zoomSpeed: {x: 0, y: -250, z: 250}
+  zoomSpeed: 750
 --- !u!4 &789563444
 Transform:
   m_ObjectHideFlags: 0
