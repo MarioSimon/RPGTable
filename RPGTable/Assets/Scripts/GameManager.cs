@@ -682,6 +682,15 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     private void SpawnTokenShortcutClientRpc(CharacterSheetInfo characterSheetInfo, ClientRpcParams clientRpcParams = default)
     {
+        CharacterShortcut[] activeShortcuts = FindObjectsOfType<CharacterShortcut>();
+        foreach (CharacterShortcut shortcut in activeShortcuts)
+        {
+            if (shortcut.charID == characterSheetInfo.sheetID)
+            {
+                return;
+            }
+        }
+
         GameObject tokenShortcut = Instantiate(tokenShortcutPrefab);
         tokenShortcut.GetComponent<CharacterShortcut>().characterName.text = characterSheetInfo.characterName;
         tokenShortcut.GetComponent<CharacterShortcut>().characterPortrait.sprite = playerAvatarPortrait[characterSheetInfo.avatarID];

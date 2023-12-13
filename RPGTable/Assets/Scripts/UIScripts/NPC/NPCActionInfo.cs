@@ -176,7 +176,7 @@ public class NPCActionInfo : MonoBehaviour
 
     private void SetDamage1NDices(InputField diceNumber)
     {
-        if (diceNumber.text == null)
+        if (diceNumber.text == null || diceNumber.text == "")
         {
             diceNumber.text = "0";
             damage1NumDices = 0;
@@ -211,7 +211,7 @@ public class NPCActionInfo : MonoBehaviour
 
     private void SetDamage1FlatDamage(InputField damageBonus)
     {
-        if (damageBonus.text == null)
+        if (damageBonus.text == null || damageBonus.text == "")
         {
             damageBonus.text = "0";
             damage1FlatDamage = 0;
@@ -267,7 +267,7 @@ public class NPCActionInfo : MonoBehaviour
 
     private void SetDamage2NDices(InputField diceNumber)
     {
-        if (diceNumber.text == null)
+        if (diceNumber.text == null || diceNumber.text == "")
         {
             diceNumber.text = "0";
             damage2NumDices = 0;
@@ -302,7 +302,7 @@ public class NPCActionInfo : MonoBehaviour
 
     private void SetDamage2FlatDamage(InputField damageBonus)
     {
-        if (damageBonus.text == null)
+        if (damageBonus.text == null || damageBonus.text == "")
         {
             damageBonus.text = "0";
             damage2FlatDamage = 0;
