@@ -1,3 +1,4 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,13 +13,12 @@ public class CameraController : MonoBehaviour
 
     Vector3 newPosition;
     Quaternion newRotation;
-    Vector3 newZoom;
+    float newZoom;
 
     [SerializeField] float rotationSpeed = 5.0f;
     [SerializeField] float movementSpeed = 1.0f;
-    [SerializeField] Vector3 zoomSpeed = new Vector3(0,-1.0f,1.0f);
-
-
+    [SerializeField] float zoomSpeed = 5.0f;
+    
 
     #endregion
 
@@ -28,7 +28,7 @@ public class CameraController : MonoBehaviour
     {
         newPosition = transform.position;
         newRotation = transform.rotation;
-        newZoom = cameraTransform.localPosition;
+        newZoom = Camera.main.fieldOfView;
     }
 
     private void Update()
@@ -71,27 +71,58 @@ public class CameraController : MonoBehaviour
 
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
-            newZoom += zoomSpeed * Time.deltaTime;
+            float a = newZoom - zoomSpeed * Time.deltaTime;
+
+            if (a > 30f)
+            {
+                newZoom = a;
+            }
+            else
+            {
+                newZoom = 30f;
+            }
         }
         if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
-            newZoom -= zoomSpeed * Time.deltaTime;
+            float a = newZoom + zoomSpeed * Time.deltaTime;
+
+            if (a < 120f)
+            {
+                newZoom = a;
+            }
+            else
+            {
+                newZoom = 120f;
+            }
         }
 
-        if (newPosition != transform.position && !OutOfBounds())
-        {
-            transform.position = newPosition;
-        }
-        
+        CheckBounds();
+        transform.position = newPosition;
         transform.rotation = newRotation;
-        cameraTransform.localPosition = newZoom;
+        cameraTransform.GetComponent<CinemachineVirtualCamera>().m_Lens.FieldOfView = newZoom;
 
     }
 
-    private bool OutOfBounds()
+    private void CheckBounds()
     {
-        return newPosition.z < -22.5f || newPosition.z > 22.5f || newPosition.x < -22.5f || newPosition.x > 22.5f; 
-    }
 
+        if (newPosition.z < -25f)
+        {
+            newPosition.z = -25f;
+        } 
+        else if (newPosition.z > 25f)
+        {
+            newPosition.z = 25f;
+        }
+
+        if (newPosition.x < -25f)
+        {
+            newPosition.x = -25f;
+        }
+        else if (newPosition.x > 25f)
+        {
+            newPosition.x = 25f;
+        }
+    }
     #endregion
 }

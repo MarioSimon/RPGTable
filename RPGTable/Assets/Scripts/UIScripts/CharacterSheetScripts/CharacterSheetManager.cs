@@ -14,6 +14,7 @@ public class CharacterSheetManager : MonoBehaviour
     private GameManager gameManager;
     private UIManager uiManager;
     private DiceHandler diceHandler;
+    private TokenManager tokenManager;
 
     private GameObject currentPage;
     private bool permisson;
@@ -269,10 +270,11 @@ public class CharacterSheetManager : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
         uiManager = FindObjectOfType<UIManager>();
         diceHandler = FindObjectOfType<DiceHandler>();
+        tokenManager = FindObjectOfType<TokenManager>();
 
         // navigation related events
         buttonClose.onClick.AddListener(() => CloseSheet());
-        buttonSpawnToken.onClick.AddListener(() => SpawnToken(NetworkManager.Singleton.LocalClientId, playerName.text, CSInfo.avatarID, CSInfo));
+        buttonSpawnToken.onClick.AddListener(() => SpawnToken(CSInfo.ownerID, playerName.text, CSInfo.avatarID, CSInfo));
         buttonPublicInfo.onClick.AddListener(() => OpenPublicInfoPage());
         buttonBasicInfo.onClick.AddListener(() => OpenBasicInfoPage());
         buttonSkills.onClick.AddListener(() => OpenSkillsPage());
@@ -1655,7 +1657,9 @@ public class CharacterSheetManager : MonoBehaviour
 
     void SpawnToken(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
     {
-        gameManager.SpawnPlayerToken(ownerID, ownerName, avatarID, characterSheetInfo);
+        tokenManager.DragPlayerToken(ownerName, avatarID, characterSheetInfo);
+
+        //gameManager.SpawnPlayerToken(ownerID, ownerName, avatarID, Vector3.zero, characterSheetInfo);
     }
 
     public void UpdateTokenHealthPoints(string tempHP, string currHP)

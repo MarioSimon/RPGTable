@@ -38,8 +38,6 @@ public class Relay : MonoBehaviour
 
         joinCode = await RelayService.Instance.GetJoinCodeAsync(a.AllocationId);
 
-        Debug.Log(joinCode);
-
         NetworkManager.Singleton.StartHost();
     }
 

@@ -198,7 +198,7 @@ public class CharacterCreator : NetworkBehaviour
 
     public IEnumerator LoadCharacterCreationOptions()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.5f);
 
         if (IsHost)
         {

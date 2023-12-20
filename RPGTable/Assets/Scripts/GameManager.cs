@@ -61,24 +61,21 @@ public class GameManager : NetworkBehaviour
 
     #region tokens
 
-    public void SpawnPlayerToken(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
+    public void SpawnPlayerToken(ulong ownerID, string ownerName, int avatarID, Vector3 spawnPosition, CharacterSheetInfo characterSheetInfo)
     {
         if (IsHost)
         {
-            GameObject token = Instantiate(playerAvatarList[avatarID], Vector3.zero, Quaternion.identity);
-
-            TokenController tokenController = token.GetComponent<TokenController>();
-            tokenController.ownerName.Value = new FixedString64Bytes(ownerName);
-            tokenController.tokenType = tokenType.PC;
-            tokenController.characterSheetInfo = characterSheetInfo;
+            GameObject token = Instantiate(playerAvatarList[avatarID], spawnPosition, Quaternion.identity);
+            token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
             token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
+            SetTokenInfoClientRpc(ownerName, characterSheetInfo);
 
             SpawnTokenShortcutClientRpc(characterSheetInfo);
             AddToInitiativeTrackerClientRpc(characterSheetInfo.characterName);
         }
         else
         {
-            SpawnPlayerTokenServerRpc(ownerID, ownerName, avatarID, characterSheetInfo);
+            SpawnPlayerTokenServerRpc(ownerID, ownerName, avatarID, spawnPosition, characterSheetInfo);
         }
     }
 
@@ -231,7 +228,7 @@ public class GameManager : NetworkBehaviour
 
     public IEnumerator LoadNPCsFromJSON()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.5f);
 
 
         if (File.Exists(Application.dataPath + "/StreamingAssets/npcs.json")) 
@@ -330,7 +327,7 @@ public class GameManager : NetworkBehaviour
 
     public IEnumerator LoadCharactersFromJSON()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.5f);
 
         if (File.Exists(Application.dataPath + "/StreamingAssets/player characters.json"))
         {
@@ -515,11 +512,11 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnPlayerTokenServerRpc(ulong ownerID, string ownerName, int avatarID, CharacterSheetInfo characterSheetInfo)
+    public void SpawnPlayerTokenServerRpc(ulong ownerID, string ownerName, int avatarID, Vector3 spawnPosition, CharacterSheetInfo characterSheetInfo)
     {
         if (!IsHost) { return; }
 
-        SpawnPlayerToken(ownerID, ownerName, avatarID, characterSheetInfo);
+        SpawnPlayerToken(ownerID, ownerName, avatarID, spawnPosition, characterSheetInfo);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -668,8 +665,32 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
+    private void SetTokenInfoClientRpc(string ownerName, CharacterSheetInfo characterSheetInfo)
+    {
+
+        int tokenIndex = 0;
+        TokenController[] tokenControllers = FindObjectsOfType<TokenController>();
+        while (tokenControllers[tokenIndex].characterSheetInfo.sheetID < -1)
+        {
+            tokenIndex++;
+        }
+
+        tokenControllers[tokenIndex].tokenType = tokenType.PC;
+        tokenControllers[tokenIndex].characterSheetInfo = characterSheetInfo;
+    }
+
+    [ClientRpc]
     private void SpawnTokenShortcutClientRpc(CharacterSheetInfo characterSheetInfo, ClientRpcParams clientRpcParams = default)
     {
+        CharacterShortcut[] activeShortcuts = FindObjectsOfType<CharacterShortcut>();
+        foreach (CharacterShortcut shortcut in activeShortcuts)
+        {
+            if (shortcut.charID == characterSheetInfo.sheetID)
+            {
+                return;
+            }
+        }
+
         GameObject tokenShortcut = Instantiate(tokenShortcutPrefab);
         tokenShortcut.GetComponent<CharacterShortcut>().characterName.text = characterSheetInfo.characterName;
         tokenShortcut.GetComponent<CharacterShortcut>().characterPortrait.sprite = playerAvatarPortrait[characterSheetInfo.avatarID];

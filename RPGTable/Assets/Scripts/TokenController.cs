@@ -437,7 +437,11 @@ public class TokenController : NetworkBehaviour
     {
         Destroy(tokenMenuInstance);
 
-        OpenCharacterSheetServerRpc();
+        GameObject charSheet = Instantiate(characterSheetPrefab);
+        charSheet.GetComponent<CharacterSheetManager>().CSInfo = characterSheetInfo;
+        charSheet.GetComponent<RectTransform>().SetParent(canvas.transform, false);
+
+        //OpenCharacterSheetServerRpc();
     }
 
     private void OpenNPCSheet()
@@ -533,10 +537,31 @@ public class TokenController : NetworkBehaviour
 
     private void DestroyToken()
     {
+        
         tokenHP = null;
         Destroy(tokenMenuInstance);
 
-        DestroyTokenServerRpc();
+        if (IsHost)
+        {
+            if (characterSheetInfo != null)
+            {
+                DestroyShortcutsClientRpc(characterSheetInfo.sheetID);
+                gameManager.RemoveFromInitiativeTracker(characterSheetInfo.characterName);
+            }
+
+            if (NPCSheetInfo != null)
+            {
+                ReduceNPCCounter();
+                gameManager.RemoveFromInitiativeTracker(NPCSheetInfo.NPCName);
+            }
+
+            GetComponent<NetworkObject>().Despawn();
+        }
+        else
+        {
+            DestroyTokenServerRpc();
+        }
+       
     }
 
     private void TauntGesture()
@@ -679,7 +704,7 @@ public class TokenController : NetworkBehaviour
             gameManager.RemoveFromInitiativeTracker(NPCSheetInfo.NPCName);
         }   
 
-        this.gameObject.GetComponent<NetworkObject>().Despawn();
+        GetComponent<NetworkObject>().Despawn();
     }    
 
     [ServerRpc]
