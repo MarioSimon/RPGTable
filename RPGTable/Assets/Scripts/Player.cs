@@ -15,7 +15,7 @@ public class Player : NetworkBehaviour
 
     private TokenController selectedToken;
 
-    private UIManager UIManager;
+    private UIManager uiManager;
     private GameManager gameManager;
 
     private LineRenderer lineRenderer;
@@ -27,10 +27,10 @@ public class Player : NetworkBehaviour
 
     private void Awake()
     {
-        UIManager = FindObjectOfType<UIManager>();
+        uiManager = FindObjectOfType<UIManager>();
         gameManager = FindObjectOfType<GameManager>();
         lineRenderer = GetComponent<LineRenderer>();
-        rulerDistance = UIManager.GetRulerDistanceText();
+        rulerDistance = uiManager.GetRulerDistanceText();
         NetworkManager.OnClientConnectedCallback += ConfigurePlayer;
     }
 
@@ -39,9 +39,9 @@ public class Player : NetworkBehaviour
 
         if (IsLocalPlayer)
         {
-            UIManager.localPlayer = this;
+            uiManager.localPlayer = this;
             FindObjectOfType<CameraController>().enabled = true;
-            AddPlayerToList(UIManager.inputFieldName.text, NetworkManager.Singleton.LocalClientId);
+            AddPlayerToList(uiManager.playerNameInput.text, NetworkManager.Singleton.LocalClientId);
         }
     }
 
@@ -65,7 +65,7 @@ public class Player : NetworkBehaviour
     {
         if (IsLocalPlayer)
         {
-            SetPlayerNameServerRpc(UIManager.inputFieldName.text);
+            SetPlayerNameServerRpc(uiManager.playerNameInput.text);
             gameManager.AddSavedCharactersServerRpc();
             //AddPlayerToList(playerName, obj);
         }

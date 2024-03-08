@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class NPCList : MonoBehaviour
 {
-    [SerializeField] UIManager uIManager;
+    [SerializeField] UIManager uiManager;
     [SerializeField] GameManager gameManager;
 
     [SerializeField] GameObject NPCListParent;
@@ -52,7 +52,7 @@ public class NPCList : MonoBehaviour
         newNPC.GetComponent<NPCSelector>().NPC_ID = newNPCSheet.sheetID;
         newNPC.GetComponent<RectTransform>().SetParent(NPCListParent.GetComponent<RectTransform>());
 
-        uIManager.NPCSelectorList.Add(newNPC);
+        uiManager.NPCSelectorList.Add(newNPC);
         gameManager.AddNewNPCSheetInfo(newNPCSheet);
     }
 
@@ -77,18 +77,18 @@ public class NPCList : MonoBehaviour
         savedNPC.GetComponent<NPCSelector>().NPCName.text = NPCName;
         savedNPC.GetComponent<RectTransform>().SetParent(NPCListParent.GetComponent<RectTransform>());
 
-        uIManager.NPCSelectorList.Add(savedNPC);
+        uiManager.NPCSelectorList.Add(savedNPC);
     }
 
     public void FilterNPCByName(string nameFilter)
     {
-        foreach (GameObject NPC in uIManager.NPCSearchSelectorList)
+        foreach (GameObject NPC in uiManager.NPCSearchSelectorList)
         {
             Destroy(NPC);
         }
-        uIManager.NPCSearchSelectorList.Clear();
+        uiManager.NPCSearchSelectorList.Clear();
 
-        foreach (GameObject NPC in uIManager.NPCSelectorList)
+        foreach (GameObject NPC in uiManager.NPCSelectorList)
         {
             NPCSelector _NPCSelector = NPC.GetComponent<NPCSelector>();
 
@@ -100,7 +100,7 @@ public class NPCList : MonoBehaviour
 
                 searchNPCSelector.GetComponent<RectTransform>().SetParent(NPCSearchListParent.GetComponent<RectTransform>());
 
-                uIManager.NPCSearchSelectorList.Add(searchNPCSelector);
+                uiManager.NPCSearchSelectorList.Add(searchNPCSelector);
             }      
         }
     }

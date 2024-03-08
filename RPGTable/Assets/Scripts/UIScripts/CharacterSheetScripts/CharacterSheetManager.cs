@@ -274,7 +274,7 @@ public class CharacterSheetManager : MonoBehaviour
 
         // navigation related events
         buttonClose.onClick.AddListener(() => CloseSheet());
-        buttonSpawnToken.onClick.AddListener(() => SpawnToken(CSInfo.ownerID, playerName.text, CSInfo.avatarID, CSInfo));
+        buttonSpawnToken.onClick.AddListener(() => SpawnToken(CSInfo.ownerID, playerName.text, CSInfo.publicPageCharacterInfo.avatarID, CSInfo));
         buttonPublicInfo.onClick.AddListener(() => OpenPublicInfoPage());
         buttonBasicInfo.onClick.AddListener(() => OpenBasicInfoPage());
         buttonSkills.onClick.AddListener(() => OpenSkillsPage());
@@ -306,26 +306,26 @@ public class CharacterSheetManager : MonoBehaviour
         chaScore.onValueChanged.AddListener(delegate { CheckAbilityScore(chaScore, chaModifier); });
 
         // ability related roll events
-        strCheck.onClick.AddListener(() => RollStrenghtCheck());
-        dexCheck.onClick.AddListener(() => RollDexterityCheck());
-        conCheck.onClick.AddListener(() => RollConstitutionCheck());
-        intCheck.onClick.AddListener(() => RollIntelligenceCheck());
-        wisCheck.onClick.AddListener(() => RollWisdomCheck());
-        chaCheck.onClick.AddListener(() => RollCharismaCheck());
+        strCheck.onClick.AddListener(() => RollCheck("Strenght", strModifier.text));
+        dexCheck.onClick.AddListener(() => RollCheck("Dexterity", dexModifier.text));
+        conCheck.onClick.AddListener(() => RollCheck("Constitution", conModifier.text));
+        intCheck.onClick.AddListener(() => RollCheck("Intelligence", intModifier.text));
+        wisCheck.onClick.AddListener(() => RollCheck("Wisdom", wisModifier.text));
+        chaCheck.onClick.AddListener(() => RollCheck("Charisma", chaModifier.text));
 
-        strSave.onClick.AddListener(() => RollStrengthSave());
-        dexSave.onClick.AddListener(() => RollDexteritySave());
-        conSave.onClick.AddListener(() => RollConstitutionSave());
-        intSave.onClick.AddListener(() => RollIntelligenceSave());
-        wisSave.onClick.AddListener(() => RollWisdomSave());
-        chaSave.onClick.AddListener(() => RollCharismaSave());
+        strSave.onClick.AddListener(() => RollSavingThrow("Strenght", strModifier.text));
+        dexSave.onClick.AddListener(() => RollSavingThrow("Dexterity", dexModifier.text));
+        conSave.onClick.AddListener(() => RollSavingThrow("Constitution", conModifier.text));
+        intSave.onClick.AddListener(() => RollSavingThrow("Intelligence", intModifier.text));
+        wisSave.onClick.AddListener(() => RollSavingThrow("Wisdom", wisModifier.text));
+        chaSave.onClick.AddListener(() => RollSavingThrow("Charisma", chaModifier.text));
 
         // character stats related events
         currHealthPoints.onValueChanged.AddListener(delegate { UpdateTokenHealthPoints(tempHealthPoints.text, currHealthPoints.text); });
         tempHealthPoints.onValueChanged.AddListener(delegate { UpdateTokenHealthPoints(tempHealthPoints.text, currHealthPoints.text); });
 
         rollHitDice.onClick.AddListener(() => RollHitDice());
-        rollInitiative.onClick.AddListener(() => RollInitiativeCheck());
+        rollInitiative.onClick.AddListener(() => RollInitiative());
         rollDeathSave.onClick.AddListener(() => RollDeathSavingThrow());
         resetDeathSaves.onClick.AddListener(() => ResetDeathSavingThrows());
 
@@ -349,7 +349,7 @@ public class CharacterSheetManager : MonoBehaviour
             CalculateSkillTotalBonus(skill.skillProficency, skill.skillCharacteristic, skill.skillExtraBonus, skill.skillTotalBonus);
 
             // skill related roll events
-            skill.skillCheck.onClick.AddListener(() => RollSkillCheck(skill.skillName, skill.skillTotalBonus.text));
+            skill.skillCheck.onClick.AddListener(() => RollCheck(skill.skillName, skill.skillTotalBonus.text));
         }
 
         // features related events
@@ -466,9 +466,9 @@ public class CharacterSheetManager : MonoBehaviour
 
     void LoadCharacterInfo()
     {
-        characterName.text = CSInfo.characterName;
-        playerName.text = CSInfo.playerName;
-        appearance.text = CSInfo.appearance;
+        characterName.text = CSInfo.publicPageCharacterInfo.characterName;
+        playerName.text = CSInfo.publicPageCharacterInfo.playerName;
+        appearance.text = CSInfo.publicPageCharacterInfo.appearance;
 
         basicInfoPublisher.isOn = CSInfo.publicBasicInfo;
         skillsPublisher.isOn = CSInfo.publicSkills;
@@ -478,28 +478,29 @@ public class CharacterSheetManager : MonoBehaviour
         actionsPublisher.isOn = CSInfo.publicActions;
         personalityPublisher.isOn = CSInfo.publicPersonality;
 
-        clasAndLevel.text = CSInfo.clasAndLevel;
-        subclass.text = CSInfo.subclass;
-        race.text = CSInfo.race;
-        background.text = CSInfo.background;
-        alignement.text = CSInfo.alignement;
-        experience.text = CSInfo.experience;
+        #region basic info 
+        clasAndLevel.text = CSInfo.basicPageCharacterInfo.clasAndLevel;
+        subclass.text = CSInfo.basicPageCharacterInfo.subclass;
+        race.text = CSInfo.basicPageCharacterInfo.race;
+        background.text = CSInfo.basicPageCharacterInfo.background;
+        alignement.text = CSInfo.basicPageCharacterInfo.alignement;
+        experience.text = CSInfo.basicPageCharacterInfo.experience;
 
-        strScore.text = CSInfo.strScore;
-        dexScore.text = CSInfo.dexScore;
-        conScore.text = CSInfo.conScore;
-        intScore.text = CSInfo.intScore;
-        wisScore.text = CSInfo.wisScore;
-        chaScore.text = CSInfo.chaScore;
+        strScore.text = CSInfo.basicPageCharacterInfo.strScore;
+        dexScore.text = CSInfo.basicPageCharacterInfo.dexScore;
+        conScore.text = CSInfo.basicPageCharacterInfo.conScore;
+        intScore.text = CSInfo.basicPageCharacterInfo.intScore;
+        wisScore.text = CSInfo.basicPageCharacterInfo.wisScore;
+        chaScore.text = CSInfo.basicPageCharacterInfo.chaScore;
 
-        maxHealthPoints.text = CSInfo.maxHealthPoints;
-        currHealthPoints.text = CSInfo.currHealthPoints;
-        tempHealthPoints.text = CSInfo.tempHealthPoints;
-        initiativeBonus.text = CSInfo.initiativeBonus;
-        armorClass.text = CSInfo.armorClass;
-        speed.text = CSInfo.speed;
-        hitDice.value = CSInfo.hitDiceType;
-        switch (CSInfo.deathSaveSuccesses)
+        maxHealthPoints.text = CSInfo.basicPageCharacterInfo.maxHealthPoints;
+        currHealthPoints.text = CSInfo.basicPageCharacterInfo.currHealthPoints;
+        tempHealthPoints.text = CSInfo.basicPageCharacterInfo.tempHealthPoints;
+        initiativeBonus.text = CSInfo.basicPageCharacterInfo.initiativeBonus;
+        armorClass.text = CSInfo.basicPageCharacterInfo.armorClass;
+        speed.text = CSInfo.basicPageCharacterInfo.speed;
+        hitDice.value = CSInfo.basicPageCharacterInfo.hitDiceType;
+        switch (CSInfo.basicPageCharacterInfo.deathSaveSuccesses)
         {
             case 1:
                 deathSaveSuccess1.isOn = true;
@@ -514,7 +515,7 @@ public class CharacterSheetManager : MonoBehaviour
                 deathSaveSuccess3.isOn = true;
                 break;
         }
-        switch (CSInfo.deathSaveFails)
+        switch (CSInfo.basicPageCharacterInfo.deathSaveFails)
         {
             case 1:
                 deathSaveFail1.isOn = true;
@@ -529,304 +530,321 @@ public class CharacterSheetManager : MonoBehaviour
                 deathSaveFail3.isOn = true;
                 break;
         }
-       
-        strProficency.isOn = CSInfo.strProf;
-        dexProficency.isOn = CSInfo.dexProf;
-        conProficency.isOn = CSInfo.conProf;
-        intProficency.isOn = CSInfo.intProf;
-        wisProficency.isOn = CSInfo.wisProf;
-        chaProficency.isOn = CSInfo.chaProf;
+        #endregion
+
+        #region skills info
+
+        strProficency.isOn = CSInfo.skillsPageCharacterInfo.strProf;
+        dexProficency.isOn = CSInfo.skillsPageCharacterInfo.dexProf;
+        conProficency.isOn = CSInfo.skillsPageCharacterInfo.conProf;
+        intProficency.isOn = CSInfo.skillsPageCharacterInfo.intProf;
+        wisProficency.isOn = CSInfo.skillsPageCharacterInfo.wisProf;
+        chaProficency.isOn = CSInfo.skillsPageCharacterInfo.chaProf;
 
         for (int i = 0; i < skillList.Count; i++)
         {
-            skillList[i].skillProficency.value = CSInfo.skillProf[i];
-            skillList[i].skillCharacteristic.value = CSInfo.skillCharacteristic[i];
-            skillList[i].skillExtraBonus.text = CSInfo.skillBonus[i];
-            skillList[i].skillTotalBonus.text = CSInfo.skillTotal[i];
+            skillList[i].skillProficency.value = CSInfo.skillsPageCharacterInfo.skillProf[i];
+            skillList[i].skillCharacteristic.value = CSInfo.skillsPageCharacterInfo.skillCharacteristic[i];
+            skillList[i].skillExtraBonus.text = CSInfo.skillsPageCharacterInfo.skillBonus[i];
+            skillList[i].skillTotalBonus.text = CSInfo.skillsPageCharacterInfo.skillTotal[i];
         }
 
-        proficencyBonus.text = CSInfo.proficencyBonus;
+        proficencyBonus.text = CSInfo.skillsPageCharacterInfo.proficencyBonus;
 
-        featuresAndTraits.text = CSInfo.featuresAndTraits;
-        for (int i = 0; i < CSInfo.traitCount; i++)
+        #endregion
+
+        #region features and traits info
+        featuresAndTraits.text = CSInfo.featuresPageCharacterInfo.featuresAndTraits;
+        for (int i = 0; i < CSInfo.featuresPageCharacterInfo.traitCount; i++)
         {
             AddNewTrait(traitList, featuresParent);
             CharacterTrait trait = traitList[i].GetComponent<CharacterTrait>();
 
-            trait.traitName.text = CSInfo.traitName[i];
-            trait.traitDescriptionInput.text = CSInfo.traitDescription[i];
+            trait.traitName.text = CSInfo.featuresPageCharacterInfo.traitName[i];
+            trait.traitDescriptionInput.text = CSInfo.featuresPageCharacterInfo.traitDescription[i];
             trait.UpdateDescriptionAndSize();
         }
-        proficencies.text = CSInfo.proficencies;
+        proficencies.text = CSInfo.featuresPageCharacterInfo.proficencies;
+        #endregion
 
-        for (int i = 0; i < CSInfo.itemCount; i++)
+        #region inventory
+        for (int i = 0; i < CSInfo.inventoryPageCharacterInfo.itemCount; i++)
         {
             AddItemToInventory();
             CharacterSheetItem item = itemList[i].GetComponent<CharacterSheetItem>();
-            item.itemName.text = CSInfo.itemNames[i];
-            item.itemAmount.text = CSInfo.itemAmounts[i];
-            item.itemWeight.text = CSInfo.itemWeights[i];
+            item.itemName.text = CSInfo.inventoryPageCharacterInfo.itemNames[i];
+            item.itemAmount.text = CSInfo.inventoryPageCharacterInfo.itemAmounts[i];
+            item.itemWeight.text = CSInfo.inventoryPageCharacterInfo.itemWeights[i];
         }      
 
-        copperPieces.text = CSInfo.copperPieces;
-        silverPieces.text = CSInfo.silverPieces;
-        electrumPieces.text = CSInfo.electrumPieces;
-        goldPieces.text = CSInfo.goldPieces;
-        platinumPieces.text = CSInfo.platinumPieces;
+        copperPieces.text = CSInfo.inventoryPageCharacterInfo.copperPieces;
+        silverPieces.text = CSInfo.inventoryPageCharacterInfo.silverPieces;
+        electrumPieces.text = CSInfo.inventoryPageCharacterInfo.electrumPieces;
+        goldPieces.text = CSInfo.inventoryPageCharacterInfo.goldPieces;
+        platinumPieces.text = CSInfo.inventoryPageCharacterInfo.platinumPieces;
+        #endregion
 
-        spellModifier.value = CSInfo.spellCastingAbility;
+        #region spells
+        spellModifier.value = CSInfo.spellsPageCharacterInfo.spellCastingAbility;
+        spellSaveDc.text = CSInfo.spellsPageCharacterInfo.spellSaveDC;
+        spellAttackMod.text = CSInfo.spellsPageCharacterInfo.spellAttackMod;
 
-        for (int i = 0; i < CSInfo.level0SpellCount; i++)
+        for (int i = 0; i < CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellCount; i++)
         {
             AddNewSpellByLevel(level0SpellsList, level0Area);
             SpellInfo spell = level0SpellsList[i].GetComponent<SpellInfo>();
-            spell.spellName.text = CSInfo.level0SpellNames[i];
-            spell.prepared.isOn = CSInfo.level0PreparedSpells[i];
+            spell.spellName.text = CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellNames[i];
+            spell.prepared.isOn = CSInfo.spellsPageCharacterInfo.spellLevelList[0].preparedSpells[i];
             spell.spellLevel.value = 0;
-            spell.spellSchool.value = CSInfo.level0SpellSchool[i];
-            spell.spellCastingTime.text = CSInfo.level0SpellCastingTime[i];
-            spell.spellRange.text = CSInfo.level0SpellCastingTime[i];
-            spell.spellComponents.text = CSInfo.level0SpellComponents[i];
-            spell.spellDuration.text = CSInfo.level0SpellDuration[i];
-            spell.spellDescription.text = CSInfo.level0SpellDescription[i];
+            spell.spellSchool.value = CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellSchool[i];
+            spell.spellCastingTime.text = CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellCastingTime[i];
+            spell.spellRange.text = CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellCastingTime[i];
+            spell.spellComponents.text = CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellComponents[i];
+            spell.spellDuration.text = CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellDuration[i];
+            spell.spellDescription.text = CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellDescription[i];
         }
 
-        for (int i = 0; i < CSInfo.level1SpellCount; i++)
+        for (int i = 0; i < CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellCount; i++)
         {
             AddNewSpellByLevel(level1SpellsList, level1Area);
             SpellInfo spell = level1SpellsList[i].GetComponent<SpellInfo>();
-            spell.spellName.text = CSInfo.level1SpellNames[i];
-            spell.prepared.isOn = CSInfo.level1PreparedSpells[i];
+            spell.spellName.text = CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellNames[i];
+            spell.prepared.isOn = CSInfo.spellsPageCharacterInfo.spellLevelList[1].preparedSpells[i];
             spell.spellLevel.value = 1;
-            spell.spellSchool.value = CSInfo.level1SpellSchool[i];
-            spell.spellCastingTime.text = CSInfo.level1SpellCastingTime[i];
-            spell.spellRange.text = CSInfo.level1SpellCastingTime[i];
-            spell.spellComponents.text = CSInfo.level1SpellComponents[i];
-            spell.spellDuration.text = CSInfo.level1SpellDuration[i];
-            spell.spellDescription.text = CSInfo.level1SpellDescription[i];
+            spell.spellSchool.value = CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellSchool[i];
+            spell.spellCastingTime.text = CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellCastingTime[i];
+            spell.spellRange.text = CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellCastingTime[i];
+            spell.spellComponents.text = CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellComponents[i];
+            spell.spellDuration.text = CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellDuration[i];
+            spell.spellDescription.text = CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellDescription[i];
         }
 
-        for (int i = 0; i < CSInfo.level2SpellCount; i++)
+        for (int i = 0; i < CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellCount; i++)
         {
             AddNewSpellByLevel(level2SpellsList, level2Area);
             SpellInfo spell = level2SpellsList[i].GetComponent<SpellInfo>();
-            spell.spellName.text = CSInfo.level2SpellNames[i];
-            spell.prepared.isOn = CSInfo.level2PreparedSpells[i];
+            spell.spellName.text = CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellNames[i];
+            spell.prepared.isOn = CSInfo.spellsPageCharacterInfo.spellLevelList[2].preparedSpells[i];
             spell.spellLevel.value = 2;
-            spell.spellSchool.value = CSInfo.level2SpellSchool[i];
-            spell.spellCastingTime.text = CSInfo.level2SpellCastingTime[i];
-            spell.spellRange.text = CSInfo.level2SpellCastingTime[i];
-            spell.spellComponents.text = CSInfo.level2SpellComponents[i];
-            spell.spellDuration.text = CSInfo.level2SpellDuration[i];
-            spell.spellDescription.text = CSInfo.level2SpellDescription[i];
+            spell.spellSchool.value = CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellSchool[i];
+            spell.spellCastingTime.text = CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellCastingTime[i];
+            spell.spellRange.text = CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellCastingTime[i];
+            spell.spellComponents.text = CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellComponents[i];
+            spell.spellDuration.text = CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellDuration[i];
+            spell.spellDescription.text = CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellDescription[i];
         }
 
-        for (int i = 0; i < CSInfo.level3SpellCount; i++)
+        for (int i = 0; i < CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellCount; i++)
         {
             AddNewSpellByLevel(level3SpellsList, level0Area);
             SpellInfo spell = level3SpellsList[i].GetComponent<SpellInfo>();
-            spell.spellName.text = CSInfo.level3SpellNames[i];
-            spell.prepared.isOn = CSInfo.level3PreparedSpells[i];
+            spell.spellName.text = CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellNames[i];
+            spell.prepared.isOn = CSInfo.spellsPageCharacterInfo.spellLevelList[3].preparedSpells[i];
             spell.spellLevel.value = 3;
-            spell.spellSchool.value = CSInfo.level3SpellSchool[i];
-            spell.spellCastingTime.text = CSInfo.level3SpellCastingTime[i];
-            spell.spellRange.text = CSInfo.level3SpellCastingTime[i];
-            spell.spellComponents.text = CSInfo.level3SpellComponents[i];
-            spell.spellDuration.text = CSInfo.level3SpellDuration[i];
-            spell.spellDescription.text = CSInfo.level3SpellDescription[i];
+            spell.spellSchool.value = CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellSchool[i];
+            spell.spellCastingTime.text = CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellCastingTime[i];
+            spell.spellRange.text = CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellCastingTime[i];
+            spell.spellComponents.text = CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellComponents[i];
+            spell.spellDuration.text = CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellDuration[i];
+            spell.spellDescription.text = CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellDescription[i];
         }
 
-        for (int i = 0; i < CSInfo.level4SpellCount; i++)
+        for (int i = 0; i < CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellCount; i++)
         {
             AddNewSpellByLevel(level4SpellsList, level0Area);
             SpellInfo spell = level4SpellsList[i].GetComponent<SpellInfo>();
-            spell.spellName.text = CSInfo.level4SpellNames[i];
-            spell.prepared.isOn = CSInfo.level4PreparedSpells[i];
+            spell.spellName.text = CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellNames[i];
+            spell.prepared.isOn = CSInfo.spellsPageCharacterInfo.spellLevelList[4].preparedSpells[i];
             spell.spellLevel.value = 4;
-            spell.spellSchool.value = CSInfo.level4SpellSchool[i];
-            spell.spellCastingTime.text = CSInfo.level4SpellCastingTime[i];
-            spell.spellRange.text = CSInfo.level4SpellCastingTime[i];
-            spell.spellComponents.text = CSInfo.level4SpellComponents[i];
-            spell.spellDuration.text = CSInfo.level4SpellDuration[i];
-            spell.spellDescription.text = CSInfo.level4SpellDescription[i];
+            spell.spellSchool.value = CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellSchool[i];
+            spell.spellCastingTime.text = CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellCastingTime[i];
+            spell.spellRange.text = CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellCastingTime[i];
+            spell.spellComponents.text = CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellComponents[i];
+            spell.spellDuration.text = CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellDuration[i];
+            spell.spellDescription.text = CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellDescription[i];
         }
 
-        for (int i = 0; i < CSInfo.level5SpellCount; i++)
+        for (int i = 0; i < CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellCount; i++)
         {
             AddNewSpellByLevel(level5SpellsList, level5Area);
             SpellInfo spell = level5SpellsList[i].GetComponent<SpellInfo>();
-            spell.spellName.text = CSInfo.level5SpellNames[i];
-            spell.prepared.isOn = CSInfo.level5PreparedSpells[i];
+            spell.spellName.text = CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellNames[i];
+            spell.prepared.isOn = CSInfo.spellsPageCharacterInfo.spellLevelList[5].preparedSpells[i];
             spell.spellLevel.value = 5;
-            spell.spellSchool.value = CSInfo.level5SpellSchool[i];
-            spell.spellCastingTime.text = CSInfo.level5SpellCastingTime[i];
-            spell.spellRange.text = CSInfo.level5SpellCastingTime[i];
-            spell.spellComponents.text = CSInfo.level5SpellComponents[i];
-            spell.spellDuration.text = CSInfo.level5SpellDuration[i];
-            spell.spellDescription.text = CSInfo.level5SpellDescription[i];
+            spell.spellSchool.value = CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellSchool[i];
+            spell.spellCastingTime.text = CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellCastingTime[i];
+            spell.spellRange.text = CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellCastingTime[i];
+            spell.spellComponents.text = CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellComponents[i];
+            spell.spellDuration.text = CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellDuration[i];
+            spell.spellDescription.text = CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellDescription[i];
         }
 
-        for (int i = 0; i < CSInfo.level6SpellCount; i++)
+        for (int i = 0; i < CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellCount; i++)
         {
             AddNewSpellByLevel(level6SpellsList, level6Area);
             SpellInfo spell = level6SpellsList[i].GetComponent<SpellInfo>();
-            spell.spellName.text = CSInfo.level6SpellNames[i];
-            spell.prepared.isOn = CSInfo.level6PreparedSpells[i];
+            spell.spellName.text = CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellNames[i];
+            spell.prepared.isOn = CSInfo.spellsPageCharacterInfo.spellLevelList[6].preparedSpells[i];
             spell.spellLevel.value = 6;
-            spell.spellSchool.value = CSInfo.level6SpellSchool[i];
-            spell.spellCastingTime.text = CSInfo.level6SpellCastingTime[i];
-            spell.spellRange.text = CSInfo.level6SpellCastingTime[i];
-            spell.spellComponents.text = CSInfo.level6SpellComponents[i];
-            spell.spellDuration.text = CSInfo.level6SpellDuration[i];
-            spell.spellDescription.text = CSInfo.level6SpellDescription[i];
+            spell.spellSchool.value = CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellSchool[i];
+            spell.spellCastingTime.text = CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellCastingTime[i];
+            spell.spellRange.text = CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellCastingTime[i];
+            spell.spellComponents.text = CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellComponents[i];
+            spell.spellDuration.text = CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellDuration[i];
+            spell.spellDescription.text = CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellDescription[i];
         }
 
-        for (int i = 0; i < CSInfo.level7SpellCount; i++)
+        for (int i = 0; i < CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellCount; i++)
         {
             AddNewSpellByLevel(level7SpellsList, level7Area);
             SpellInfo spell = level7SpellsList[i].GetComponent<SpellInfo>();
-            spell.spellName.text = CSInfo.level7SpellNames[i];
-            spell.prepared.isOn = CSInfo.level7PreparedSpells[i];
+            spell.spellName.text = CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellNames[i];
+            spell.prepared.isOn = CSInfo.spellsPageCharacterInfo.spellLevelList[7].preparedSpells[i];
             spell.spellLevel.value = 7;
-            spell.spellSchool.value = CSInfo.level7SpellSchool[i];
-            spell.spellCastingTime.text = CSInfo.level7SpellCastingTime[i];
-            spell.spellRange.text = CSInfo.level7SpellCastingTime[i];
-            spell.spellComponents.text = CSInfo.level7SpellComponents[i];
-            spell.spellDuration.text = CSInfo.level7SpellDuration[i];
-            spell.spellDescription.text = CSInfo.level7SpellDescription[i];
+            spell.spellSchool.value = CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellSchool[i];
+            spell.spellCastingTime.text = CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellCastingTime[i];
+            spell.spellRange.text = CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellCastingTime[i];
+            spell.spellComponents.text = CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellComponents[i];
+            spell.spellDuration.text = CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellDuration[i];
+            spell.spellDescription.text = CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellDescription[i];
         }
 
-        for (int i = 0; i < CSInfo.level8SpellCount; i++)
+        for (int i = 0; i < CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellCount; i++)
         {
             AddNewSpellByLevel(level8SpellsList, level8Area);
             SpellInfo spell = level8SpellsList[i].GetComponent<SpellInfo>();
-            spell.spellName.text = CSInfo.level8SpellNames[i];
-            spell.prepared.isOn = CSInfo.level8PreparedSpells[i];
+            spell.spellName.text = CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellNames[i];
+            spell.prepared.isOn = CSInfo.spellsPageCharacterInfo.spellLevelList[8].preparedSpells[i];
             spell.spellLevel.value = 8;
-            spell.spellSchool.value = CSInfo.level8SpellSchool[i];
-            spell.spellCastingTime.text = CSInfo.level8SpellCastingTime[i];
-            spell.spellRange.text = CSInfo.level8SpellCastingTime[i];
-            spell.spellComponents.text = CSInfo.level8SpellComponents[i];
-            spell.spellDuration.text = CSInfo.level8SpellDuration[i];
-            spell.spellDescription.text = CSInfo.level8SpellDescription[i];
+            spell.spellSchool.value = CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellSchool[i];
+            spell.spellCastingTime.text = CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellCastingTime[i];
+            spell.spellRange.text = CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellCastingTime[i];
+            spell.spellComponents.text = CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellComponents[i];
+            spell.spellDuration.text = CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellDuration[i];
+            spell.spellDescription.text = CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellDescription[i];
         }
 
-        for (int i = 0; i < CSInfo.level9SpellCount; i++)
+        for (int i = 0; i < CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellCount; i++)
         {
             AddNewSpellByLevel(level9SpellsList, level0Area);
             SpellInfo spell = level9SpellsList[i].GetComponent<SpellInfo>();
-            spell.spellName.text = CSInfo.level9SpellNames[i];
-            spell.prepared.isOn = CSInfo.level9PreparedSpells[i];
+            spell.spellName.text = CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellNames[i];
+            spell.prepared.isOn = CSInfo.spellsPageCharacterInfo.spellLevelList[9].preparedSpells[i];
             spell.spellLevel.value = 9;
-            spell.spellSchool.value = CSInfo.level9SpellSchool[i];
-            spell.spellCastingTime.text = CSInfo.level9SpellCastingTime[i];
-            spell.spellRange.text = CSInfo.level9SpellCastingTime[i];
-            spell.spellComponents.text = CSInfo.level9SpellComponents[i];
-            spell.spellDuration.text = CSInfo.level9SpellDuration[i];
-            spell.spellDescription.text = CSInfo.level9SpellDescription[i];
+            spell.spellSchool.value = CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellSchool[i];
+            spell.spellCastingTime.text = CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellCastingTime[i];
+            spell.spellRange.text = CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellCastingTime[i];
+            spell.spellComponents.text = CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellComponents[i];
+            spell.spellDuration.text = CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellDuration[i];
+            spell.spellDescription.text = CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellDescription[i];
         }
+        #endregion
 
-        for (int i = 0; i < CSInfo.actionCount; i++)
+        #region actions
+        for (int i = 0; i < CSInfo.actionsPageCharacterInfo.actionList.actionCount; i++)
         {
             AddNewAction(actionList, actionsParent);
             PCActionInfo action = actionList[i].GetComponent<PCActionInfo>();
 
-            action.actionName.text = CSInfo.actionName[i];
-            action.actionType.value = CSInfo.actionType[i];
-            action.weaponTemplate.value = CSInfo.actionWeapon[i];
+            action.actionName.text = CSInfo.actionsPageCharacterInfo.actionList.actionName[i];
+            action.actionType.value = CSInfo.actionsPageCharacterInfo.actionList.actionType[i];
+            action.weaponTemplate.value = CSInfo.actionsPageCharacterInfo.actionList.actionWeapon[i];
 
-            action.wpnAttackAbility.value = CSInfo.actionAttackAbility[i];
-            action.wpnOtherAttackBonus.text = CSInfo.actionAttackOtherBonus[i];
-            action.wpnAttackProficency.isOn = CSInfo.actionAttackProficency[i];
+            action.wpnAttackAbility.value = CSInfo.actionsPageCharacterInfo.actionList.actionAttackAbility[i];
+            action.wpnOtherAttackBonus.text = CSInfo.actionsPageCharacterInfo.actionList.actionAttackOtherBonus[i];
+            action.wpnAttackProficency.isOn = CSInfo.actionsPageCharacterInfo.actionList.actionAttackProficency[i];
 
-            action.wpnDamage1NumberOfDices.text = CSInfo.actionD1NumDices[i];
-            action.wpnDamage1DiceType.value = CSInfo.actionD1DiceType[i];
-            action.wpnDamage1Ability.value = CSInfo.actionD1Ability[i];
-            action.wpnDamage1OtherBonus.text = CSInfo.actionD1OtherBonus[i];
-            action.wpnDamage1DamageType.value = CSInfo.actionD1Type[i];
+            action.wpnDamage1NumberOfDices.text = CSInfo.actionsPageCharacterInfo.actionList.actionD1NumDices[i];
+            action.wpnDamage1DiceType.value = CSInfo.actionsPageCharacterInfo.actionList.actionD1DiceType[i];
+            action.wpnDamage1Ability.value = CSInfo.actionsPageCharacterInfo.actionList.actionD1Ability[i];
+            action.wpnDamage1OtherBonus.text = CSInfo.actionsPageCharacterInfo.actionList.actionD1OtherBonus[i];
+            action.wpnDamage1DamageType.value = CSInfo.actionsPageCharacterInfo.actionList.actionD1Type[i];
 
-            action.wpnDamage2NumberOfDices.text = CSInfo.actionD2NumDices[i];
-            action.wpnDamage2DiceType.value = CSInfo.actionD2DiceType[i];
-            action.wpnDamage2Ability.value = CSInfo.actionD2Ability[i];
-            action.wpnDamage2OtherBonus.text = CSInfo.actionD2OtherBonus[i];
-            action.wpnDamage2DamageType.value = CSInfo.actionD2Type[i];
+            action.wpnDamage2NumberOfDices.text = CSInfo.actionsPageCharacterInfo.actionList.actionD2NumDices[i];
+            action.wpnDamage2DiceType.value = CSInfo.actionsPageCharacterInfo.actionList.actionD2DiceType[i];
+            action.wpnDamage2Ability.value = CSInfo.actionsPageCharacterInfo.actionList.actionD2Ability[i];
+            action.wpnDamage2OtherBonus.text = CSInfo.actionsPageCharacterInfo.actionList.actionD2OtherBonus[i];
+            action.wpnDamage2DamageType.value = CSInfo.actionsPageCharacterInfo.actionList.actionD2Type[i];
 
-            action.saveDC = CSInfo.actionDC[i];
+            action.saveDC = CSInfo.actionsPageCharacterInfo.actionList.actionDC[i];
 
             action.SetActionConfig();
         }
 
-        for (int i = 0; i < CSInfo.bonusActionCount; i++)
+        for (int i = 0; i < CSInfo.actionsPageCharacterInfo.bonusActionList.actionCount; i++)
         {
             AddNewAction(bonusActionList, bonusActionsParent);
             PCActionInfo action = bonusActionList[i].GetComponent<PCActionInfo>();
 
-            action.actionName.text = CSInfo.bonusActionName[i];
-            action.actionType.value = CSInfo.bonusActionType[i];
-            action.weaponTemplate.value = CSInfo.bonusActionWeapon[i];
+            action.actionName.text = CSInfo.actionsPageCharacterInfo.bonusActionList.actionName[i];
+            action.actionType.value = CSInfo.actionsPageCharacterInfo.bonusActionList.actionType[i];
+            action.weaponTemplate.value = CSInfo.actionsPageCharacterInfo.bonusActionList.actionWeapon[i];
 
-            action.wpnAttackAbility.value = CSInfo.bonusActionAttackAbility[i];
-            action.wpnOtherAttackBonus.text = CSInfo.bonusActionAttackOtherBonus[i];
-            action.wpnAttackProficency.isOn = CSInfo.bonusActionAttackProficency[i];
+            action.wpnAttackAbility.value = CSInfo.actionsPageCharacterInfo.bonusActionList.actionAttackAbility[i];
+            action.wpnOtherAttackBonus.text = CSInfo.actionsPageCharacterInfo.bonusActionList.actionAttackOtherBonus[i];
+            action.wpnAttackProficency.isOn = CSInfo.actionsPageCharacterInfo.bonusActionList.actionAttackProficency[i];
 
-            action.wpnDamage1NumberOfDices.text = CSInfo.bonusActionD1NumDices[i];
-            action.wpnDamage1DiceType.value = CSInfo.bonusActionD1DiceType[i];
-            action.wpnDamage1Ability.value = CSInfo.bonusActionD1Ability[i];
-            action.wpnDamage1OtherBonus.text = CSInfo.bonusActionD1OtherBonus[i];
-            action.wpnDamage1DamageType.value = CSInfo.bonusActionD1Type[i];
+            action.wpnDamage1NumberOfDices.text = CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1NumDices[i];
+            action.wpnDamage1DiceType.value = CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1DiceType[i];
+            action.wpnDamage1Ability.value = CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1Ability[i];
+            action.wpnDamage1OtherBonus.text = CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1OtherBonus[i];
+            action.wpnDamage1DamageType.value = CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1Type[i];
 
-            action.wpnDamage2NumberOfDices.text = CSInfo.bonusActionD2NumDices[i];
-            action.wpnDamage2DiceType.value = CSInfo.bonusActionD2DiceType[i];
-            action.wpnDamage2Ability.value = CSInfo.bonusActionD2Ability[i];
-            action.wpnDamage2OtherBonus.text = CSInfo.bonusActionD2OtherBonus[i];
-            action.wpnDamage2DamageType.value = CSInfo.bonusActionD2Type[i];
+            action.wpnDamage2NumberOfDices.text = CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2NumDices[i];
+            action.wpnDamage2DiceType.value = CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2DiceType[i];
+            action.wpnDamage2Ability.value = CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2Ability[i];
+            action.wpnDamage2OtherBonus.text = CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2OtherBonus[i];
+            action.wpnDamage2DamageType.value = CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2Type[i];
 
-            action.saveDC = CSInfo.bonusActionDC[i];
+            action.saveDC = CSInfo.actionsPageCharacterInfo.bonusActionList.actionDC[i];
 
             action.SetActionConfig();
         }
 
-        for (int i = 0; i < CSInfo.reactionCount; i++)
+        for (int i = 0; i < CSInfo.actionsPageCharacterInfo.reactionList.actionCount; i++)
         {
             AddNewAction(reactionList, reactionsParent);
             PCActionInfo action = reactionList[i].GetComponent<PCActionInfo>();
 
-            action.actionName.text = CSInfo.reactionName[i];
-            action.actionType.value = CSInfo.reactionType[i];
-            action.weaponTemplate.value = CSInfo.reactionWeapon[i];
+            action.actionName.text = CSInfo.actionsPageCharacterInfo.reactionList.actionName[i];
+            action.actionType.value = CSInfo.actionsPageCharacterInfo.reactionList.actionType[i];
+            action.weaponTemplate.value = CSInfo.actionsPageCharacterInfo.reactionList.actionWeapon[i];
 
-            action.wpnAttackAbility.value = CSInfo.reactionAttackAbility[i];
-            action.wpnOtherAttackBonus.text = CSInfo.reactionAttackOtherBonus[i];
-            action.wpnAttackProficency.isOn = CSInfo.reactionAttackProficency[i];
+            action.wpnAttackAbility.value = CSInfo.actionsPageCharacterInfo.reactionList.actionAttackAbility[i];
+            action.wpnOtherAttackBonus.text = CSInfo.actionsPageCharacterInfo.reactionList.actionAttackOtherBonus[i];
+            action.wpnAttackProficency.isOn = CSInfo.actionsPageCharacterInfo.reactionList.actionAttackProficency[i];
 
-            action.wpnDamage1NumberOfDices.text = CSInfo.reactionD1NumDices[i];
-            action.wpnDamage1DiceType.value = CSInfo.reactionD1DiceType[i];
-            action.wpnDamage1Ability.value = CSInfo.reactionD1Ability[i];
-            action.wpnDamage1OtherBonus.text = CSInfo.reactionD1OtherBonus[i];
-            action.wpnDamage1DamageType.value = CSInfo.reactionD1Type[i];
+            action.wpnDamage1NumberOfDices.text = CSInfo.actionsPageCharacterInfo.reactionList.actionD1NumDices[i];
+            action.wpnDamage1DiceType.value = CSInfo.actionsPageCharacterInfo.reactionList.actionD1DiceType[i];
+            action.wpnDamage1Ability.value = CSInfo.actionsPageCharacterInfo.reactionList.actionD1Ability[i];
+            action.wpnDamage1OtherBonus.text = CSInfo.actionsPageCharacterInfo.reactionList.actionD1OtherBonus[i];
+            action.wpnDamage1DamageType.value = CSInfo.actionsPageCharacterInfo.reactionList.actionD1Type[i];
 
-            action.wpnDamage2NumberOfDices.text = CSInfo.reactionD2NumDices[i];
-            action.wpnDamage2DiceType.value = CSInfo.reactionD2DiceType[i];
-            action.wpnDamage2Ability.value = CSInfo.reactionD2Ability[i];
-            action.wpnDamage2OtherBonus.text = CSInfo.reactionD2OtherBonus[i];
-            action.wpnDamage2DamageType.value = CSInfo.reactionD2Type[i];
+            action.wpnDamage2NumberOfDices.text = CSInfo.actionsPageCharacterInfo.reactionList.actionD2NumDices[i];
+            action.wpnDamage2DiceType.value = CSInfo.actionsPageCharacterInfo.reactionList.actionD2DiceType[i];
+            action.wpnDamage2Ability.value = CSInfo.actionsPageCharacterInfo.reactionList.actionD2Ability[i];
+            action.wpnDamage2OtherBonus.text = CSInfo.actionsPageCharacterInfo.reactionList.actionD2OtherBonus[i];
+            action.wpnDamage2DamageType.value = CSInfo.actionsPageCharacterInfo.reactionList.actionD2Type[i];
 
-            action.saveDC = CSInfo.reactionDC[i];
+            action.saveDC = CSInfo.actionsPageCharacterInfo.reactionList.actionDC[i];
 
             action.SetActionConfig();
         }
+        #endregion
 
-        traits.text = CSInfo.traits;
-        ideals.text = CSInfo.ideals;
-        bonds.text = CSInfo.bonds;
-        flaws.text = CSInfo.flaws; 
+        #region personality
+        traits.text = CSInfo.personalityPageCharacterInfo.traits;
+        ideals.text = CSInfo.personalityPageCharacterInfo.ideals;
+        bonds.text = CSInfo.personalityPageCharacterInfo.bonds;
+        flaws.text = CSInfo.personalityPageCharacterInfo.flaws;
+        #endregion
     }
 
     void SaveCharacterInfo()
     {
-        CSInfo.characterName = characterName.text;
-        CSInfo.playerName = playerName.text;
-        CSInfo.appearance = appearance.text;
+        CSInfo.publicPageCharacterInfo.characterName = characterName.text;
+        CSInfo.publicPageCharacterInfo.playerName = playerName.text;
+        CSInfo.publicPageCharacterInfo.appearance = appearance.text;
 
         CSInfo.publicBasicInfo = basicInfoPublisher.isOn;
         CSInfo.publicSkills = skillsPublisher.isOn;
@@ -836,490 +854,508 @@ public class CharacterSheetManager : MonoBehaviour
         CSInfo.publicActions = actionsPublisher.isOn;
         CSInfo.publicPersonality = personalityPublisher.isOn;
 
-        CSInfo.clasAndLevel = clasAndLevel.text;
-        CSInfo.subclass = subclass.text;
-        CSInfo.race = race.text;
-        CSInfo.background = background.text;
-        CSInfo.alignement = alignement.text;
-        CSInfo.experience = experience.text;
+        #region basic info
+        CSInfo.basicPageCharacterInfo.clasAndLevel = clasAndLevel.text;
+        CSInfo.basicPageCharacterInfo.subclass = subclass.text;
+        CSInfo.basicPageCharacterInfo.race = race.text;
+        CSInfo.basicPageCharacterInfo.background = background.text;
+        CSInfo.basicPageCharacterInfo.alignement = alignement.text;
+        CSInfo.basicPageCharacterInfo.experience = experience.text;
 
-        CSInfo.strScore = strScore.text;
-        CSInfo.dexScore = dexScore.text;
-        CSInfo.conScore = conScore.text;
-        CSInfo.intScore = intScore.text;
-        CSInfo.wisScore = wisScore.text;
-        CSInfo.chaScore = chaScore.text;
+        CSInfo.basicPageCharacterInfo.strScore = strScore.text;
+        CSInfo.basicPageCharacterInfo.dexScore = dexScore.text;
+        CSInfo.basicPageCharacterInfo.conScore = conScore.text;
+        CSInfo.basicPageCharacterInfo.intScore = intScore.text;
+        CSInfo.basicPageCharacterInfo.wisScore = wisScore.text;
+        CSInfo.basicPageCharacterInfo.chaScore = chaScore.text;
 
-        CSInfo.maxHealthPoints = maxHealthPoints.text;
-        CSInfo.currHealthPoints = currHealthPoints.text;
-        CSInfo.tempHealthPoints = tempHealthPoints.text;
-        CSInfo.initiativeBonus = initiativeBonus.text;
-        CSInfo.armorClass = armorClass.text;
-        CSInfo.speed = speed.text;
-        CSInfo.hitDiceType = hitDice.value;
+        CSInfo.basicPageCharacterInfo.maxHealthPoints = maxHealthPoints.text;
+        CSInfo.basicPageCharacterInfo.currHealthPoints = currHealthPoints.text;
+        CSInfo.basicPageCharacterInfo.tempHealthPoints = tempHealthPoints.text;
+        CSInfo.basicPageCharacterInfo.initiativeBonus = initiativeBonus.text;
+        CSInfo.basicPageCharacterInfo.armorClass = armorClass.text;
+        CSInfo.basicPageCharacterInfo.speed = speed.text;
+        CSInfo.basicPageCharacterInfo.hitDiceType = hitDice.value;
         if (deathSaveFail1.isOn)
-            CSInfo.deathSaveFails += 1;
+            CSInfo.basicPageCharacterInfo.deathSaveFails += 1;
         if (deathSaveFail2.isOn)
-            CSInfo.deathSaveFails += 1;
+            CSInfo.basicPageCharacterInfo.deathSaveFails += 1;
         if (deathSaveFail3.isOn)
-            CSInfo.deathSaveFails += 1;
+            CSInfo.basicPageCharacterInfo.deathSaveFails += 1;
         if (deathSaveSuccess1.isOn)
-            CSInfo.deathSaveSuccesses += 1;
+            CSInfo.basicPageCharacterInfo.deathSaveSuccesses += 1;
         if (deathSaveSuccess2.isOn)
-            CSInfo.deathSaveSuccesses += 1;
+            CSInfo.basicPageCharacterInfo.deathSaveSuccesses += 1;
         if (deathSaveSuccess3.isOn)
-            CSInfo.deathSaveSuccesses += 1;
+            CSInfo.basicPageCharacterInfo.deathSaveSuccesses += 1;
+        #endregion
 
-        CSInfo.proficencyBonus = proficencyBonus.text;
-        CSInfo.strProf = strProficency.isOn;
-        CSInfo.dexProf = dexProficency.isOn;
-        CSInfo.conProf = conProficency.isOn;
-        CSInfo.intProf = intProficency.isOn;
-        CSInfo.wisProf = wisProficency.isOn;
-        CSInfo.chaProf = chaProficency.isOn;
+        #region skills info
 
-        CSInfo.skillProf = new int[skillList.Count];
-        CSInfo.skillCharacteristic = new int[skillList.Count];
-        CSInfo.skillBonus = new string[skillList.Count];
-        CSInfo.skillTotal = new string[skillList.Count];
+        CSInfo.skillsPageCharacterInfo.proficencyBonus = proficencyBonus.text;
+        CSInfo.skillsPageCharacterInfo.strProf = strProficency.isOn;
+        CSInfo.skillsPageCharacterInfo.dexProf = dexProficency.isOn;
+        CSInfo.skillsPageCharacterInfo.conProf = conProficency.isOn;
+        CSInfo.skillsPageCharacterInfo.intProf = intProficency.isOn;
+        CSInfo.skillsPageCharacterInfo.wisProf = wisProficency.isOn;
+        CSInfo.skillsPageCharacterInfo.chaProf = chaProficency.isOn;
+
+        CSInfo.skillsPageCharacterInfo.skillProf = new int[skillList.Count];
+        CSInfo.skillsPageCharacterInfo.skillCharacteristic = new int[skillList.Count];
+        CSInfo.skillsPageCharacterInfo.skillBonus = new string[skillList.Count];
+        CSInfo.skillsPageCharacterInfo.skillTotal = new string[skillList.Count];
 
         for (int i = 0; i < skillList.Count; i++)
         {
-            CSInfo.skillProf[i] = skillList[i].skillProficency.value;
-            CSInfo.skillCharacteristic[i] = skillList[i].skillCharacteristic.value;
-            CSInfo.skillBonus[i] = skillList[i].skillExtraBonus.text;
-            CSInfo.skillTotal[i] = skillList[i].skillTotalBonus.text;
+            CSInfo.skillsPageCharacterInfo.skillProf[i] = skillList[i].skillProficency.value;
+            CSInfo.skillsPageCharacterInfo.skillCharacteristic[i] = skillList[i].skillCharacteristic.value;
+            CSInfo.skillsPageCharacterInfo.skillBonus[i] = skillList[i].skillExtraBonus.text;
+            CSInfo.skillsPageCharacterInfo.skillTotal[i] = skillList[i].skillTotalBonus.text;
         }
 
-        CSInfo.featuresAndTraits = featuresAndTraits.text;
+        #endregion
 
-        CSInfo.traitCount = traitList.Count;
-        CSInfo.traitName = new string[CSInfo.traitCount];
-        CSInfo.traitDescription = new string[CSInfo.traitCount];
-        for (int i = 0; i < CSInfo.traitCount; i++)
+        #region features and traits info
+        CSInfo.featuresPageCharacterInfo.featuresAndTraits = featuresAndTraits.text;
+
+        CSInfo.featuresPageCharacterInfo.traitCount = traitList.Count;
+        CSInfo.featuresPageCharacterInfo.traitName = new string[CSInfo.featuresPageCharacterInfo.traitCount];
+        CSInfo.featuresPageCharacterInfo.traitDescription = new string[CSInfo.featuresPageCharacterInfo.traitCount];
+        for (int i = 0; i < CSInfo.featuresPageCharacterInfo.traitCount; i++)
         {
             CharacterTrait trait = traitList[i].GetComponent<CharacterTrait>();
 
-            CSInfo.traitName[i] = trait.traitName.text;
-            CSInfo.traitDescription[i] = trait.traitDescriptionInput.text;
+            CSInfo.featuresPageCharacterInfo.traitName[i] = trait.traitName.text;
+            CSInfo.featuresPageCharacterInfo.traitDescription[i] = trait.traitDescriptionInput.text;
         }
-        CSInfo.proficencies = proficencies.text;
+        CSInfo.featuresPageCharacterInfo.proficencies = proficencies.text;
+        #endregion
 
-        CSInfo.itemCount = itemList.Count;
-        CSInfo.itemNames = new string[CSInfo.itemCount];
-        CSInfo.itemAmounts = new string[CSInfo.itemCount];
-        CSInfo.itemWeights = new string[CSInfo.itemCount];
+        #region inventory
+        CSInfo.inventoryPageCharacterInfo.itemCount = itemList.Count;
+        CSInfo.inventoryPageCharacterInfo.itemNames = new string[CSInfo.inventoryPageCharacterInfo.itemCount];
+        CSInfo.inventoryPageCharacterInfo.itemAmounts = new string[CSInfo.inventoryPageCharacterInfo.itemCount];
+        CSInfo.inventoryPageCharacterInfo.itemWeights = new string[CSInfo.inventoryPageCharacterInfo.itemCount];
 
         for (int i = 0; i < itemList.Count; i++)
         {
             CharacterSheetItem item = itemList[i].GetComponent<CharacterSheetItem>();
-            CSInfo.itemNames[i] = item.itemName.text;
-            CSInfo.itemAmounts[i] = item.itemAmount.text;
-            CSInfo.itemWeights[i] = item.itemWeight.text;
+            CSInfo.inventoryPageCharacterInfo.itemNames[i] = item.itemName.text;
+            CSInfo.inventoryPageCharacterInfo.itemAmounts[i] = item.itemAmount.text;
+            CSInfo.inventoryPageCharacterInfo.itemWeights[i] = item.itemWeight.text;
         }
 
-        CSInfo.copperPieces = copperPieces.text;
-        CSInfo.silverPieces = silverPieces.text;
-        CSInfo.electrumPieces = electrumPieces.text;
-        CSInfo.goldPieces = goldPieces.text;
-        CSInfo.platinumPieces = platinumPieces.text;
+        CSInfo.inventoryPageCharacterInfo.copperPieces = copperPieces.text;
+        CSInfo.inventoryPageCharacterInfo.silverPieces = silverPieces.text;
+        CSInfo.inventoryPageCharacterInfo.electrumPieces = electrumPieces.text;
+        CSInfo.inventoryPageCharacterInfo.goldPieces = goldPieces.text;
+        CSInfo.inventoryPageCharacterInfo.platinumPieces = platinumPieces.text;
+        #endregion
 
-        CSInfo.spellCastingAbility = spellModifier.value;
+        #region spells
+        CSInfo.spellsPageCharacterInfo.spellCastingAbility = spellModifier.value;
+        CSInfo.spellsPageCharacterInfo.spellSaveDC = spellSaveDc.text;
+        CSInfo.spellsPageCharacterInfo.spellAttackMod = spellAttackMod.text;
 
-        CSInfo.level0SpellCount = level0SpellsList.Count;
-        CSInfo.level0SpellNames = new string[CSInfo.level0SpellCount];
-        CSInfo.level0PreparedSpells = new bool[CSInfo.level0SpellCount];
-        CSInfo.level0SpellSchool = new int[CSInfo.level0SpellCount];
-        CSInfo.level0SpellCastingTime = new string[CSInfo.level0SpellCount];
-        CSInfo.level0SpellRange = new string[CSInfo.level0SpellCount];
-        CSInfo.level0SpellComponents = new string[CSInfo.level0SpellCount];
-        CSInfo.level0SpellDuration = new string[CSInfo.level0SpellCount];
-        CSInfo.level0SpellDescription = new string[CSInfo.level0SpellCount];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellCount = level0SpellsList.Count;
+        CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellNames = new string[level0SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[0].preparedSpells = new bool[level0SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellSchool = new int[level0SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellCastingTime = new string[level0SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellRange = new string[level0SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellComponents = new string[level0SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellDuration = new string[level0SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellDescription = new string[level0SpellsList.Count];
 
-        for (int i = 0; i < CSInfo.level0SpellCount; i++)
+        for (int i = 0; i < level0SpellsList.Count; i++)
         {
             SpellInfo spell = level0SpellsList[i].GetComponent<SpellInfo>();
 
-            CSInfo.level0SpellNames[i] = spell.spellName.text;
-            CSInfo.level0PreparedSpells[i] = spell.prepared.isOn;
-            CSInfo.level0SpellSchool[i] = spell.spellSchool.value;
-            CSInfo.level0SpellCastingTime[i] = spell.spellCastingTime.text;
-            CSInfo.level0SpellRange[i] = spell.spellRange.text;
-            CSInfo.level0SpellComponents[i] = spell.spellComponents.text;
-            CSInfo.level0SpellDuration[i] = spell.spellDuration.text;
-            CSInfo.level0SpellDescription[i] = spell.spellDescription.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellNames[i] = spell.spellName.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[0].preparedSpells[i] = spell.prepared.isOn;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellSchool[i] = spell.spellSchool.value;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellCastingTime[i] = spell.spellCastingTime.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellRange[i] = spell.spellRange.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellComponents[i] = spell.spellComponents.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellDuration[i] = spell.spellDuration.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[0].spellDescription[i] = spell.spellDescription.text;
         }
 
-        CSInfo.level1SpellCount = level1SpellsList.Count;
-        CSInfo.level1SpellNames = new string[CSInfo.level1SpellCount];
-        CSInfo.level1PreparedSpells = new bool[CSInfo.level1SpellCount];
-        CSInfo.level1SpellSchool = new int[CSInfo.level1SpellCount];
-        CSInfo.level1SpellCastingTime = new string[CSInfo.level1SpellCount];
-        CSInfo.level1SpellRange = new string[CSInfo.level1SpellCount];
-        CSInfo.level1SpellComponents = new string[CSInfo.level1SpellCount];
-        CSInfo.level1SpellDuration = new string[CSInfo.level1SpellCount];
-        CSInfo.level1SpellDescription = new string[CSInfo.level1SpellCount];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellCount = level1SpellsList.Count;
+        CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellNames = new string[level1SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[1].preparedSpells = new bool[level1SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellSchool = new int[level1SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellCastingTime = new string[level1SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellRange = new string[level1SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellComponents = new string[level1SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellDuration = new string[level1SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellDescription = new string[level1SpellsList.Count];
 
-        for (int i = 0; i < CSInfo.level1SpellCount; i++)
+        for (int i = 0; i < level1SpellsList.Count; i++)
         {
             SpellInfo spell = level1SpellsList[i].GetComponent<SpellInfo>();
 
-            CSInfo.level1SpellNames[i] = spell.spellName.text;
-            CSInfo.level1PreparedSpells[i] = spell.prepared.isOn;
-            CSInfo.level1SpellSchool[i] = spell.spellSchool.value;
-            CSInfo.level1SpellCastingTime[i] = spell.spellCastingTime.text;
-            CSInfo.level1SpellRange[i] = spell.spellRange.text;
-            CSInfo.level1SpellComponents[i] = spell.spellComponents.text;
-            CSInfo.level1SpellDuration[i] = spell.spellDuration.text;
-            CSInfo.level1SpellDescription[i] = spell.spellDescription.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellNames[i] = spell.spellName.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[1].preparedSpells[i] = spell.prepared.isOn;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellSchool[i] = spell.spellSchool.value;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellCastingTime[i] = spell.spellCastingTime.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellRange[i] = spell.spellRange.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellComponents[i] = spell.spellComponents.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellDuration[i] = spell.spellDuration.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[1].spellDescription[i] = spell.spellDescription.text;
         }
 
-        CSInfo.level2SpellCount = level2SpellsList.Count;
-        CSInfo.level2SpellNames = new string[CSInfo.level2SpellCount];
-        CSInfo.level2PreparedSpells = new bool[CSInfo.level2SpellCount];
-        CSInfo.level2SpellSchool = new int[CSInfo.level2SpellCount];
-        CSInfo.level2SpellCastingTime = new string[CSInfo.level2SpellCount];
-        CSInfo.level2SpellRange = new string[CSInfo.level2SpellCount];
-        CSInfo.level2SpellComponents = new string[CSInfo.level2SpellCount];
-        CSInfo.level2SpellDuration = new string[CSInfo.level2SpellCount];
-        CSInfo.level2SpellDescription = new string[CSInfo.level2SpellCount];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellCount = level2SpellsList.Count;
+        CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellNames = new string[level2SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[2].preparedSpells = new bool[level2SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellSchool = new int[level2SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellCastingTime = new string[level2SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellRange = new string[level2SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellComponents = new string[level2SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellDuration = new string[level2SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[2].spellDescription = new string[level2SpellsList.Count];
 
-        for (int i = 0; i < CSInfo.level2SpellCount; i++)
-        {
-            SpellInfo spell = level2SpellsList[i].GetComponent<SpellInfo>();
-
-            CSInfo.level2SpellNames[i] = spell.spellName.text;
-            CSInfo.level2PreparedSpells[i] = spell.prepared.isOn;
-            CSInfo.level2SpellSchool[i] = spell.spellSchool.value;
-            CSInfo.level2SpellCastingTime[i] = spell.spellCastingTime.text;
-            CSInfo.level2SpellRange[i] = spell.spellRange.text;
-            CSInfo.level2SpellComponents[i] = spell.spellComponents.text;
-            CSInfo.level2SpellDuration[i] = spell.spellDuration.text;
-            CSInfo.level2SpellDescription[i] = spell.spellDescription.text;
-        }
-
-        CSInfo.level3SpellCount = level3SpellsList.Count;
-        CSInfo.level3SpellNames = new string[CSInfo.level3SpellCount];
-        CSInfo.level3PreparedSpells = new bool[CSInfo.level3SpellCount];
-        CSInfo.level3SpellSchool = new int[CSInfo.level3SpellCount];
-        CSInfo.level3SpellCastingTime = new string[CSInfo.level3SpellCount];
-        CSInfo.level3SpellRange = new string[CSInfo.level3SpellCount];
-        CSInfo.level3SpellComponents = new string[CSInfo.level3SpellCount];
-        CSInfo.level3SpellDuration = new string[CSInfo.level3SpellCount];
-        CSInfo.level3SpellDescription = new string[CSInfo.level3SpellCount];
-
-        for (int i = 0; i < CSInfo.level3SpellCount; i++)
+        for (int i = 0; i < level2SpellsList.Count; i++)
         {
             SpellInfo spell = level3SpellsList[i].GetComponent<SpellInfo>();
 
-            CSInfo.level3SpellNames[i] = spell.spellName.text;
-            CSInfo.level3PreparedSpells[i] = spell.prepared.isOn;
-            CSInfo.level3SpellSchool[i] = spell.spellSchool.value;
-            CSInfo.level3SpellCastingTime[i] = spell.spellCastingTime.text;
-            CSInfo.level3SpellRange[i] = spell.spellRange.text;
-            CSInfo.level3SpellComponents[i] = spell.spellComponents.text;
-            CSInfo.level3SpellDuration[i] = spell.spellDuration.text;
-            CSInfo.level3SpellDescription[i] = spell.spellDescription.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellNames[i] = spell.spellName.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].preparedSpells[i] = spell.prepared.isOn;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellSchool[i] = spell.spellSchool.value;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellCastingTime[i] = spell.spellCastingTime.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellRange[i] = spell.spellRange.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellComponents[i] = spell.spellComponents.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellDuration[i] = spell.spellDuration.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellDescription[i] = spell.spellDescription.text;
         }
 
-        CSInfo.level4SpellCount = level4SpellsList.Count;
-        CSInfo.level4SpellNames = new string[CSInfo.level4SpellCount];
-        CSInfo.level4PreparedSpells = new bool[CSInfo.level4SpellCount];
-        CSInfo.level4SpellSchool = new int[CSInfo.level4SpellCount];
-        CSInfo.level4SpellCastingTime = new string[CSInfo.level4SpellCount];
-        CSInfo.level4SpellRange = new string[CSInfo.level4SpellCount];
-        CSInfo.level4SpellComponents = new string[CSInfo.level4SpellCount];
-        CSInfo.level4SpellDuration = new string[CSInfo.level4SpellCount];
-        CSInfo.level4SpellDescription = new string[CSInfo.level4SpellCount];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellCount = level3SpellsList.Count;
+        CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellNames = new string[level3SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[3].preparedSpells = new bool[level3SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellSchool = new int[level3SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellCastingTime = new string[level3SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellRange = new string[level3SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellComponents = new string[level3SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellDuration = new string[level3SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellDescription = new string[level3SpellsList.Count];
 
-        for (int i = 0; i < CSInfo.level4SpellCount; i++)
+        for (int i = 0; i < level3SpellsList.Count; i++)
+        {
+            SpellInfo spell = level3SpellsList[i].GetComponent<SpellInfo>();
+
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellNames[i] = spell.spellName.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].preparedSpells[i] = spell.prepared.isOn;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellSchool[i] = spell.spellSchool.value;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellCastingTime[i] = spell.spellCastingTime.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellRange[i] = spell.spellRange.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellComponents[i] = spell.spellComponents.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellDuration[i] = spell.spellDuration.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[3].spellDescription[i] = spell.spellDescription.text;
+        }
+
+        CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellCount = level4SpellsList.Count;
+        CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellNames = new string[level4SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[4].preparedSpells = new bool[level4SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellSchool = new int[level4SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellCastingTime = new string[level4SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellRange = new string[level4SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellComponents = new string[level4SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellDuration = new string[level4SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellDescription = new string[level4SpellsList.Count];
+
+        for (int i = 0; i < level4SpellsList.Count; i++)
         {
             SpellInfo spell = level4SpellsList[i].GetComponent<SpellInfo>();
 
-            CSInfo.level4SpellNames[i] = spell.spellName.text;
-            CSInfo.level4PreparedSpells[i] = spell.prepared.isOn;
-            CSInfo.level4SpellSchool[i] = spell.spellSchool.value;
-            CSInfo.level4SpellCastingTime[i] = spell.spellCastingTime.text;
-            CSInfo.level4SpellRange[i] = spell.spellRange.text;
-            CSInfo.level4SpellComponents[i] = spell.spellComponents.text;
-            CSInfo.level4SpellDuration[i] = spell.spellDuration.text;
-            CSInfo.level4SpellDescription[i] = spell.spellDescription.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellNames[i] = spell.spellName.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[4].preparedSpells[i] = spell.prepared.isOn;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellSchool[i] = spell.spellSchool.value;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellCastingTime[i] = spell.spellCastingTime.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellRange[i] = spell.spellRange.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellComponents[i] = spell.spellComponents.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellDuration[i] = spell.spellDuration.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[4].spellDescription[i] = spell.spellDescription.text;
         }
 
-        CSInfo.level5SpellCount = level5SpellsList.Count;
-        CSInfo.level5SpellNames = new string[CSInfo.level5SpellCount];
-        CSInfo.level5PreparedSpells = new bool[CSInfo.level5SpellCount];
-        CSInfo.level5SpellSchool = new int[CSInfo.level5SpellCount];
-        CSInfo.level5SpellCastingTime = new string[CSInfo.level5SpellCount];
-        CSInfo.level5SpellRange = new string[CSInfo.level5SpellCount];
-        CSInfo.level5SpellComponents = new string[CSInfo.level5SpellCount];
-        CSInfo.level5SpellDuration = new string[CSInfo.level5SpellCount];
-        CSInfo.level5SpellDescription = new string[CSInfo.level5SpellCount];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellCount = level5SpellsList.Count;
+        CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellNames = new string[level5SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[5].preparedSpells = new bool[level5SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellSchool = new int[level5SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellCastingTime = new string[level5SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellRange = new string[level5SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellComponents = new string[level5SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellDuration = new string[level5SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellDescription = new string[level5SpellsList.Count];
 
-        for (int i = 0; i < CSInfo.level5SpellCount; i++)
+        for (int i = 0; i < level5SpellsList.Count; i++)
         {
             SpellInfo spell = level5SpellsList[i].GetComponent<SpellInfo>();
 
-            CSInfo.level5SpellNames[i] = spell.spellName.text;
-            CSInfo.level5PreparedSpells[i] = spell.prepared.isOn;
-            CSInfo.level5SpellSchool[i] = spell.spellSchool.value;
-            CSInfo.level5SpellCastingTime[i] = spell.spellCastingTime.text;
-            CSInfo.level5SpellRange[i] = spell.spellRange.text;
-            CSInfo.level5SpellComponents[i] = spell.spellComponents.text;
-            CSInfo.level5SpellDuration[i] = spell.spellDuration.text;
-            CSInfo.level5SpellDescription[i] = spell.spellDescription.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellNames[i] = spell.spellName.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[5].preparedSpells[i] = spell.prepared.isOn;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellSchool[i] = spell.spellSchool.value;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellCastingTime[i] = spell.spellCastingTime.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellRange[i] = spell.spellRange.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellComponents[i] = spell.spellComponents.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellDuration[i] = spell.spellDuration.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[5].spellDescription[i] = spell.spellDescription.text;
         }
 
-        CSInfo.level6SpellCount = level6SpellsList.Count;
-        CSInfo.level6SpellNames = new string[CSInfo.level6SpellCount];
-        CSInfo.level6PreparedSpells = new bool[CSInfo.level6SpellCount];
-        CSInfo.level6SpellSchool = new int[CSInfo.level6SpellCount];
-        CSInfo.level6SpellCastingTime = new string[CSInfo.level6SpellCount];
-        CSInfo.level6SpellRange = new string[CSInfo.level6SpellCount];
-        CSInfo.level6SpellComponents = new string[CSInfo.level6SpellCount];
-        CSInfo.level6SpellDuration = new string[CSInfo.level6SpellCount];
-        CSInfo.level6SpellDescription = new string[CSInfo.level6SpellCount];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellCount = level6SpellsList.Count;
+        CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellNames = new string[level6SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[6].preparedSpells = new bool[level6SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellSchool = new int[level6SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellCastingTime = new string[level6SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellRange = new string[level6SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellComponents = new string[level6SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellDuration = new string[level6SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellDescription = new string[level6SpellsList.Count];
 
-        for (int i = 0; i < CSInfo.level6SpellCount; i++)
+        for (int i = 0; i < level6SpellsList.Count; i++)
         {
             SpellInfo spell = level6SpellsList[i].GetComponent<SpellInfo>();
 
-            CSInfo.level6SpellNames[i] = spell.spellName.text;
-            CSInfo.level6PreparedSpells[i] = spell.prepared.isOn;
-            CSInfo.level6SpellSchool[i] = spell.spellSchool.value;
-            CSInfo.level6SpellCastingTime[i] = spell.spellCastingTime.text;
-            CSInfo.level6SpellRange[i] = spell.spellRange.text;
-            CSInfo.level6SpellComponents[i] = spell.spellComponents.text;
-            CSInfo.level6SpellDuration[i] = spell.spellDuration.text;
-            CSInfo.level6SpellDescription[i] = spell.spellDescription.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellNames[i] = spell.spellName.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[6].preparedSpells[i] = spell.prepared.isOn;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellSchool[i] = spell.spellSchool.value;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellCastingTime[i] = spell.spellCastingTime.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellRange[i] = spell.spellRange.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellComponents[i] = spell.spellComponents.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellDuration[i] = spell.spellDuration.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[6].spellDescription[i] = spell.spellDescription.text;
         }
 
-        CSInfo.level7SpellCount = level7SpellsList.Count;
-        CSInfo.level7SpellNames = new string[CSInfo.level7SpellCount];
-        CSInfo.level7PreparedSpells = new bool[CSInfo.level7SpellCount];
-        CSInfo.level7SpellSchool = new int[CSInfo.level7SpellCount];
-        CSInfo.level7SpellCastingTime = new string[CSInfo.level7SpellCount];
-        CSInfo.level7SpellRange = new string[CSInfo.level7SpellCount];
-        CSInfo.level7SpellComponents = new string[CSInfo.level7SpellCount];
-        CSInfo.level7SpellDuration = new string[CSInfo.level7SpellCount];
-        CSInfo.level7SpellDescription = new string[CSInfo.level7SpellCount];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellCount = level7SpellsList.Count;
+        CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellNames = new string[level7SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[7].preparedSpells = new bool[level7SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellSchool = new int[level7SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellCastingTime = new string[level7SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellRange = new string[level7SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellComponents = new string[level7SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellDuration = new string[level7SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellDescription = new string[level7SpellsList.Count];
 
-        for (int i = 0; i < CSInfo.level7SpellCount; i++)
+        for (int i = 0; i < level7SpellsList.Count; i++)
         {
             SpellInfo spell = level7SpellsList[i].GetComponent<SpellInfo>();
 
-            CSInfo.level7SpellNames[i] = spell.spellName.text;
-            CSInfo.level7PreparedSpells[i] = spell.prepared.isOn;
-            CSInfo.level7SpellSchool[i] = spell.spellSchool.value;
-            CSInfo.level7SpellCastingTime[i] = spell.spellCastingTime.text;
-            CSInfo.level7SpellRange[i] = spell.spellRange.text;
-            CSInfo.level7SpellComponents[i] = spell.spellComponents.text;
-            CSInfo.level7SpellDuration[i] = spell.spellDuration.text;
-            CSInfo.level7SpellDescription[i] = spell.spellDescription.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellNames[i] = spell.spellName.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[7].preparedSpells[i] = spell.prepared.isOn;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellSchool[i] = spell.spellSchool.value;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellCastingTime[i] = spell.spellCastingTime.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellRange[i] = spell.spellRange.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellComponents[i] = spell.spellComponents.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellDuration[i] = spell.spellDuration.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[7].spellDescription[i] = spell.spellDescription.text;
         }
 
-        CSInfo.level8SpellCount = level8SpellsList.Count;
-        CSInfo.level8SpellNames = new string[CSInfo.level8SpellCount];
-        CSInfo.level8PreparedSpells = new bool[CSInfo.level8SpellCount];
-        CSInfo.level8SpellSchool = new int[CSInfo.level8SpellCount];
-        CSInfo.level8SpellCastingTime = new string[CSInfo.level8SpellCount];
-        CSInfo.level8SpellRange = new string[CSInfo.level8SpellCount];
-        CSInfo.level8SpellComponents = new string[CSInfo.level8SpellCount];
-        CSInfo.level8SpellDuration = new string[CSInfo.level8SpellCount];
-        CSInfo.level8SpellDescription = new string[CSInfo.level8SpellCount];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellCount = level8SpellsList.Count;
+        CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellNames = new string[level8SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[8].preparedSpells = new bool[level8SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellSchool = new int[level8SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellCastingTime = new string[level8SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellRange = new string[level8SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellComponents = new string[level8SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellDuration = new string[level8SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellDescription = new string[level8SpellsList.Count];
 
-        for (int i = 0; i < CSInfo.level8SpellCount; i++)
+        for (int i = 0; i < level8SpellsList.Count; i++)
         {
             SpellInfo spell = level8SpellsList[i].GetComponent<SpellInfo>();
 
-            CSInfo.level8SpellNames[i] = spell.spellName.text;
-            CSInfo.level8PreparedSpells[i] = spell.prepared.isOn;
-            CSInfo.level8SpellSchool[i] = spell.spellSchool.value;
-            CSInfo.level8SpellCastingTime[i] = spell.spellCastingTime.text;
-            CSInfo.level8SpellRange[i] = spell.spellRange.text;
-            CSInfo.level8SpellComponents[i] = spell.spellComponents.text;
-            CSInfo.level8SpellDuration[i] = spell.spellDuration.text;
-            CSInfo.level8SpellDescription[i] = spell.spellDescription.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellNames[i] = spell.spellName.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[8].preparedSpells[i] = spell.prepared.isOn;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellSchool[i] = spell.spellSchool.value;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellCastingTime[i] = spell.spellCastingTime.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellRange[i] = spell.spellRange.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellComponents[i] = spell.spellComponents.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellDuration[i] = spell.spellDuration.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[8].spellDescription[i] = spell.spellDescription.text;
         }
 
-        CSInfo.level9SpellCount = level9SpellsList.Count;
-        CSInfo.level9SpellNames = new string[CSInfo.level9SpellCount];
-        CSInfo.level9PreparedSpells = new bool[CSInfo.level9SpellCount];
-        CSInfo.level9SpellSchool = new int[CSInfo.level9SpellCount];
-        CSInfo.level9SpellCastingTime = new string[CSInfo.level9SpellCount];
-        CSInfo.level9SpellRange = new string[CSInfo.level9SpellCount];
-        CSInfo.level9SpellComponents = new string[CSInfo.level9SpellCount];
-        CSInfo.level9SpellDuration = new string[CSInfo.level9SpellCount];
-        CSInfo.level9SpellDescription = new string[CSInfo.level9SpellCount];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellCount = level9SpellsList.Count;
+        CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellNames = new string[level9SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[9].preparedSpells = new bool[level9SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellSchool = new int[level9SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellCastingTime = new string[level9SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellRange = new string[level9SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellComponents = new string[level9SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellDuration = new string[level9SpellsList.Count];
+        CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellDescription = new string[level9SpellsList.Count];
 
-        for (int i = 0; i < CSInfo.level9SpellCount; i++)
+        for (int i = 0; i < level9SpellsList.Count; i++)
         {
             SpellInfo spell = level9SpellsList[i].GetComponent<SpellInfo>();
 
-            CSInfo.level9SpellNames[i] = spell.spellName.text;
-            CSInfo.level9PreparedSpells[i] = spell.prepared.isOn;
-            CSInfo.level9SpellSchool[i] = spell.spellSchool.value;
-            CSInfo.level9SpellCastingTime[i] = spell.spellCastingTime.text;
-            CSInfo.level9SpellRange[i] = spell.spellRange.text;
-            CSInfo.level9SpellComponents[i] = spell.spellComponents.text;
-            CSInfo.level9SpellDuration[i] = spell.spellDuration.text;
-            CSInfo.level9SpellDescription[i] = spell.spellDescription.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellNames[i] = spell.spellName.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[9].preparedSpells[i] = spell.prepared.isOn;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellSchool[i] = spell.spellSchool.value;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellCastingTime[i] = spell.spellCastingTime.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellRange[i] = spell.spellRange.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellComponents[i] = spell.spellComponents.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellDuration[i] = spell.spellDuration.text;
+            CSInfo.spellsPageCharacterInfo.spellLevelList[9].spellDescription[i] = spell.spellDescription.text;
         }
+        #endregion
 
-        CSInfo.actionCount = actionList.Count;
-        CSInfo.actionName = new string[CSInfo.actionCount];
-        CSInfo.actionType = new int[CSInfo.actionCount];
-        CSInfo.actionWeapon = new int[CSInfo.actionCount];
+        #region actions
+        CSInfo.actionsPageCharacterInfo.actionList.actionCount = actionList.Count;
+        CSInfo.actionsPageCharacterInfo.actionList.actionName = new string[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionType = new int[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionWeapon = new int[actionList.Count];
 
-        CSInfo.actionAttackAbility = new int[CSInfo.actionCount];
-        CSInfo.actionAttackOtherBonus = new string[CSInfo.actionCount];
-        CSInfo.actionAttackProficency = new bool[CSInfo.actionCount];
+        CSInfo.actionsPageCharacterInfo.actionList.actionAttackAbility = new int[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionAttackOtherBonus = new string[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionAttackProficency = new bool[actionList.Count];
 
-        CSInfo.actionD1NumDices = new string[CSInfo.actionCount];
-        CSInfo.actionD1DiceType = new int[CSInfo.actionCount];
-        CSInfo.actionD1Ability = new int[CSInfo.actionCount];
-        CSInfo.actionD1OtherBonus = new string[CSInfo.actionCount];
-        CSInfo.actionD1Type = new int[CSInfo.actionCount];
+        CSInfo.actionsPageCharacterInfo.actionList.actionD1NumDices = new string[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionD1DiceType = new int[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionD1Ability = new int[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionD1OtherBonus = new string[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionD1Type = new int[actionList.Count];
 
-        CSInfo.actionD2NumDices = new string[CSInfo.actionCount];
-        CSInfo.actionD2DiceType = new int[CSInfo.actionCount];
-        CSInfo.actionD2Ability = new int[CSInfo.actionCount];
-        CSInfo.actionD2OtherBonus = new string[CSInfo.actionCount];
-        CSInfo.actionD2Type = new int[CSInfo.actionCount];
+        CSInfo.actionsPageCharacterInfo.actionList.actionD2NumDices = new string[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionD2DiceType = new int[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionD2Ability = new int[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionD2OtherBonus = new string[actionList.Count];
+        CSInfo.actionsPageCharacterInfo.actionList.actionD2Type = new int[actionList.Count];
 
-        CSInfo.actionDC = new int[CSInfo.actionCount];
+        CSInfo.actionsPageCharacterInfo.actionList.actionDC = new int[actionList.Count];
 
-        for (int i = 0; i < CSInfo.actionCount; i++)
+        for (int i = 0; i < actionList.Count; i++)
         {
             PCActionInfo action = actionList[i].GetComponent<PCActionInfo>();
 
-            CSInfo.actionName[i] = action.actionName.text;
-            CSInfo.actionType[i] = action.actionType.value;
-            CSInfo.actionWeapon[i] = action.weaponTemplate.value;
+            CSInfo.actionsPageCharacterInfo.actionList.actionName[i] = action.actionName.text;
+            CSInfo.actionsPageCharacterInfo.actionList.actionType[i] = action.actionType.value;
+            CSInfo.actionsPageCharacterInfo.actionList.actionWeapon[i] = action.weaponTemplate.value;
 
-            CSInfo.actionAttackAbility[i] = action.wpnAttackAbility.value;
-            CSInfo.actionAttackOtherBonus[i] = action.wpnOtherAttackBonus.text;
-            CSInfo.actionAttackProficency[i] = action.wpnAttackProficency.isOn;
+            CSInfo.actionsPageCharacterInfo.actionList.actionAttackAbility[i] = action.wpnAttackAbility.value;
+            CSInfo.actionsPageCharacterInfo.actionList.actionAttackOtherBonus[i] = action.wpnOtherAttackBonus.text;
+            CSInfo.actionsPageCharacterInfo.actionList.actionAttackProficency[i] = action.wpnAttackProficency.isOn;
 
-            CSInfo.actionD1NumDices[i] = action.wpnDamage1NumberOfDices.text;
-            CSInfo.actionD1DiceType[i] = action.wpnDamage1DiceType.value;
-            CSInfo.actionD1Ability[i] = action.wpnDamage1Ability.value;
-            CSInfo.actionD1OtherBonus[i] = action.wpnDamage1OtherBonus.text;
-            CSInfo.actionD1Type[i] = action.wpnDamage1DamageType.value;
+            CSInfo.actionsPageCharacterInfo.actionList.actionD1NumDices[i] = action.wpnDamage1NumberOfDices.text;
+            CSInfo.actionsPageCharacterInfo.actionList.actionD1DiceType[i] = action.wpnDamage1DiceType.value;
+            CSInfo.actionsPageCharacterInfo.actionList.actionD1Ability[i] = action.wpnDamage1Ability.value;
+            CSInfo.actionsPageCharacterInfo.actionList.actionD1OtherBonus[i] = action.wpnDamage1OtherBonus.text;
+            CSInfo.actionsPageCharacterInfo.actionList.actionD1Type[i] = action.wpnDamage1DamageType.value;
 
-            CSInfo.actionD2NumDices[i] = action.wpnDamage2NumberOfDices.text;
-            CSInfo.actionD2DiceType[i] = action.wpnDamage2DiceType.value;
-            CSInfo.actionD2Ability[i] = action.wpnDamage2Ability.value;
-            CSInfo.actionD2OtherBonus[i] = action.wpnDamage2OtherBonus.text;
-            CSInfo.actionD2Type[i] = action.wpnDamage2DamageType.value;
+            CSInfo.actionsPageCharacterInfo.actionList.actionD2NumDices[i] = action.wpnDamage2NumberOfDices.text;
+            CSInfo.actionsPageCharacterInfo.actionList.actionD2DiceType[i] = action.wpnDamage2DiceType.value;
+            CSInfo.actionsPageCharacterInfo.actionList.actionD2Ability[i] = action.wpnDamage2Ability.value;
+            CSInfo.actionsPageCharacterInfo.actionList.actionD2OtherBonus[i] = action.wpnDamage2OtherBonus.text;
+            CSInfo.actionsPageCharacterInfo.actionList.actionD2Type[i] = action.wpnDamage2DamageType.value;
 
-            CSInfo.actionDC[i] = action.saveDC;
+            CSInfo.actionsPageCharacterInfo.actionList.actionDC[i] = action.saveDC;
         }
 
-        CSInfo.bonusActionCount = bonusActionList.Count;
-        CSInfo.bonusActionName = new string[CSInfo.bonusActionCount];
-        CSInfo.bonusActionType = new int[CSInfo.bonusActionCount];
-        CSInfo.bonusActionWeapon = new int[CSInfo.bonusActionCount];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionCount = bonusActionList.Count;
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionName = new string[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionType = new int[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionWeapon = new int[bonusActionList.Count];
 
-        CSInfo.bonusActionAttackAbility = new int[CSInfo.bonusActionCount];
-        CSInfo.bonusActionAttackOtherBonus = new string[CSInfo.bonusActionCount];
-        CSInfo.bonusActionAttackProficency = new bool[CSInfo.bonusActionCount];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionAttackAbility = new int[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionAttackOtherBonus = new string[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionAttackProficency = new bool[bonusActionList.Count];
 
-        CSInfo.bonusActionD1NumDices = new string[CSInfo.bonusActionCount];
-        CSInfo.bonusActionD1DiceType = new int[CSInfo.bonusActionCount];
-        CSInfo.bonusActionD1Ability = new int[CSInfo.bonusActionCount];
-        CSInfo.bonusActionD1OtherBonus = new string[CSInfo.bonusActionCount];
-        CSInfo.bonusActionD1Type = new int[CSInfo.bonusActionCount];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1NumDices = new string[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1DiceType = new int[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1Ability = new int[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1OtherBonus = new string[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1Type = new int[bonusActionList.Count];
 
-        CSInfo.bonusActionD2NumDices = new string[CSInfo.bonusActionCount];
-        CSInfo.bonusActionD2DiceType = new int[CSInfo.bonusActionCount];
-        CSInfo.bonusActionD2Ability = new int[CSInfo.bonusActionCount];
-        CSInfo.bonusActionD2OtherBonus = new string[CSInfo.bonusActionCount];
-        CSInfo.bonusActionD2Type = new int[CSInfo.bonusActionCount];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2NumDices = new string[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2DiceType = new int[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2Ability = new int[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2OtherBonus = new string[bonusActionList.Count];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2Type = new int[bonusActionList.Count];
 
-        CSInfo.bonusActionDC = new int[CSInfo.bonusActionCount];
+        CSInfo.actionsPageCharacterInfo.bonusActionList.actionDC = new int[bonusActionList.Count];
 
-        for (int i = 0; i < CSInfo.bonusActionCount; i++)
+        for (int i = 0; i < bonusActionList.Count; i++)
         {
             PCActionInfo action = bonusActionList[i].GetComponent<PCActionInfo>();
 
-            CSInfo.bonusActionName[i] = action.actionName.text;
-            CSInfo.bonusActionType[i] = action.actionType.value;
-            CSInfo.bonusActionWeapon[i] = action.weaponTemplate.value;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionName[i] = action.actionName.text;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionType[i] = action.actionType.value;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionWeapon[i] = action.weaponTemplate.value;
 
-            CSInfo.bonusActionAttackAbility[i] = action.wpnAttackAbility.value;
-            CSInfo.bonusActionAttackOtherBonus[i] = action.wpnOtherAttackBonus.text;
-            CSInfo.bonusActionAttackProficency[i] = action.wpnAttackProficency.isOn;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionAttackAbility[i] = action.wpnAttackAbility.value;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionAttackOtherBonus[i] = action.wpnOtherAttackBonus.text;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionAttackProficency[i] = action.wpnAttackProficency.isOn;
 
-            CSInfo.bonusActionD1NumDices[i] = action.wpnDamage1NumberOfDices.text;
-            CSInfo.bonusActionD1DiceType[i] = action.wpnDamage1DiceType.value;
-            CSInfo.bonusActionD1Ability[i] = action.wpnDamage1Ability.value;
-            CSInfo.bonusActionD1OtherBonus[i] = action.wpnDamage1OtherBonus.text;
-            CSInfo.bonusActionD1Type[i] = action.wpnDamage1DamageType.value;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1NumDices[i] = action.wpnDamage1NumberOfDices.text;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1DiceType[i] = action.wpnDamage1DiceType.value;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1Ability[i] = action.wpnDamage1Ability.value;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1OtherBonus[i] = action.wpnDamage1OtherBonus.text;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionD1Type[i] = action.wpnDamage1DamageType.value;
 
-            CSInfo.bonusActionD2NumDices[i] = action.wpnDamage2NumberOfDices.text;
-            CSInfo.bonusActionD2DiceType[i] = action.wpnDamage2DiceType.value;
-            CSInfo.bonusActionD2Ability[i] = action.wpnDamage2Ability.value;
-            CSInfo.bonusActionD2OtherBonus[i] = action.wpnDamage2OtherBonus.text;
-            CSInfo.bonusActionD2Type[i] = action.wpnDamage2DamageType.value;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2NumDices[i] = action.wpnDamage2NumberOfDices.text;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2DiceType[i] = action.wpnDamage2DiceType.value;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2Ability[i] = action.wpnDamage2Ability.value;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2OtherBonus[i] = action.wpnDamage2OtherBonus.text;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionD2Type[i] = action.wpnDamage2DamageType.value;
 
-            CSInfo.bonusActionDC[i] = action.saveDC;
+            CSInfo.actionsPageCharacterInfo.bonusActionList.actionDC[i] = action.saveDC;
         }
 
-        CSInfo.reactionCount = reactionList.Count;
-        CSInfo.reactionName = new string[CSInfo.reactionCount];
-        CSInfo.reactionType = new int[CSInfo.reactionCount];
-        CSInfo.reactionWeapon = new int[CSInfo.reactionCount];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionCount = reactionList.Count;
+        CSInfo.actionsPageCharacterInfo.reactionList.actionName = new string[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionType = new int[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionWeapon = new int[reactionList.Count];
 
-        CSInfo.reactionAttackAbility = new int[CSInfo.reactionCount];
-        CSInfo.reactionAttackOtherBonus = new string[CSInfo.reactionCount];
-        CSInfo.reactionAttackProficency = new bool[CSInfo.reactionCount];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionAttackAbility = new int[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionAttackOtherBonus = new string[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionAttackProficency = new bool[reactionList.Count];
 
-        CSInfo.reactionD1NumDices = new string[CSInfo.reactionCount];
-        CSInfo.reactionD1DiceType = new int[CSInfo.reactionCount];
-        CSInfo.reactionD1Ability = new int[CSInfo.reactionCount];
-        CSInfo.reactionD1OtherBonus = new string[CSInfo.reactionCount];
-        CSInfo.reactionD1Type = new int[CSInfo.reactionCount];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionD1NumDices = new string[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionD1DiceType = new int[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionD1Ability = new int[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionD1OtherBonus = new string[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionD1Type = new int[reactionList.Count];
 
-        CSInfo.reactionD2NumDices = new string[CSInfo.reactionCount];
-        CSInfo.reactionD2DiceType = new int[CSInfo.reactionCount];
-        CSInfo.reactionD2Ability = new int[CSInfo.reactionCount];
-        CSInfo.reactionD2OtherBonus = new string[CSInfo.reactionCount];
-        CSInfo.reactionD2Type = new int[CSInfo.reactionCount];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionD2NumDices = new string[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionD2DiceType = new int[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionD2Ability = new int[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionD2OtherBonus = new string[reactionList.Count];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionD2Type = new int[reactionList.Count];
 
-        CSInfo.reactionDC = new int[CSInfo.reactionCount];
+        CSInfo.actionsPageCharacterInfo.reactionList.actionDC = new int[reactionList.Count];
 
-        for (int i = 0; i < CSInfo.reactionCount; i++)
+        for (int i = 0; i < reactionList.Count; i++)
         {
             PCActionInfo action = reactionList[i].GetComponent<PCActionInfo>();
 
-            CSInfo.reactionName[i] = action.actionName.text;
-            CSInfo.reactionType[i] = action.actionType.value;
-            CSInfo.reactionWeapon[i] = action.weaponTemplate.value;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionName[i] = action.actionName.text;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionType[i] = action.actionType.value;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionWeapon[i] = action.weaponTemplate.value;
 
-            CSInfo.reactionAttackAbility[i] = action.wpnAttackAbility.value;
-            CSInfo.reactionAttackOtherBonus[i] = action.wpnOtherAttackBonus.text;
-            CSInfo.reactionAttackProficency[i] = action.wpnAttackProficency.isOn;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionAttackAbility[i] = action.wpnAttackAbility.value;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionAttackOtherBonus[i] = action.wpnOtherAttackBonus.text;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionAttackProficency[i] = action.wpnAttackProficency.isOn;
 
-            CSInfo.reactionD1NumDices[i] = action.wpnDamage1NumberOfDices.text;
-            CSInfo.reactionD1DiceType[i] = action.wpnDamage1DiceType.value;
-            CSInfo.reactionD1Ability[i] = action.wpnDamage1Ability.value;
-            CSInfo.reactionD1OtherBonus[i] = action.wpnDamage1OtherBonus.text;
-            CSInfo.reactionD1Type[i] = action.wpnDamage1DamageType.value;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionD1NumDices[i] = action.wpnDamage1NumberOfDices.text;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionD1DiceType[i] = action.wpnDamage1DiceType.value;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionD1Ability[i] = action.wpnDamage1Ability.value;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionD1OtherBonus[i] = action.wpnDamage1OtherBonus.text;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionD1Type[i] = action.wpnDamage1DamageType.value;
 
-            CSInfo.reactionD2NumDices[i] = action.wpnDamage2NumberOfDices.text;
-            CSInfo.reactionD2DiceType[i] = action.wpnDamage2DiceType.value;
-            CSInfo.reactionD2Ability[i] = action.wpnDamage2Ability.value;
-            CSInfo.reactionD2OtherBonus[i] = action.wpnDamage2OtherBonus.text;
-            CSInfo.reactionD2Type[i] = action.wpnDamage2DamageType.value;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionD2NumDices[i] = action.wpnDamage2NumberOfDices.text;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionD2DiceType[i] = action.wpnDamage2DiceType.value;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionD2Ability[i] = action.wpnDamage2Ability.value;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionD2OtherBonus[i] = action.wpnDamage2OtherBonus.text;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionD2Type[i] = action.wpnDamage2DamageType.value;
 
-            CSInfo.reactionDC[i] = action.saveDC;
+            CSInfo.actionsPageCharacterInfo.reactionList.actionDC[i] = action.saveDC;
         }
+        #endregion
 
-        CSInfo.traits = traits.text;
-        CSInfo.ideals = ideals.text;
-        CSInfo.bonds = bonds.text;
-        CSInfo.flaws = flaws.text;
+        #region personality
+        CSInfo.personalityPageCharacterInfo.traits = traits.text;
+        CSInfo.personalityPageCharacterInfo.ideals = ideals.text;
+        CSInfo.personalityPageCharacterInfo.bonds = bonds.text;
+        CSInfo.personalityPageCharacterInfo.flaws = flaws.text;
+        #endregion
     }
 
     // ability score methods
@@ -1670,8 +1706,8 @@ public class CharacterSheetManager : MonoBehaviour
         {
             if (token.characterSheetInfo.sheetID == CSInfo.sheetID)
             {
-                token.characterSheetInfo.tempHealthPoints = tempHP;
-                token.characterSheetInfo.currHealthPoints = currHP;
+                token.characterSheetInfo.basicPageCharacterInfo.tempHealthPoints = tempHP;
+                token.characterSheetInfo.basicPageCharacterInfo.currHealthPoints = currHP;
             }
         }
     }
@@ -1747,7 +1783,7 @@ public class CharacterSheetManager : MonoBehaviour
 
     int GetSkillProficencyBonus(Dropdown profType)
     {
-        int profBonus = int.Parse(CSInfo.proficencyBonus);
+        int profBonus = int.Parse(CSInfo.skillsPageCharacterInfo.proficencyBonus);
         int skillBonus;
 
         switch (profType.value)
@@ -1851,44 +1887,12 @@ public class CharacterSheetManager : MonoBehaviour
 
     #region rolling methods
 
-    // ability and skill checks
-
-    void RollStrenghtCheck()
+    void RollCheck(string abilityOrSkillName, string bonus)
     {
-        diceHandler.RollCheck(characterName.text, "Strenght", int.Parse(strModifier.text));
+        diceHandler.RollCheck(characterName.text, abilityOrSkillName, int.Parse(bonus));
     }
 
-    void RollDexterityCheck()
-    {
-        diceHandler.RollCheck(characterName.text, "Dexterity", int.Parse(dexModifier.text));
-    }
-
-    void RollConstitutionCheck()
-    {
-        diceHandler.RollCheck(characterName.text, "Constitution", int.Parse(conModifier.text));
-    }
-
-    void RollIntelligenceCheck()
-    {
-        diceHandler.RollCheck(characterName.text, "Intelligence", int.Parse(intModifier.text));
-    }
-
-    void RollWisdomCheck()
-    {
-        diceHandler.RollCheck(characterName.text, "Wisdom", int.Parse(wisModifier.text));
-    }
-
-    void RollCharismaCheck()
-    {
-        diceHandler.RollCheck(characterName.text, "Charisma", int.Parse(chaModifier.text));
-    }
-
-    void RollSkillCheck(string skillName, string skillTotalBonus)
-    {
-        diceHandler.RollCheck(characterName.text, skillName, int.Parse(skillTotalBonus));
-    }
-
-    void RollInitiativeCheck()
+    void RollInitiative()
     {
         if (initiativeBonus.text == "")
         {
@@ -1898,39 +1902,10 @@ public class CharacterSheetManager : MonoBehaviour
         diceHandler.RollInitiative(characterName.text, int.Parse(initiativeBonus.text));
     }
 
-    // ability saving throws
-
-    void RollStrengthSave()
+    void RollSavingThrow(string abilityName, string abilityModifier)
     {
-        diceHandler.RollAbilitySave(characterName.text, "Strength", int.Parse(strModifier.text));
+        diceHandler.RollAbilitySave(characterName.text, abilityName, int.Parse(abilityModifier));
     }
-
-    void RollDexteritySave()
-    {
-        diceHandler.RollAbilitySave(characterName.text, "Dexterity", int.Parse(dexModifier.text));
-    }
-
-    void RollConstitutionSave()
-    {
-        diceHandler.RollAbilitySave(characterName.text, "Constitution", int.Parse(conModifier.text));
-    }
-
-    void RollIntelligenceSave()
-    {
-        diceHandler.RollAbilitySave(characterName.text, "Intelligence", int.Parse(intModifier.text));
-    }
-
-    void RollWisdomSave()
-    {
-        diceHandler.RollAbilitySave(characterName.text, "Wisdom", int.Parse(wisModifier.text));
-    }
-
-    void RollCharismaSave()
-    {
-        diceHandler.RollAbilitySave(characterName.text, "Charisma", int.Parse(chaModifier.text));
-    }
-
-    // other rolls
 
     void RollHitDice()
     {
@@ -1943,7 +1918,6 @@ public class CharacterSheetManager : MonoBehaviour
     }
 
     #endregion
-
 }
 
 [Serializable]

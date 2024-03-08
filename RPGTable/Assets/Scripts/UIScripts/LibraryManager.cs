@@ -1126,6 +1126,7 @@ public struct Spell
 {
     public string spellName;
     public string spellDescription;
+    public int spellLevel;
 }
 
 #endregion

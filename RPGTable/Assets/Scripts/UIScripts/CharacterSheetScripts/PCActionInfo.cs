@@ -105,7 +105,7 @@ public class PCActionInfo : MonoBehaviour
         if (sheetManager != null)
         {
             attackRollInfo.sheetID = sheetManager.CSInfo.sheetID;
-            attackRollInfo.characterName = sheetManager.CSInfo.characterName;
+            attackRollInfo.characterName = sheetManager.CSInfo.publicPageCharacterInfo.characterName;
         }
 
         attackRollInfo.actionName = actionName.text;
@@ -132,7 +132,7 @@ public class PCActionInfo : MonoBehaviour
         if (sheetManager != null)
         {
             attackRollInfo.sheetID = sheetManager.CSInfo.sheetID;
-            attackRollInfo.characterName = sheetManager.CSInfo.characterName;
+            attackRollInfo.characterName = sheetManager.CSInfo.publicPageCharacterInfo.characterName;
         }
 
         attackRollInfo.actionName = actionName.text;

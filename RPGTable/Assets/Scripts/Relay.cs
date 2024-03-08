@@ -13,7 +13,7 @@ using Unity.Services.Relay.Models;
 public class Relay : MonoBehaviour
 {
     private UnityTransport transport;
-    private const int MaxPlayers = 10;
+    private const int MAX_PLAYERS = 10;
 
     public string joinCode;
 
@@ -32,7 +32,7 @@ public class Relay : MonoBehaviour
 
     public async void StartGame()
     {
-        Allocation a = await RelayService.Instance.CreateAllocationAsync(MaxPlayers);
+        Allocation a = await RelayService.Instance.CreateAllocationAsync(MAX_PLAYERS);
 
         transport.SetHostRelayData(a.RelayServer.IpV4, (ushort)a.RelayServer.Port, a.AllocationIdBytes, a.Key, a.ConnectionData);
 

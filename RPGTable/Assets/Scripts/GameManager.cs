@@ -67,11 +67,12 @@ public class GameManager : NetworkBehaviour
         {
             GameObject token = Instantiate(playerAvatarList[avatarID], spawnPosition, Quaternion.identity);
             token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
+            token.GetComponent<TokenController>().tokenType = tokenType.PC;
             token.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
             SetTokenInfoClientRpc(ownerName, characterSheetInfo);
 
             SpawnTokenShortcutClientRpc(characterSheetInfo);
-            AddToInitiativeTrackerClientRpc(characterSheetInfo.characterName);
+            AddToInitiativeTrackerClientRpc(characterSheetInfo.publicPageCharacterInfo.characterName);
         }
         else
         {
@@ -79,11 +80,11 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    public void SpawnNPCToken(ulong ownerID, string ownerName, int avatarID, NPCSheetInfo _NPCSheetInfo)
+    public void SpawnNPCToken(ulong ownerID, string ownerName, int avatarID, Vector3 spawnPosition, NPCSheetInfo _NPCSheetInfo)
     {
         if (IsHost)
         {
-            GameObject token = Instantiate(NPCAvatarList[avatarID], Vector3.zero, Quaternion.identity);
+            GameObject token = Instantiate(NPCAvatarList[avatarID], spawnPosition, Quaternion.identity);
 
             TokenController tokenController = token.GetComponent<TokenController>();
             tokenController.ownerName.Value = new FixedString64Bytes(ownerName);
@@ -97,7 +98,7 @@ public class GameManager : NetworkBehaviour
         }
         else
         {
-            SpawnNPCTokenServerRpc(ownerID, ownerName, avatarID, _NPCSheetInfo);
+            SpawnNPCTokenServerRpc(ownerID, ownerName, avatarID, spawnPosition, _NPCSheetInfo);
         }
     }
 
@@ -259,7 +260,7 @@ public class GameManager : NetworkBehaviour
     {
         UpdateSheetListClientRpc(charInfo);
         SaveCharactersToJSON();
-        uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.characterName, charInfo.avatarID);
+        uiManager.AddCharacterButtonClientRpc(charInfo.sheetID, charInfo.publicPageCharacterInfo.characterName, charInfo.publicPageCharacterInfo.avatarID);
     }
 
     public void SaveCharacterSheetChanges(CharacterSheetInfo charInfo)
@@ -520,11 +521,11 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnNPCTokenServerRpc(ulong ownerID, string ownerName, int avatarID, NPCSheetInfo NPCSheetInfo)
+    public void SpawnNPCTokenServerRpc(ulong ownerID, string ownerName, int avatarID, Vector3 spawnPosition, NPCSheetInfo NPCSheetInfo)
     {
         if (!IsHost) { return; }
 
-        SpawnNPCToken(ownerID, ownerName, avatarID, NPCSheetInfo);
+        SpawnNPCToken(ownerID, ownerName, avatarID, spawnPosition, NPCSheetInfo);
     }
 
     [ServerRpc (RequireOwnership = false)]
@@ -638,7 +639,7 @@ public class GameManager : NetworkBehaviour
         if (IsHost) { return; }
        
         characterSheets.Add(charInfo);
-        uiManager.AddCharacterButton(charInfo.sheetID, charInfo.characterName, charInfo.avatarID);     
+        uiManager.AddCharacterButton(charInfo.sheetID, charInfo.publicPageCharacterInfo.characterName, charInfo.publicPageCharacterInfo.avatarID);     
     }
 
     [ClientRpc]
@@ -692,8 +693,8 @@ public class GameManager : NetworkBehaviour
         }
 
         GameObject tokenShortcut = Instantiate(tokenShortcutPrefab);
-        tokenShortcut.GetComponent<CharacterShortcut>().characterName.text = characterSheetInfo.characterName;
-        tokenShortcut.GetComponent<CharacterShortcut>().characterPortrait.sprite = playerAvatarPortrait[characterSheetInfo.avatarID];
+        tokenShortcut.GetComponent<CharacterShortcut>().characterName.text = characterSheetInfo.publicPageCharacterInfo.characterName;
+        tokenShortcut.GetComponent<CharacterShortcut>().characterPortrait.sprite = playerAvatarPortrait[characterSheetInfo.publicPageCharacterInfo.avatarID];
         tokenShortcut.GetComponent<CharacterShortcut>().charID = characterSheetInfo.sheetID;
         tokenShortcut.GetComponent<RectTransform>().SetParent(uiManager.GetActiveTokensParent().GetComponent<RectTransform>());
     }

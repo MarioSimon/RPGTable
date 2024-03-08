@@ -10692,7 +10692,7 @@ MonoBehaviour:
   localPlayer: {fileID: 0}
   rulerDistanceText: {fileID: 1807826544}
   mainMenu: {fileID: 853588721}
-  inputFieldName: {fileID: 1643838064}
+  playerNameInput: {fileID: 1643838064}
   joinCode: {fileID: 1104266362}
   buttonHost: {fileID: 478951524}
   buttonClient: {fileID: 1880828173}
@@ -10962,7 +10962,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &330829258
 Light:
   m_ObjectHideFlags: 0
@@ -28099,6 +28099,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 2ec96c9d0857d8149ade1da9965875df, type: 3}
   - {fileID: 21300000, guid: 032ae1a2bd9f7ba47babbe044cde1866, type: 3}
   tokenShortcutPrefab: {fileID: 8641440178500542071, guid: 5ad2d8bbb1e07b64e84eaf5f2b6711d1, type: 3}
+  npcAvatarList:
+  - {fileID: 353186407617308433, guid: 029996c1f0069934ea27d7db87039f3f, type: 3}
+  - {fileID: 6908615707928747110, guid: b45b868e2ccf3b7458746180313b0880, type: 3}
 --- !u!4 &866520999
 Transform:
   m_ObjectHideFlags: 0
@@ -34359,7 +34362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a79ebfb42c6ae04685eb678cabb2a48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uIManager: {fileID: 316338588}
+  uiManager: {fileID: 316338588}
   gameManager: {fileID: 1016826984}
   NPCListParent: {fileID: 1570660744}
   NPCSearchListParent: {fileID: 849447545}
@@ -38791,7 +38794,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &1255952127
 Light:
   m_ObjectHideFlags: 0
@@ -46488,7 +46491,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1543387829}
   m_LocalRotation: {x: 0.55667037, y: -0.38302225, z: 0.3213938, w: 0.663414}
-  m_LocalPosition: {x: 4.5595207, y: 9.970825, z: -33.5496}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 416214447}

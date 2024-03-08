@@ -15,7 +15,6 @@ public class CharacterTrait : MonoBehaviour
     public Action repositionListener;
     public Action<GameObject> removeListener;
 
-    // Start is called before the first frame update
     void Start()
     {
         lastSize = traitDescription.GetComponent<LayoutElement>().minHeight;

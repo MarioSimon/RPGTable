@@ -14,21 +14,30 @@ public class TokenManager : NetworkBehaviour
     public List<Sprite> playerAvatarPortrait;
     public GameObject tokenShortcutPrefab;
 
+    public GameObject[] npcAvatarList;
+ 
     private GameObject token;
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0) && token != null)
         {
-            SpawnPlayerToken();
+            if (IsPlayer())
+            {
+                SpawnPlayerToken();
+            }              
+            else
+            {
+                SpawnNPCToken();
+            }
         }
 
         if (Input.GetMouseButtonDown(1) && token != null)
         {
-            CancelSpawnPlayerToken();
+            CancelSpawnToken();
         }
     }
-    private void CancelSpawnPlayerToken()
+    private void CancelSpawnToken()
     {
         Destroy(token);
         token = null;
@@ -44,27 +53,32 @@ public class TokenManager : NetworkBehaviour
 
         if (IsHost)
         {
-
-
-            //CharacterSheetInfo characterSheetInfo = token.GetComponent<TokenController>().characterSheetInfo;
-            //tokenController.enabled = true;
-            //token.GetComponent<NetworkObject>().SpawnWithOwnership(tokenController.characterSheetInfo.ownerID);
-            //SetTokenInfoClientRpc(tokenController.ownerName.Value.ToString(), tokenController.characterSheetInfo);
-            //
-            //SpawnTokenShortcutClientRpc(tokenController.characterSheetInfo);
-            //AddToInitiativeTrackerClientRpc(tokenController.characterSheetInfo.characterName);
-            
-
-            gameManager.SpawnPlayerToken(characterSheetInfo.ownerID, characterSheetInfo.playerName, characterSheetInfo.avatarID, worldPosition, characterSheetInfo);
-
-
-            
+            gameManager.SpawnPlayerToken(characterSheetInfo.ownerID, characterSheetInfo.publicPageCharacterInfo.playerName, characterSheetInfo.publicPageCharacterInfo.avatarID, worldPosition, characterSheetInfo);          
         }
         else
         {
             SpawnPlayerTokenServerRpc(worldPosition, characterSheetInfo);
         }
-        
+    }
+
+    private void SpawnNPCToken()
+    {
+        if (!IsHost) { return; }
+
+        Vector3 worldPosition = GetTablePoint();
+        if (worldPosition == new Vector3(-99, -99, -99)) { return; }
+
+        NPCSheetInfo npcSheetInfo = token.GetComponent<TokenController>().NPCSheetInfo;
+        Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
+
+        if (IsHost)
+        {
+            gameManager.SpawnNPCToken(0, "", npcSheetInfo.avatarID, worldPosition, npcSheetInfo);
+        }
+        else
+        {
+            SpawnNPCTokenServerRpc(worldPosition, npcSheetInfo);
+        }
     }
 
     private Vector3 GetTablePoint()
@@ -91,8 +105,38 @@ public class TokenManager : NetworkBehaviour
         token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
         token.GetComponent<TokenController>().characterSheetInfo = characterSheetInfo;
         token.GetComponent<TokenController>().enabled = false;
+        token.GetComponent<TokenController>().tokenType = tokenType.PC;
         token.AddComponent<ItemPreviewFollow>();
         token.tag = "ItemImage";
+    }
+
+    public void DragNPCToken(string ownerName, int avatarID, NPCSheetInfo npcSheetInfo)
+    {
+        token = Instantiate(npcAvatarList[avatarID], new Vector3(-99, -99, -99), Quaternion.identity);
+        token.GetComponent<TokenController>().ownerName.Value = new FixedString64Bytes(ownerName);
+        token.GetComponent<TokenController>().NPCSheetInfo = npcSheetInfo;
+        token.GetComponent<TokenController>().enabled = false;
+        token.AddComponent<ItemPreviewFollow>();
+        token.tag = "ItemImage";
+    }
+
+    private bool IsPlayer()
+    {
+        if (token == null)
+        {
+            return false;
+        }
+
+        TokenController controller = token.GetComponent<TokenController>();
+
+        if (controller != null && controller.tokenType == tokenType.PC)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     #region ServerRPC
@@ -100,10 +144,13 @@ public class TokenManager : NetworkBehaviour
     [ServerRpc (RequireOwnership = false)]
     private void SpawnPlayerTokenServerRpc(Vector3 spawnPosition, CharacterSheetInfo characterSheetInfo)
     {
-        //SpawnPlayerToken();
-        //Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
+        gameManager.SpawnPlayerToken(characterSheetInfo.ownerID, characterSheetInfo.publicPageCharacterInfo.playerName, characterSheetInfo.publicPageCharacterInfo.avatarID, spawnPosition, characterSheetInfo);
+    }
 
-        gameManager.SpawnPlayerToken(characterSheetInfo.ownerID, characterSheetInfo.playerName, characterSheetInfo.avatarID, spawnPosition, characterSheetInfo);
+    [ServerRpc(RequireOwnership = false)]
+    private void SpawnNPCTokenServerRpc(Vector3 spawnPosition, NPCSheetInfo npcSheetInfo)
+    {
+        gameManager.SpawnNPCToken(0, "", npcSheetInfo.avatarID, spawnPosition, npcSheetInfo);
     }
 
     #endregion
@@ -129,8 +176,8 @@ public class TokenManager : NetworkBehaviour
     private void SpawnTokenShortcutClientRpc(CharacterSheetInfo characterSheetInfo, ClientRpcParams clientRpcParams = default)
     {
         GameObject tokenShortcut = Instantiate(tokenShortcutPrefab);
-        tokenShortcut.GetComponent<CharacterShortcut>().characterName.text = characterSheetInfo.characterName;
-        tokenShortcut.GetComponent<CharacterShortcut>().characterPortrait.sprite = playerAvatarPortrait[characterSheetInfo.avatarID];
+        tokenShortcut.GetComponent<CharacterShortcut>().characterName.text = characterSheetInfo.publicPageCharacterInfo.characterName;
+        tokenShortcut.GetComponent<CharacterShortcut>().characterPortrait.sprite = playerAvatarPortrait[characterSheetInfo.publicPageCharacterInfo.avatarID];
         tokenShortcut.GetComponent<CharacterShortcut>().charID = characterSheetInfo.sheetID;
         tokenShortcut.GetComponent<RectTransform>().SetParent(uiManager.GetActiveTokensParent().GetComponent<RectTransform>());
     }
@@ -145,10 +192,6 @@ public class TokenManager : NetworkBehaviour
             uiManager.SetInitiative(name, initiative);
         }
     }
-
-
-
-
     #endregion
 
 }
