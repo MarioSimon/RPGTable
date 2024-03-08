@@ -124,15 +124,15 @@ public class CharacterCreator : NetworkBehaviour
     private int[] subraceBonus;
 
     private int pointBuyCount;
-    private const int PointBuyMax = 27;
+    private const int POINT_BUY_MAX = 27;
     private int pointBuyStrenght;
     private int pointBuyDexterity;
     private int pointBuyConstitution;
     private int pointBuyIntelligence;
     private int pointBuyWisdom;
     private int pointBuyCharisma;
-    private const int PointBuyMaxScore = 15;
-    private const int PointBuyMinScore = 8;
+    private const int POINT_BUY_MAX_SCORE = 15;
+    private const int POINT_BUY_MIN_SCORE = 8;
 
     private int passingStrenght;
     private int passingDexterity;
@@ -191,7 +191,7 @@ public class CharacterCreator : NetworkBehaviour
         takeCharisma.onClick.AddListener(() => Take1(ref pointBuyCharisma, chaScore));
 
         resumeMenuBack.onClick.AddListener(delegate { OpenScoreSelector(); });
-        resumeMenuFinish.onClick.AddListener(delegate { WriteFinalDetails(); CreateCharacterServerRpc(newCharacterSheet); ResetCharacterCreator(); characterCreatorWindow.SetActive(false); });
+        resumeMenuFinish.onClick.AddListener(delegate { WriteFinalDetails(); CreateCharacter(); ResetCharacterCreator(); characterCreatorWindow.SetActive(false); });
     }
 
     #endregion
@@ -337,12 +337,12 @@ public class CharacterCreator : NetworkBehaviour
 
         if (IsHost)
         {
-            newCharacterSheet.race = libraryManager.races[raceID - 1].raceName;
-            resumeRace.text = "Race: " + newCharacterSheet.race;
+            newCharacterSheet.basicPageCharacterInfo.race = libraryManager.races[raceID - 1].raceName;
+            resumeRace.text = "Race: " + newCharacterSheet.basicPageCharacterInfo.race;
 
             raceBonus = libraryManager.races[raceID - 1].raceBonus;
 
-            newCharacterSheet.speed = libraryManager.races[raceID - 1].raceSpeed.ToString();
+            newCharacterSheet.basicPageCharacterInfo.speed = libraryManager.races[raceID - 1].raceSpeed.ToString();
 
             if (subrace.isActiveAndEnabled && subraceID > 0)
             {
@@ -472,46 +472,46 @@ public class CharacterCreator : NetworkBehaviour
 
         if (IsHost)
         {
-            newCharacterSheet.clasAndLevel = libraryManager.classes[classID - 1].className + " 1";
+            newCharacterSheet.basicPageCharacterInfo.clasAndLevel = libraryManager.classes[classID - 1].className + " 1";
 
             resumeClass.text = "Class: " + libraryManager.classes[classID - 1].className;
 
-            newCharacterSheet.hitDiceType = libraryManager.classes[classID - 1].hitDice;
+            newCharacterSheet.basicPageCharacterInfo.hitDiceType = libraryManager.classes[classID - 1].hitDice;
 
             List<string> classTraits = libraryManager.classes[classID - 1].startingClassTraits.list;
 
             if (subclasses.isActiveAndEnabled && subclassID > 0)
             {
-                newCharacterSheet.subclass = libraryManager.classes[classID - 1].subclasses.list[subclassID - 1].subclassName;
+                newCharacterSheet.basicPageCharacterInfo.subclass = libraryManager.classes[classID - 1].subclasses.list[subclassID - 1].subclassName;
 
                 List<string> subclassTraits = libraryManager.classes[classID - 1].subclasses.list[subclassID - 1].startingSubclassTraits.list;
 
-                newCharacterSheet.traitCount = classTraits.Count + subclassTraits.Count;
-                newCharacterSheet.traitName = new string[newCharacterSheet.traitCount];
-                newCharacterSheet.traitDescription = new string[newCharacterSheet.traitCount];
+                newCharacterSheet.featuresPageCharacterInfo.traitCount = classTraits.Count + subclassTraits.Count;
+                newCharacterSheet.featuresPageCharacterInfo.traitName = new string[newCharacterSheet.featuresPageCharacterInfo.traitCount];
+                newCharacterSheet.featuresPageCharacterInfo.traitDescription = new string[newCharacterSheet.featuresPageCharacterInfo.traitCount];
 
                 for(int i = 0; i < classTraits.Count; i++)
                 {
-                    newCharacterSheet.traitName[i] = classTraits[i];
-                    newCharacterSheet.traitDescription[i] = "";
+                    newCharacterSheet.featuresPageCharacterInfo.traitName[i] = classTraits[i];
+                    newCharacterSheet.featuresPageCharacterInfo.traitDescription[i] = "";
                 }
-                for(int i = classTraits.Count; i < newCharacterSheet.traitCount; i++)
+                for(int i = classTraits.Count; i < newCharacterSheet.featuresPageCharacterInfo.traitCount; i++)
                 {
-                    newCharacterSheet.traitName[i] = subclassTraits[i - classTraits.Count];
-                    newCharacterSheet.traitDescription[i] = "";
+                    newCharacterSheet.featuresPageCharacterInfo.traitName[i] = subclassTraits[i - classTraits.Count];
+                    newCharacterSheet.featuresPageCharacterInfo.traitDescription[i] = "";
                 }
             }
 
             else
             {
-                newCharacterSheet.traitCount = classTraits.Count;
-                newCharacterSheet.traitName = new string[newCharacterSheet.traitCount];
-                newCharacterSheet.traitDescription = new string[newCharacterSheet.traitCount];
+                newCharacterSheet.featuresPageCharacterInfo.traitCount = classTraits.Count;
+                newCharacterSheet.featuresPageCharacterInfo.traitName = new string[newCharacterSheet.featuresPageCharacterInfo.traitCount];
+                newCharacterSheet.featuresPageCharacterInfo.traitDescription = new string[newCharacterSheet.featuresPageCharacterInfo.traitCount];
 
                 for (int i = 0; i < classTraits.Count; i++)
                 {
-                    newCharacterSheet.traitName[i] = classTraits[i];
-                    newCharacterSheet.traitDescription[i] = "";
+                    newCharacterSheet.featuresPageCharacterInfo.traitName[i] = classTraits[i];
+                    newCharacterSheet.featuresPageCharacterInfo.traitDescription[i] = "";
                 }
             }
         }
@@ -572,7 +572,7 @@ public class CharacterCreator : NetworkBehaviour
 
         if (IsHost)
         {
-            newCharacterSheet.background = libraryManager.backgrounds[backgroundID - 1].backgroundName;
+            newCharacterSheet.basicPageCharacterInfo.background = libraryManager.backgrounds[backgroundID - 1].backgroundName;
             resumeBackground.text = "Background: " + libraryManager.backgrounds[backgroundID - 1].backgroundName;
         }
         else
@@ -1133,7 +1133,7 @@ public class CharacterCreator : NetworkBehaviour
 
     private void Add1(ref int scoreValue, InputField score)
     {
-        if (scoreValue >= PointBuyMaxScore || pointBuyCount >= PointBuyMax) { return; }
+        if (scoreValue >= POINT_BUY_MAX_SCORE || pointBuyCount >= POINT_BUY_MAX) { return; }
 
         scoreValue += 1;
         score.text = scoreValue.ToString();
@@ -1152,7 +1152,7 @@ public class CharacterCreator : NetworkBehaviour
 
     private void Take1(ref int scoreValue, InputField score)
     {
-        if (scoreValue <= PointBuyMinScore) { return; }
+        if (scoreValue <= POINT_BUY_MIN_SCORE) { return; }
 
         if (scoreValue < 14)
         {
@@ -1171,12 +1171,12 @@ public class CharacterCreator : NetworkBehaviour
 
     private void WriteScores()
     {
-        newCharacterSheet.strScore = strTotalScore.text;
-        newCharacterSheet.dexScore = dexTotalScore.text;
-        newCharacterSheet.conScore = conTotalScore.text;
-        newCharacterSheet.intScore = intTotalScore.text;
-        newCharacterSheet.wisScore = wisTotalScore.text;
-        newCharacterSheet.chaScore = chaTotalScore.text;
+        newCharacterSheet.basicPageCharacterInfo.strScore = strTotalScore.text;
+        newCharacterSheet.basicPageCharacterInfo.dexScore = dexTotalScore.text;
+        newCharacterSheet.basicPageCharacterInfo.conScore = conTotalScore.text;
+        newCharacterSheet.basicPageCharacterInfo.intScore = intTotalScore.text;
+        newCharacterSheet.basicPageCharacterInfo.wisScore = wisTotalScore.text;
+        newCharacterSheet.basicPageCharacterInfo.chaScore = chaTotalScore.text;
 
         resumeStrScore.text = strTotalScore.text;
         resumeDexScore.text = dexTotalScore.text;
@@ -1199,32 +1199,32 @@ public class CharacterCreator : NetworkBehaviour
     {
         newCharacterSheet.ownerID = NetworkManager.Singleton.LocalClientId;
 
-        newCharacterSheet.characterName = characterName.text;       
-        newCharacterSheet.playerName = uIManager.localPlayer.playerName;
+        newCharacterSheet.publicPageCharacterInfo.characterName = characterName.text;       
+        newCharacterSheet.publicPageCharacterInfo.playerName = uIManager.localPlayer.playerName;
         newCharacterSheet.sheetID = gameManager.GetNewSheetID();
-        newCharacterSheet.avatarID = avatarID;
+        newCharacterSheet.publicPageCharacterInfo.avatarID = avatarID;
 
-        newCharacterSheet.initiativeBonus = CalculateAbilityModifier(passingDexterity).ToString();
-        newCharacterSheet.armorClass = (10 + CalculateAbilityModifier(passingDexterity)).ToString();
+        newCharacterSheet.basicPageCharacterInfo.initiativeBonus = CalculateAbilityModifier(passingDexterity).ToString();
+        newCharacterSheet.basicPageCharacterInfo.armorClass = (10 + CalculateAbilityModifier(passingDexterity)).ToString();
         
 
-        switch (newCharacterSheet.hitDiceType)
+        switch (newCharacterSheet.basicPageCharacterInfo.hitDiceType)
         {
             case 0:
-                newCharacterSheet.maxHealthPoints = (6 + CalculateAbilityModifier(passingConstitution)).ToString();
-                newCharacterSheet.currHealthPoints = (6 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.basicPageCharacterInfo.maxHealthPoints = (6 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.basicPageCharacterInfo.currHealthPoints = (6 + CalculateAbilityModifier(passingConstitution)).ToString();
                 break;
             case 1:
-                newCharacterSheet.maxHealthPoints = (8 + CalculateAbilityModifier(passingConstitution)).ToString();
-                newCharacterSheet.currHealthPoints = (8 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.basicPageCharacterInfo.maxHealthPoints = (8 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.basicPageCharacterInfo.currHealthPoints = (8 + CalculateAbilityModifier(passingConstitution)).ToString();
                 break;
             case 2:
-                newCharacterSheet.maxHealthPoints = (10 + CalculateAbilityModifier(passingConstitution)).ToString();
-                newCharacterSheet.currHealthPoints = (10 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.basicPageCharacterInfo.maxHealthPoints = (10 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.basicPageCharacterInfo.currHealthPoints = (10 + CalculateAbilityModifier(passingConstitution)).ToString();
                 break;
             case 3:
-                newCharacterSheet.maxHealthPoints = (12 + CalculateAbilityModifier(passingConstitution)).ToString();
-                newCharacterSheet.currHealthPoints = (12 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.basicPageCharacterInfo.maxHealthPoints = (12 + CalculateAbilityModifier(passingConstitution)).ToString();
+                newCharacterSheet.basicPageCharacterInfo.currHealthPoints = (12 + CalculateAbilityModifier(passingConstitution)).ToString();
                 break;
         }
     }
@@ -1707,6 +1707,11 @@ public class CharacterCreator : NetworkBehaviour
         gameManager.AddNewCharacterSheetInfo(newCSInfo);
     }
 
+    private void CreateCharacter()
+    {
+        CreateCharacterServerRpc(newCharacterSheet);
+    }
+
     #region race serverRpc
 
     [ServerRpc(RequireOwnership = false)]
@@ -2139,10 +2144,10 @@ public class CharacterCreator : NetworkBehaviour
     {
         if (IsOwner) { return; }
 
-        newCharacterSheet.race = raceName.SomeText;
+        newCharacterSheet.basicPageCharacterInfo.race = raceName.SomeText;
         resumeRace.text = "Race: " + raceName.SomeText;
 
-        newCharacterSheet.speed = raceSpeed.ToString();
+        newCharacterSheet.basicPageCharacterInfo.speed = raceSpeed.ToString();
 
         strRacialBonus.text = scoreBonus[0].ToString();
         dexRacialBonus.text = scoreBonus[1].ToString();
@@ -2211,17 +2216,17 @@ public class CharacterCreator : NetworkBehaviour
     {
         if (IsOwner) { return; }
 
-        newCharacterSheet.clasAndLevel = className.SomeText + " 1";
+        newCharacterSheet.basicPageCharacterInfo.clasAndLevel = className.SomeText + " 1";
         resumeClass.text = "Class: " + className.SomeText;
 
         if (subclasses.isActiveAndEnabled)
         {
-            newCharacterSheet.subclass = subclassName.SomeText;
+            newCharacterSheet.basicPageCharacterInfo.subclass = subclassName.SomeText;
         }
 
-        newCharacterSheet.hitDiceType = hitDice;
+        newCharacterSheet.basicPageCharacterInfo.hitDiceType = hitDice;
 
-        newCharacterSheet.featuresAndTraits += traits.SomeText;
+        newCharacterSheet.featuresPageCharacterInfo.featuresAndTraits += traits.SomeText;
     }
 
     #endregion
@@ -2257,7 +2262,7 @@ public class CharacterCreator : NetworkBehaviour
     {
         if (IsOwner) { return; }
 
-        newCharacterSheet.background = backgroundName.SomeText;
+        newCharacterSheet.basicPageCharacterInfo.background = backgroundName.SomeText;
         resumeBackground.text = "Background: " + backgroundName.SomeText;
     }
 

@@ -25,7 +25,7 @@ public class UIManager : NetworkBehaviour
 
     [Header("Main Menu")]
     [SerializeField] GameObject mainMenu;
-    [SerializeField] public InputField inputFieldName;
+    [SerializeField] public InputField playerNameInput;
     [SerializeField] InputField joinCode;
     [SerializeField] Button buttonHost;
     [SerializeField] Button buttonClient;
@@ -177,7 +177,7 @@ public class UIManager : NetworkBehaviour
         diceNumber.onValueChanged.AddListener(delegate { CheckRange(diceNumber); });
         minimizeDiceCam.onClick.AddListener(() => ToggleDiceCam());
 
-        exitApp.onClick.AddListener(() => ExitAplication());
+        exitApp.onClick.AddListener(() => ExitApplication());
         closeExitMenu.onClick.AddListener(() => ToggleExitMenu());
     }
 
@@ -377,7 +377,7 @@ public class UIManager : NetworkBehaviour
                     }
                     return;
                 }
-                else if (firstWord == "/whisp")
+                else if (firstWord == "/whisper")
                 {
                     string secondWord = msg.SomeText.Split(new char[] { ' ' })[1];
 
@@ -440,8 +440,6 @@ public class UIManager : NetworkBehaviour
                     return;
                 }
             }
-
-
             PostChatMessageClientRpc(username, msg);
         }
         else
@@ -581,7 +579,7 @@ public class UIManager : NetworkBehaviour
         return rulerDistanceText;
     }
 
-    private void ExitAplication()
+    private void ExitApplication()
     {
         NetworkManager.Singleton.Shutdown();
         Application.Quit();
@@ -639,7 +637,7 @@ public class UIManager : NetworkBehaviour
                     ClearChatClientRpc(clientRpcParams);
                 }
             }
-            if (firstWord == "/whisp")
+            if (firstWord == "/whisper")
             {
                 string secondWord = msg.SomeText.Split(new char[] { ' ' })[1];
 
@@ -800,11 +798,6 @@ public class UIManager : NetworkBehaviour
 
     #region UI Navigation Methods
 
-    private void ActivateMainMenu()
-    {
-        mainMenu.SetActive(true);
-    }
-
     private void DeactivateMainMenu()
     {
         mainMenu.SetActive(false);
@@ -813,11 +806,6 @@ public class UIManager : NetworkBehaviour
     private void ActivateInGameHUD()
     {
         inGameHUD.SetActive(true);
-    }
-
-    private void DeactivateInGameHUD()
-    {
-        inGameHUD.SetActive(false);
     }
 
     public void ToggleCharacterSelector()

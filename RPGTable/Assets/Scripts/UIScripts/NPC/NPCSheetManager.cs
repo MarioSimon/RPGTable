@@ -100,18 +100,18 @@ public class NPCSheetManager : MonoBehaviour
         wisScore.onValueChanged.AddListener(delegate { CalculateAbilityModifier(wisScore, wisModifier); });
         chaScore.onValueChanged.AddListener(delegate { CalculateAbilityModifier(chaScore, chaModifier); });
 
-        strCheck.onClick.AddListener(() => RollStrenghtCheck());
-        strSave.onClick.AddListener(() => RollStrengthSave());
-        dexCheck.onClick.AddListener(() => RollDexterityCheck());
-        dexSave.onClick.AddListener(() => RollDexteritySave());
-        conCheck.onClick.AddListener(() => RollConstitutionCheck());
-        conSave.onClick.AddListener(() => RollConstitutionSave());
-        intCheck.onClick.AddListener(() => RollIntelligenceCheck());
-        intSave.onClick.AddListener(() => RollIntelligenceSave());
-        wisCheck.onClick.AddListener(() => RollWisdomCheck());
-        wisSave.onClick.AddListener(() => RollWisdomSave());
-        chaCheck.onClick.AddListener(() => RollCharismaCheck());
-        chaSave.onClick.AddListener(() => RollCharismaSave());
+        strCheck.onClick.AddListener(() => RollCheck("Strenght", strModifier.text));
+        strSave.onClick.AddListener(() => RollSavingThrow("Strenght", strModifier.text));
+        dexCheck.onClick.AddListener(() => RollCheck("Dexterity", dexModifier.text));
+        dexSave.onClick.AddListener(() => RollSavingThrow("Dexterity", dexModifier.text));
+        conCheck.onClick.AddListener(() => RollCheck("Constitution", conModifier.text));
+        conSave.onClick.AddListener(() => RollSavingThrow("Constitution", conModifier.text));
+        intCheck.onClick.AddListener(() => RollCheck("Intelligence", intModifier.text));
+        intSave.onClick.AddListener(() => RollSavingThrow("Intelligence", intModifier.text));
+        wisCheck.onClick.AddListener(() => RollCheck("Wisdom", wisModifier.text));
+        wisSave.onClick.AddListener(() => RollSavingThrow("Wisdom", wisModifier.text));
+        chaCheck.onClick.AddListener(() => RollCheck("Charisma", chaModifier.text));
+        chaSave.onClick.AddListener(() => RollSavingThrow("Charisma", chaModifier.text));
 
         rollInitiative.onClick.AddListener(() => RollInitiativeCheck());
         addTrait.onClick.AddListener(() => AddNewTrait(traitList, traitsParent));
@@ -339,34 +339,9 @@ public class NPCSheetManager : MonoBehaviour
 
     #region Rolling methods
 
-    void RollStrenghtCheck()
+    void RollCheck(string ability, string bonus)
     {
-        diceHandler.RollCheck(NPCName.text, "Strenght", int.Parse(strModifier.text));
-    }
-
-    void RollDexterityCheck()
-    {
-        diceHandler.RollCheck(NPCName.text, "Dexterity", int.Parse(dexModifier.text));
-    }
-
-    void RollConstitutionCheck()
-    {
-        diceHandler.RollCheck(NPCName.text, "Constitution", int.Parse(conModifier.text));
-    }
-
-    void RollIntelligenceCheck()
-    {
-        diceHandler.RollCheck(NPCName.text, "Intelligence", int.Parse(intModifier.text));
-    }
-
-    void RollWisdomCheck()
-    {
-        diceHandler.RollCheck(NPCName.text, "Wisdom", int.Parse(wisModifier.text));
-    }
-
-    void RollCharismaCheck()
-    {
-        diceHandler.RollCheck(NPCName.text, "Charisma", int.Parse(chaModifier.text));
+        diceHandler.RollCheck(NPCName.text, ability, int.Parse(bonus));
     }
 
     void RollInitiativeCheck()
@@ -379,36 +354,10 @@ public class NPCSheetManager : MonoBehaviour
         diceHandler.RollInitiative(NPCName.text, int.Parse(dexModifier.text));
     }
 
-    void RollStrengthSave()
+    void RollSavingThrow(string abilityName, string abilityModifier)
     {
-        diceHandler.RollAbilitySave(NPCName.text, "Strength", int.Parse(strModifier.text));
+        diceHandler.RollAbilitySave(NPCName.text, abilityName, int.Parse(abilityModifier));
     }
-
-    void RollDexteritySave()
-    {
-        diceHandler.RollAbilitySave(NPCName.text, "Dexterity", int.Parse(dexModifier.text));
-    }
-
-    void RollConstitutionSave()
-    {
-        diceHandler.RollAbilitySave(NPCName.text, "Constitution", int.Parse(conModifier.text));
-    }
-
-    void RollIntelligenceSave()
-    {
-        diceHandler.RollAbilitySave(NPCName.text, "Intelligence", int.Parse(intModifier.text));
-    }
-
-    void RollWisdomSave()
-    {
-        diceHandler.RollAbilitySave(NPCName.text, "Wisdom", int.Parse(wisModifier.text));
-    }
-
-    void RollCharismaSave()
-    {
-        diceHandler.RollAbilitySave(NPCName.text, "Charisma", int.Parse(chaModifier.text));
-    }
-
     #endregion   
 
     #region Navigation methods

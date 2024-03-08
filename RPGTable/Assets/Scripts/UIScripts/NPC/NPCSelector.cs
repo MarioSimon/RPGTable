@@ -5,8 +5,9 @@ using UnityEngine.UI;
 
 public class NPCSelector : MonoBehaviour
 {
-    UIManager uIManager;
+    UIManager uiManager;
     GameManager gameManager;
+    TokenManager tokenManager;
     Canvas canvas;
 
     [SerializeField] Button openNPCSheet;
@@ -21,8 +22,9 @@ public class NPCSelector : MonoBehaviour
 
     void Start()
     {
-        uIManager = FindObjectOfType<UIManager>();
+        uiManager = FindObjectOfType<UIManager>();
         gameManager = FindObjectOfType<GameManager>();
+        tokenManager = FindObjectOfType<TokenManager>();
         canvas = FindObjectOfType<Canvas>();
 
         NPCSheetInfo NPCInfo = gameManager.GetNPCSheetInfo(NPC_ID);
@@ -53,13 +55,13 @@ public class NPCSelector : MonoBehaviour
         NPCCounter++;
         _NPCSheetInfo.NPCName += " " + NPCCounter;
 
-        gameManager.SpawnNPCToken(ownerID, ownerName, avatarID, _NPCSheetInfo);
+        tokenManager.DragNPCToken(ownerName, avatarID, _NPCSheetInfo);
     }
 
     void DeleteNPC()
     {
-        GameObject selector = uIManager.NPCSelectorList[NPC_ID];
-        uIManager.RemoveNPCButtonFromList(NPC_ID);
+        GameObject selector = uiManager.NPCSelectorList[NPC_ID];
+        uiManager.RemoveNPCButtonFromList(NPC_ID);
         gameManager.DeleteNPC(NPC_ID);
 
         if (selector != this.gameObject)
