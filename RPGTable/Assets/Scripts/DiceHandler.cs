@@ -8,6 +8,7 @@ public class DiceHandler : NetworkBehaviour
 {
     [SerializeField] private UIManager uiManager;
     [SerializeField] private GameManager gameManager;
+    [SerializeField] private TokenManager tokenManager;
 
     [SerializeField] private GameObject d4Prefab;
     [SerializeField] private GameObject d6Prefab;
@@ -31,15 +32,14 @@ public class DiceHandler : NetworkBehaviour
     {
         if (!IsHost) { return; }
 
-        if (activeRolls.Count > 0 && !diceCam.activeInHierarchy)
+        //if (activeRolls.Count > 0 && !diceCam.activeInHierarchy)
+        //{
+        //    diceCam.SetActive(true);
+        //    ShowDiceBoxClientRpc();
+        //}
+        if (activeRolls.Count == 0 && diceCam.activeInHierarchy)
         {
-            diceCam.SetActive(true);
-            ShowDiceBoxClientRpc();
-        }
-        else if (activeRolls.Count == 0 && diceCam.activeInHierarchy)
-        {
-            diceCam.SetActive(false);
-            HideDiceBoxClientRpc();
+            StartCoroutine(HideDiceBox());
         }
     }
 
@@ -111,6 +111,7 @@ public class DiceHandler : NetworkBehaviour
 
     public IEnumerator RollDice(string rollKey, DiceType type, int modifier, ClientRpcParams clientRpcParams, Action<string, int, ClientRpcParams, int> resultFunction, int sheetID = -1)
     {
+        yield return ShowDiceBox();
         yield return new WaitForSeconds(0.25f);
 
         GameObject dice = new GameObject();
@@ -249,9 +250,9 @@ public class DiceHandler : NetworkBehaviour
         RollDeathSavingThrowServerRpc(characterName, sheetID);
     }
 
-    public void RollAttackAction(AttackRollInfo attackRollInfo)
+    public void RollAttackAction(AttackRollInfo attackRollInfo, TokenWeaponInfo tokenWeaponInfo)
     {
-        RollAttackActionServerRpc(attackRollInfo);
+        RollAttackActionServerRpc(attackRollInfo, tokenWeaponInfo);      
     }
 
     public void RollActionDamage(AttackRollInfo attackRollInfo)
@@ -366,6 +367,31 @@ public class DiceHandler : NetworkBehaviour
     }
 
     #endregion
+
+    IEnumerator ShowDiceBox()
+    {
+        yield return new WaitForSeconds(0.1f);
+        diceCam.SetActive(true);
+        ShowDiceBoxClientRpc();
+    }
+
+    IEnumerator HideDiceBox()
+    {
+        yield return new WaitForSeconds(1f);
+        if (activeRolls.Count <= 0)
+        {
+            diceCam.SetActive(false);
+            HideDiceBoxClientRpc();
+        }
+    }
+
+    private void PerformAttackAnimation(TokenWeaponInfo tokenWeaponInfo)
+    {
+        if (tokenWeaponInfo.tokenID > -3)
+        {
+            SwitchWeaponAndAttackClientRpc(tokenWeaponInfo);
+        }
+    }
 
     #region serverRpc
 
@@ -498,8 +524,10 @@ public class DiceHandler : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void RollAttackActionServerRpc(AttackRollInfo attackRollInfo, ServerRpcParams serverRpcParams = default)
+    private void RollAttackActionServerRpc(AttackRollInfo attackRollInfo, TokenWeaponInfo tokenWeaponInfo, ServerRpcParams serverRpcParams = default)
     {
+        PerformAttackAnimation(tokenWeaponInfo);
+
         string rollKey = GetNewRollKey(attackRollInfo.characterName + "-");
         string message = "";
 
@@ -616,6 +644,12 @@ public class DiceHandler : NetworkBehaviour
                 sheet.ProcessDeathSavingThrow(result);
             }
         }
+    }
+
+    [ClientRpc]
+    private void SwitchWeaponAndAttackClientRpc(TokenWeaponInfo tokenWeaponInfo)
+    {
+        tokenManager.SwitchWeaponAndAttack(tokenWeaponInfo);
     }
 
     #endregion

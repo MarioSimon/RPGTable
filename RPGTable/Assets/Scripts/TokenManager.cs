@@ -15,7 +15,9 @@ public class TokenManager : NetworkBehaviour
     public GameObject tokenShortcutPrefab;
 
     public GameObject[] npcAvatarList;
- 
+
+    public RuntimeAnimatorController[] weaponAnimationList;
+
     private GameObject token;
 
     private void Update()
@@ -139,6 +141,42 @@ public class TokenManager : NetworkBehaviour
         }
     }
 
+    public void SwitchWeaponAndAttack(TokenWeaponInfo tokenWeaponInfo)
+    {
+        if (tokenWeaponInfo.tokenType == tokenType.PC)
+        {
+            TokenController[] activeTokens = FindObjectsOfType<TokenController>();
+            TokenController token = null;
+            for (int i = 0; i < activeTokens.Length; i++)
+            {
+                if (activeTokens[i].characterSheetInfo.sheetID == tokenWeaponInfo.tokenID)
+                {
+                    token = activeTokens[i];
+                    break;
+                }
+            }
+            if (token != null)
+            {
+                if (tokenWeaponInfo.weaponID == -1)
+                {
+                    token.TriggerMagicAnimation();
+                }
+                else
+                {
+                    token.SwitchWeapon(weaponAnimationList[tokenWeaponInfo.weaponID], tokenWeaponInfo.weaponID);
+
+                    if (tokenWeaponInfo.weaponID == 0)
+                    {
+                        token.TriggerPunchAnimation();
+                    }
+                    else
+                    {
+                        token.TriggerAttackAnimation();
+                    }
+                }
+            }       
+        }
+    }
     #region ServerRPC
 
     [ServerRpc (RequireOwnership = false)]
@@ -194,4 +232,20 @@ public class TokenManager : NetworkBehaviour
     }
     #endregion
 
+}
+
+public struct TokenWeaponInfo : INetworkSerializable
+{
+    public int tokenID;
+    public string tokenName;
+    public tokenType tokenType;
+    public int weaponID;
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref tokenID);
+        serializer.SerializeValue(ref tokenName);
+        serializer.SerializeValue(ref tokenType);
+        serializer.SerializeValue(ref weaponID);
+    }
 }

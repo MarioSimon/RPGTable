@@ -94,6 +94,8 @@ public class NPCActionInfo : MonoBehaviour
         if (actionType.value > 1) { return; }
 
         AttackRollInfo attackRollInfo = new AttackRollInfo();
+        TokenWeaponInfo tokenWeaponInfo = new TokenWeaponInfo();
+        tokenWeaponInfo.tokenID = -3;
 
         if (npcSheetManager != null)
         {
@@ -115,7 +117,7 @@ public class NPCActionInfo : MonoBehaviour
         attackRollInfo.damage2Modifier = damage2FlatDamage;
         attackRollInfo.damage2Type = damage2Type;
 
-        diceHandler.RollAttackAction(attackRollInfo);
+        diceHandler.RollAttackAction(attackRollInfo, tokenWeaponInfo);
     }
 
     private void RollDamage()

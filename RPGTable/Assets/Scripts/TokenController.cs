@@ -10,13 +10,14 @@ public class TokenController : NetworkBehaviour
 {
     #region variables
 
-    [SerializeField] GameObject tokenModel;
+    [SerializeField] GameObject itemHolder;
     [SerializeField] GameObject tokenBase;
     [SerializeField] GameObject tokenMenu;
     [SerializeField] GameObject characterSheetPrefab;   
     [SerializeField] GameObject NPCSheetPrefab;   
 
     [SerializeField] Animator animator;
+    [SerializeField] List<GameObject> weapons;
     GameManager gameManager;
     Canvas canvas;
 
@@ -71,47 +72,27 @@ public class TokenController : NetworkBehaviour
     private void Test()
     {
         if (!selected) { return; }
-        //test damage
+        //test damaged animation
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            if (IsHost)
-            {
-                TakeDamage(1);
-            }
-            else
-            {
-                TakeDamageServerRpc(1);
-            }
-            Debug.Log(characterSheetInfo.basicPageCharacterInfo.currHealthPoints);
+            TriggerDamagedAnimation();
         }
-        //test heal
+        //test attack animation
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            if (IsHost)
-            {
-                Heal(5, 0);
-            }
-            else
-            {
-                HealServerRpc(5, 0);
-            }
-            Debug.Log(characterSheetInfo.basicPageCharacterInfo.currHealthPoints);
+            TriggerAttackAnimation();
         }
-        //test magic
+        //test magic animation
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             TriggerMagicAnimation();
         }
-        //test unarmed
+        //test unarmed attack animation
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             TriggerPunchAnimation();
         }
-        //test attack
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            TriggerAttackAnimation();
-        }
+ 
     }
 
     #region Character sheet
@@ -198,7 +179,23 @@ public class TokenController : NetworkBehaviour
         gameManager.SaveCharacterSheetChanges(characterSheetInfo);
     }
 
-    private void TriggerMagicAnimation()
+    public void SwitchWeapon(RuntimeAnimatorController weaponAnimation, int weaponID)
+    {
+        animator.runtimeAnimatorController = weaponAnimation;
+        if (itemHolder.transform.childCount > 0)
+        {
+            Destroy(itemHolder.transform.GetChild(0).gameObject);
+        }
+
+        if (weaponID -2 >= 0)
+        {
+            GameObject weapon = Instantiate(weapons[weaponID - 2]);
+            weapon.transform.SetParent(itemHolder.transform);
+            weapon.transform.localPosition = Vector3.zero;
+        }       
+    }
+
+    public void TriggerMagicAnimation()
     {
         if (IsHost)
         {
@@ -258,10 +255,10 @@ public class TokenController : NetworkBehaviour
         }
     }
 
-    private void TriggerAttackAnimation()
+    public void TriggerAttackAnimation()
     {
-        if (IsHost)
-        {
+        //if (IsHost)
+        //{
             int animation = Random.Range(0, 3);
 
             switch (animation)
@@ -277,15 +274,15 @@ public class TokenController : NetworkBehaviour
                     break;
             }
 
-            TriggerAttackAnimationClientRpc(animation);
-        }
-        else
-        {
-            TriggerAttackAnimationServerRpc();
-        }
+     //       TriggerAttackAnimationClientRpc(animation);
+     //   }
+     //   else
+     //   {
+     //       TriggerAttackAnimationServerRpc();
+     //   }
     }
 
-    private void TriggerPunchAnimation()
+    public void TriggerPunchAnimation()
     {
         if (IsHost)
         {
@@ -666,25 +663,25 @@ public class TokenController : NetworkBehaviour
         charSheet.GetComponent<RectTransform>().SetParent(canvas.gameObject.transform, false);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void TriggerDamagedAnimationServerRpc()
     {
         TriggerDamagedAnimation();
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void TriggerAttackAnimationServerRpc()
     {
         TriggerAttackAnimation();
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void TriggerMagicAnimationServerRpc()
     {
         TriggerMagicAnimation();
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void TriggerCaCAnimationServerRpc()
     {
         TriggerCaCAnimationClientRpc();
@@ -897,7 +894,7 @@ public class TokenController : NetworkBehaviour
     #endregion
 }
 
-public enum tokenType 
+public enum tokenType
 { 
     PC = 1,
     NPC = 2

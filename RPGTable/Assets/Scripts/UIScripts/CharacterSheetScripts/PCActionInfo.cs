@@ -101,11 +101,24 @@ public class PCActionInfo : MonoBehaviour
         if (actionType.value > 1) { return; }
 
         AttackRollInfo attackRollInfo = new AttackRollInfo();
+        TokenWeaponInfo tokenWeaponInfo = new TokenWeaponInfo();
 
         if (sheetManager != null)
         {
             attackRollInfo.sheetID = sheetManager.CSInfo.sheetID;
             attackRollInfo.characterName = sheetManager.CSInfo.publicPageCharacterInfo.characterName;
+
+            tokenWeaponInfo.tokenID = sheetManager.CSInfo.sheetID;
+            tokenWeaponInfo.tokenName = sheetManager.CSInfo.publicPageCharacterInfo.characterName;
+            tokenWeaponInfo.tokenType = tokenType.PC;
+            if (actionType.value == 0)
+                tokenWeaponInfo.weaponID = weaponTemplate.value;
+            else
+                tokenWeaponInfo.weaponID = -1;
+        }
+        else
+        {
+            tokenWeaponInfo.tokenID = -3;
         }
 
         attackRollInfo.actionName = actionName.text;
@@ -122,7 +135,7 @@ public class PCActionInfo : MonoBehaviour
         attackRollInfo.damage2Modifier = damage2FlatDamage;
         attackRollInfo.damage2Type = damage2Type;
 
-        diceHandler.RollAttackAction(attackRollInfo);
+        diceHandler.RollAttackAction(attackRollInfo, tokenWeaponInfo);
     }
 
     private void RollDamage()
