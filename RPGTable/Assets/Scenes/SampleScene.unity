@@ -1905,6 +1905,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiManager: {fileID: 316338588}
   gameManager: {fileID: 1016826984}
+  tokenManager: {fileID: 866520998}
   d4Prefab: {fileID: 7735603651951753207, guid: 33b2d431405efa243ab3fb652b14cb2c, type: 3}
   d6Prefab: {fileID: 379013194807109498, guid: e564d3562444d7d41ac9a3e7acebd084, type: 3}
   d8Prefab: {fileID: 3058876418915712847, guid: 8ef3c83aace9f254eb194abe6cb6c6a8, type: 3}
@@ -28102,6 +28103,12 @@ MonoBehaviour:
   npcAvatarList:
   - {fileID: 353186407617308433, guid: 029996c1f0069934ea27d7db87039f3f, type: 3}
   - {fileID: 6908615707928747110, guid: b45b868e2ccf3b7458746180313b0880, type: 3}
+  weaponAnimationList:
+  - {fileID: 9100000, guid: 1c5da0b04451fe0488631542b2158e33, type: 2}
+  - {fileID: 9100000, guid: b62a03b7cea76174b988e6beeee2c91f, type: 2}
+  - {fileID: 9100000, guid: 849d0d8c60ee9a0479a8a00c89d02c74, type: 2}
+  - {fileID: 9100000, guid: 4484a2fc1cd784f49a684928a439c6a9, type: 2}
+  - {fileID: 9100000, guid: 68c4fad20affc554b902b3538522a663, type: 2}
 --- !u!4 &866520999
 Transform:
   m_ObjectHideFlags: 0
@@ -58575,7 +58582,7 @@ MonoBehaviour:
   m_StartAxis: 0
   m_CellSize: {x: 350, y: 140}
   m_Spacing: {x: 10, y: 10}
-  m_Constraint: 0
+  m_Constraint: 1
   m_ConstraintCount: 2
 --- !u!114 &1979980789
 MonoBehaviour:

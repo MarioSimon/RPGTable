@@ -96,7 +96,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1 &1563285168268500984
+--- !u!1 &726929170498940419
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -104,94 +104,28 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3152995655204690986}
-  - component: {fileID: 5531744276879448675}
-  - component: {fileID: 2689288663143841606}
-  - component: {fileID: 9361427141369934}
+  - component: {fileID: 4571031844635428500}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: ItemHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3152995655204690986
+--- !u!4 &4571031844635428500
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563285168268500984}
-  m_LocalRotation: {x: 0.039008535, y: -0.039008506, z: 0.7060299, w: 0.70603}
-  m_LocalPosition: {x: -0.426, y: 0.09400001, z: 0.018500047}
-  m_LocalScale: {x: 0.05, y: 0.5, z: 0.02}
+  m_GameObject: {fileID: 726929170498940419}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0.028, y: 0.108, z: 0.024}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5694604887154357143}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 6.325, y: 0, z: 90}
---- !u!33 &5531744276879448675
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563285168268500984}
-  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &2689288663143841606
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563285168268500984}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 3992f6b65e5b92344bead0d8f955752a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &9361427141369934
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563285168268500984}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &6908615707928747110
 GameObject:
   m_ObjectHideFlags: 0
@@ -270,18 +204,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e2929ffa95d302479117f98c0458eb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tokenModel: {fileID: 6517704692014723342}
+  itemHolder: {fileID: 726929170498940419}
   tokenBase: {fileID: 426626478177194109}
   tokenMenu: {fileID: 1878711165183701654, guid: a1b6cdbc4e4903442ab302e135a69a05, type: 3}
   characterSheetPrefab: {fileID: 6933813031592149426, guid: f55a0cf4e36b9984f8a744c78cc547fa, type: 3}
+  NPCSheetPrefab: {fileID: 0}
   animator: {fileID: 565331059829551566}
+  weapons:
+  - {fileID: 5395053633793554952, guid: b949697dd7c85b24c9106c93cd0ac09c, type: 3}
+  - {fileID: 5395053633793554952, guid: 2759b5a5271413a438a67bc4cde36144, type: 3}
+  - {fileID: 1796302918626668187, guid: 615f1c394f8f8844386533302f501f5b, type: 3}
+  tokenType: 0
   characterSheetInfo:
     ownerID: 0
     sheetID: -1
-    characterName: 
-    playerName: 
-    appearance: 
-    avatarID: 0
     publicBasicInfo: 1
     publicSkills: 1
     publicFeatures: 1
@@ -289,197 +225,308 @@ MonoBehaviour:
     publicSpells: 1
     publicActions: 1
     publicPersonality: 1
-    clasAndLevel: 
-    subclass: 
-    race: 
-    background: 
-    alignement: 
-    experience: 
-    strScore: 10
-    dexScore: 10
-    conScore: 10
-    intScore: 10
-    wisScore: 10
-    chaScore: 10
-    maxHealthPoints: 0
-    currHealthPoints: 0
-    tempHealthPoints: 0
-    initiativeBonus: 0
-    armorClass: 0
-    speed: 0
-    hitDiceType: 0
-    deathSaveSuccesses: 0
-    deathSaveFails: 0
-    proficencyBonus: 2
-    strProf: 0
-    dexProf: 0
-    conProf: 0
-    intProf: 0
-    wisProf: 0
-    chaProf: 0
-    skillProf: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-    skillCharacteristic: 010000000400000003000000000000000500000003000000040000000500000003000000040000000300000004000000050000000500000003000000010000000100000004000000
-    skillBonus:
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    skillTotal:
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    featuresAndTraits: 
-    proficencies: 
-    itemCount: 0
-    itemNames: []
-    itemAmounts: []
-    itemWeights: []
-    totalWeight: 0
-    maxWeight: 0
-    copperPieces: 0
-    silverPieces: 0
-    electrumPieces: 0
-    goldPieces: 0
-    platinumPieces: 0
-    spellCastingAbility: 0
-    spellSaveDC: 10
-    spellAttackMod: 2
-    level0SpellCount: 0
-    level0SpellNames: []
-    level0PreparedSpells: 
-    level0SpellLevel: 
-    level0SpellSchool: 
-    level0SpellCastingTime: []
-    level0SpellRange: []
-    level0SpellComponents: []
-    level0SpellDuration: []
-    level0SpellDescription: []
-    level1SpellCount: 0
-    level1SpellNames: []
-    level1PreparedSpells: 
-    level1SpellLevel: 
-    level1SpellSchool: 
-    level1SpellCastingTime: []
-    level1SpellRange: []
-    level1SpellComponents: []
-    level1SpellDuration: []
-    level1SpellDescription: []
-    level2SpellCount: 0
-    level2SpellNames: []
-    level2PreparedSpells: 
-    level2SpellLevel: 
-    level2SpellSchool: 
-    level2SpellCastingTime: []
-    level2SpellRange: []
-    level2SpellComponents: []
-    level2SpellDuration: []
-    level2SpellDescription: []
-    level3SpellCount: 0
-    level3SpellNames: []
-    level3PreparedSpells: 
-    level3SpellLevel: 
-    level3SpellSchool: 
-    level3SpellCastingTime: []
-    level3SpellRange: []
-    level3SpellComponents: []
-    level3SpellDuration: []
-    level3SpellDescription: []
-    level4SpellCount: 0
-    level4SpellNames: []
-    level4PreparedSpells: 
-    level4SpellLevel: 
-    level4SpellSchool: 
-    level4SpellCastingTime: []
-    level4SpellRange: []
-    level4SpellComponents: []
-    level4SpellDuration: []
-    level4SpellDescription: []
-    level5SpellCount: 0
-    level5SpellNames: []
-    level5PreparedSpells: 
-    level5SpellLevel: 
-    level5SpellSchool: 
-    level5SpellCastingTime: []
-    level5SpellRange: []
-    level5SpellComponents: []
-    level5SpellDuration: []
-    level5SpellDescription: []
-    level6SpellCount: 0
-    level6SpellNames: []
-    level6PreparedSpells: 
-    level6SpellLevel: 
-    level6SpellSchool: 
-    level6SpellCastingTime: []
-    level6SpellRange: []
-    level6SpellComponents: []
-    level6SpellDuration: []
-    level6SpellDescription: []
-    level7SpellCount: 0
-    level7SpellNames: []
-    level7PreparedSpells: 
-    level7SpellLevel: 
-    level7SpellSchool: 
-    level7SpellCastingTime: []
-    level7SpellRange: []
-    level7SpellComponents: []
-    level7SpellDuration: []
-    level7SpellDescription: []
-    level8SpellCount: 0
-    level8SpellNames: []
-    level8PreparedSpells: 
-    level8SpellLevel: 
-    level8SpellSchool: 
-    level8SpellCastingTime: []
-    level8SpellRange: []
-    level8SpellComponents: []
-    level8SpellDuration: []
-    level8SpellDescription: []
-    level9SpellCount: 0
-    level9SpellNames: []
-    level9PreparedSpells: 
-    level9SpellLevel: 
-    level9SpellSchool: 
-    level9SpellCastingTime: []
-    level9SpellRange: []
-    level9SpellComponents: []
-    level9SpellDuration: []
-    level9SpellDescription: []
-    actions: 
-    bonusActions: 
-    reactions: 
-    traits: 
-    ideals: 
-    bonds: 
-    flaws: 
+    publicPageCharacterInfo:
+      characterName: 
+      playerName: 
+      appearance: 
+      avatarID: 0
+    basicPageCharacterInfo:
+      clasAndLevel: 
+      subclass: 
+      race: 
+      background: 
+      alignement: 
+      experience: 
+      strScore: 10
+      dexScore: 10
+      conScore: 10
+      intScore: 10
+      wisScore: 10
+      chaScore: 10
+      maxHealthPoints: 0
+      currHealthPoints: 0
+      tempHealthPoints: 0
+      initiativeBonus: 0
+      armorClass: 0
+      speed: 0
+      hitDiceType: 0
+      deathSaveSuccesses: 0
+      deathSaveFails: 0
+    skillsPageCharacterInfo:
+      proficencyBonus: 2
+      strProf: 0
+      dexProf: 0
+      conProf: 0
+      intProf: 0
+      wisProf: 0
+      chaProf: 0
+      skillProf: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+      skillCharacteristic: 010000000400000003000000000000000500000003000000040000000500000003000000040000000300000004000000050000000500000003000000010000000100000004000000
+      skillBonus:
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      skillTotal:
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+    featuresPageCharacterInfo:
+      featuresAndTraits: 
+      traitCount: 0
+      traitName: []
+      traitDescription: []
+      proficencies: 
+    inventoryPageCharacterInfo:
+      itemCount: 0
+      itemNames: []
+      itemAmounts: []
+      itemWeights: []
+      totalWeight: 0
+      maxWeight: 0
+      copperPieces: 0
+      silverPieces: 0
+      electrumPieces: 0
+      goldPieces: 0
+      platinumPieces: 0
+    spellsPageCharacterInfo:
+      spellCastingAbility: 0
+      spellSaveDC: 10
+      spellAttackMod: 2
+      spellLevelList:
+      - spellCount: 0
+        spellNames: []
+        preparedSpells: 
+        spellLevel: 
+        spellSchool: 
+        spellCastingTime: []
+        spellRange: []
+        spellComponents: []
+        spellDuration: []
+        spellDescription: []
+      - spellCount: 0
+        spellNames: []
+        preparedSpells: 
+        spellLevel: 
+        spellSchool: 
+        spellCastingTime: []
+        spellRange: []
+        spellComponents: []
+        spellDuration: []
+        spellDescription: []
+      - spellCount: 0
+        spellNames: []
+        preparedSpells: 
+        spellLevel: 
+        spellSchool: 
+        spellCastingTime: []
+        spellRange: []
+        spellComponents: []
+        spellDuration: []
+        spellDescription: []
+      - spellCount: 0
+        spellNames: []
+        preparedSpells: 
+        spellLevel: 
+        spellSchool: 
+        spellCastingTime: []
+        spellRange: []
+        spellComponents: []
+        spellDuration: []
+        spellDescription: []
+      - spellCount: 0
+        spellNames: []
+        preparedSpells: 
+        spellLevel: 
+        spellSchool: 
+        spellCastingTime: []
+        spellRange: []
+        spellComponents: []
+        spellDuration: []
+        spellDescription: []
+      - spellCount: 0
+        spellNames: []
+        preparedSpells: 
+        spellLevel: 
+        spellSchool: 
+        spellCastingTime: []
+        spellRange: []
+        spellComponents: []
+        spellDuration: []
+        spellDescription: []
+      - spellCount: 0
+        spellNames: []
+        preparedSpells: 
+        spellLevel: 
+        spellSchool: 
+        spellCastingTime: []
+        spellRange: []
+        spellComponents: []
+        spellDuration: []
+        spellDescription: []
+      - spellCount: 0
+        spellNames: []
+        preparedSpells: 
+        spellLevel: 
+        spellSchool: 
+        spellCastingTime: []
+        spellRange: []
+        spellComponents: []
+        spellDuration: []
+        spellDescription: []
+      - spellCount: 0
+        spellNames: []
+        preparedSpells: 
+        spellLevel: 
+        spellSchool: 
+        spellCastingTime: []
+        spellRange: []
+        spellComponents: []
+        spellDuration: []
+        spellDescription: []
+      - spellCount: 0
+        spellNames: []
+        preparedSpells: 
+        spellLevel: 
+        spellSchool: 
+        spellCastingTime: []
+        spellRange: []
+        spellComponents: []
+        spellDuration: []
+        spellDescription: []
+    actionsPageCharacterInfo:
+      actionList:
+        actionCount: 0
+        actionName: []
+        actionType: 
+        actionWeapon: 
+        actionAttackAbility: 
+        actionAttackOtherBonus: []
+        actionAttackProficency: 
+        actionD1NumDices: []
+        actionD1DiceType: 
+        actionD1Ability: 
+        actionD1OtherBonus: []
+        actionD1Type: 
+        actionD2NumDices: []
+        actionD2DiceType: 
+        actionD2Ability: 
+        actionD2OtherBonus: []
+        actionD2Type: 
+        actionDC: 
+      bonusActionList:
+        actionCount: 0
+        actionName: []
+        actionType: 
+        actionWeapon: 
+        actionAttackAbility: 
+        actionAttackOtherBonus: []
+        actionAttackProficency: 
+        actionD1NumDices: []
+        actionD1DiceType: 
+        actionD1Ability: 
+        actionD1OtherBonus: []
+        actionD1Type: 
+        actionD2NumDices: []
+        actionD2DiceType: 
+        actionD2Ability: 
+        actionD2OtherBonus: []
+        actionD2Type: 
+        actionDC: 
+      reactionList:
+        actionCount: 0
+        actionName: []
+        actionType: 
+        actionWeapon: 
+        actionAttackAbility: 
+        actionAttackOtherBonus: []
+        actionAttackProficency: 
+        actionD1NumDices: []
+        actionD1DiceType: 
+        actionD1Ability: 
+        actionD1OtherBonus: []
+        actionD1Type: 
+        actionD2NumDices: []
+        actionD2DiceType: 
+        actionD2Ability: 
+        actionD2OtherBonus: []
+        actionD2Type: 
+        actionDC: 
+    personalityPageCharacterInfo:
+      traits: 
+      ideals: 
+      bonds: 
+      flaws: 
+  NPCSheetInfo:
+    sheetID: -1
+    avatarID: 0
+    animatorID: -1
+    NPCName: 
+    NPCSize: 0
+    NPCType: 0
+    NPCAlignement: 0
+    armorClass: 
+    healthPoints: 
+    speed: 
+    strScore: 
+    dexScore: 
+    conScore: 
+    intScore: 
+    wisScore: 
+    chaScore: 
+    skills: 
+    damageVulnerabilites: 
+    damageResistances: 
+    damageInmunities: 
+    conditionInmunities: 
+    senses: 
+    languages: 
+    challenge: 
+    traitCount: 0
+    traitName: []
+    traitDescription: []
+    actionCount: 0
+    actionName: []
+    actionType: 
+    actionAttackModifier: []
+    actionD1NumDices: []
+    actionD1DiceType: 
+    actionD1FlatDamage: []
+    actionD1Type: 
+    actionD2NumDices: []
+    actionD2DiceType: 
+    actionD2FlatDamage: []
+    actionD2Type: 
+    actionDC: 
   tokenName:
     m_InternalValue:
       utf8LengthInBytes: 0
@@ -703,7 +750,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: f8e2c0758c579a64499559ac92887695, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 849d0d8c60ee9a0479a8a00c89d02c74, type: 2}
+      objectReference: {fileID: 9100000, guid: 1c5da0b04451fe0488631542b2158e33, type: 2}
     - target: {fileID: 5866666021909216657, guid: f8e2c0758c579a64499559ac92887695, type: 3}
       propertyPath: m_UpdateMode
       value: 2
@@ -718,11 +765,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8e2c0758c579a64499559ac92887695, type: 3}
---- !u!1 &6517704692014723342 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f8e2c0758c579a64499559ac92887695, type: 3}
-  m_PrefabInstance: {fileID: 6247302144683281503}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5852525907526249396 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f8e2c0758c579a64499559ac92887695, type: 3}
