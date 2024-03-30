@@ -932,6 +932,8 @@ public class UIManager : NetworkBehaviour
 
     private void StartHost()
     {
+        if (string.IsNullOrEmpty(playerNameInput.text)) { return; }
+
         relay.StartGame();
         InitializeHost();
     }
@@ -986,6 +988,8 @@ public class UIManager : NetworkBehaviour
 
     private void StartClient()
     {
+        if (string.IsNullOrEmpty(playerNameInput.text)) { return; }
+
         relay.JoinGame(joinCode.text);
 
         InitializeClient();

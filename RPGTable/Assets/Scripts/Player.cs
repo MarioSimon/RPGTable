@@ -185,7 +185,14 @@ public class Player : NetworkBehaviour
 
         if (Input.GetKeyUp(KeyCode.R))
         {
-            selectedToken.transform.Rotate(Vector3.up * 45);
+            if (playerName == selectedToken.ownerName.Value)
+            {
+                selectedToken.TurnServerRpc(45);
+            }
+            else if (IsHost)
+            {
+                selectedToken.Turn(45);
+            }
         }
         
     }

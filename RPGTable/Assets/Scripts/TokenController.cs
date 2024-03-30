@@ -350,6 +350,10 @@ public class TokenController : NetworkBehaviour
         transform.position = destination;
     }
 
+    public void Turn(int degrees)
+    {
+        transform.Rotate(Vector3.up * degrees);
+    }
     #endregion
 
     #region context menu functions
@@ -630,6 +634,12 @@ public class TokenController : NetworkBehaviour
     public void MoveToServerRpc(Vector3 destination)
     {
         MoveTo(destination);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void TurnServerRpc(int degrees)
+    {
+        Turn(degrees);
     }
 
     [ServerRpc(RequireOwnership = false)]
