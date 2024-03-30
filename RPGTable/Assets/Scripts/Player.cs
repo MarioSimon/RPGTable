@@ -54,6 +54,7 @@ public class Player : NetworkBehaviour
         }
         InteractWithSelection();
         InteractWithMovement();
+        InteractWithRotation();
         InteractWithRuler();
     }
 
@@ -175,6 +176,18 @@ public class Player : NetworkBehaviour
                     selectedToken.MoveTo(hit.point);
             }
         }
+    }
+
+    private void InteractWithRotation()
+    {
+        if (selectedToken == null) { return; }
+        if (!IsOwner && !IsHost) { return; }
+
+        if (Input.GetKeyUp(KeyCode.R))
+        {
+            selectedToken.transform.Rotate(Vector3.up * 45);
+        }
+        
     }
 
     #endregion

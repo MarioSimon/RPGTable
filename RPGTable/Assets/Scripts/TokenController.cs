@@ -181,6 +181,8 @@ public class TokenController : NetworkBehaviour
 
     public void SwitchWeapon(RuntimeAnimatorController weaponAnimation, int weaponID)
     {
+        if (animator.runtimeAnimatorController == weaponAnimation) { return; }
+
         animator.runtimeAnimatorController = weaponAnimation;
         if (itemHolder.transform.childCount > 0)
         {
